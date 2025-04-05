@@ -21,7 +21,7 @@ const NavBar = () => {
       label: "Categories",
       submenu: [
         {
-          path: "/demo",
+          path: "#",
           label: "Demo",
         },
       ],
@@ -31,7 +31,7 @@ const NavBar = () => {
       label: "Products",
       submenu: [
         {
-          path: "/demo",
+          path: "#",
           label: "Demo",
         },
       ],
@@ -103,7 +103,7 @@ const NavBar = () => {
                 {navLinks.map((item, index) => (
                   <li key={index} className="relative group">
                     <Link
-                      href={`/${item.path}`}
+                      href={`${item.path}`}
                       className={`flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in-out group: ${
                         pathName === item.path
                           ? "underline underline-offset-4"
@@ -126,7 +126,7 @@ const NavBar = () => {
                         {item.submenu.map((subItem, subIndex) => (
                           <li key={subIndex}>
                             <Link
-                              href={`/${subItem.path}`}
+                              href={`${subItem.path}`}
                               className={`block px-4 py-2 text-sm text-white-700  hover:bg-white ${
                                 pathName === subItem.path
                                   ? "underline underline-offset-4"
@@ -143,7 +143,7 @@ const NavBar = () => {
                 ))}
               </ul>
             </div>
-            <CustomButton>Free Consultation</CustomButton>
+            <CustomButton href="/consultation">Free Consultation</CustomButton>
           </div>
 
           {/* Mobile Menu Button */}
@@ -192,7 +192,7 @@ const NavBar = () => {
                 className="cursor-pointer transition-all duration-300 ease-in-out hover:text-primary underline-offset-4"
               >
                 <div className="flex items-center gap-2">
-                  <Link onClick={() => setIsOpen(false)} href={`/${item.path}`}>
+                  <Link onClick={() => setIsOpen(false)} href={`${item.path}`}>
                     {item.label}
                   </Link>
                   {item.submenu && <ChevronDown size={16} />}
@@ -204,7 +204,7 @@ const NavBar = () => {
                       <li key={subIndex}>
                         <Link
                           onClick={() => setIsOpen(false)}
-                          href={`/${subItem.path}`}
+                          href={`${subItem.path}`}
                           className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
                         >
                           {subItem.label}

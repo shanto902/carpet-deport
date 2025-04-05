@@ -4,7 +4,7 @@ export default function PromoSection() {
   return (
     <div
       className="relative bg-cover bg-center min-h-[650px] flex items-center justify-center"
-      style={{ backgroundImage: `url('/images/main-section.jpg')` }}
+      style={{ backgroundImage: `url('/images/promo-bg.jpg')` }}
     >
       <div className="bg-black/50 absolute inset-0 z-0" />
 
