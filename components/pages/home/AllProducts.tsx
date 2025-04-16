@@ -51,13 +51,13 @@ export default function AllProducts() {
               key={idx}
               className="bg-white rounded-2xl p-4 shadow hover:shadow-md transition"
             >
-              <div className="relative">
+              <div className="relative ">
                 <img
                   src={product.image}
                   alt={product.title}
                   className="w-full h-32 object-cover rounded-lg"
                 />
-                <button className="absolute top-2 right-2 bg-white p-1 rounded-full shadow">
+                <button className="absolute  top-2 right-2 bg-white p-1 rounded-full shadow">
                   <FaHeart className="text-gray-500 hover:text-red-500" />
                 </button>
               </div>

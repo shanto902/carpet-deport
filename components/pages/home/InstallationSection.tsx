@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { FaArrowUpRightFromSquare } from "react-icons/fa6";
 
 export default function InstallationSection() {
@@ -6,15 +7,19 @@ export default function InstallationSection() {
       <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-10">
         {/* Image block with mobile overlay */}
         <div className="relative md:w-1/2 w-full">
-          <img
+          <Image
             src="/images/install1.png" // Replace with your background image path
             alt="Wood Panel"
             className="rounded-xl w-full"
+            height={500} // Adjust height as needed
+            width={500} // Adjust width as needed
           />
-          <img
+          <Image
             src="/images/mobile.png" // Replace with transparent phone image
             alt="Phone"
             className="absolute top-1/2 left-1/2 w-[120px] md:w-[160px] -translate-x-1/2 -translate-y-1/2"
+            height={200} // Adjust height as needed
+            width={200} // Adjust width as needed
           />
         </div>
 

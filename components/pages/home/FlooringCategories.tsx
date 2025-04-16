@@ -42,7 +42,7 @@ export default function FlooringCategories() {
                 height={300}
                 width={400}
               />
-              <button className="mt-4 bg-red-500 text-white font-semibold py-2 px-6 rounded-full">
+              <button className="mt-4 bg-red-500 text-white font-semibold w-full py-3 px-6 rounded-full">
                 {item.name}
               </button>
             </div>

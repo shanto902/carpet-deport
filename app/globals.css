@@ -5,3 +5,10 @@
   --color-title: #181919 !important;
   --color-paragraph: #4f555f !important;
 }
+.supernova {
+  background: transparent !important;
+}
+.form-all {
+  background: transparent !important;
+  box-shadow: none !important;
+}

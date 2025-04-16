@@ -99,7 +99,7 @@ const NavBar = () => {
               />
             </Link>
             <div className="flex items-center gap-5">
-              <ul className=" text-lg  flex space-x-5">
+              <ul className=" text-base xl:text-lg  flex space-x-5">
                 {navLinks.map((item, index) => (
                   <li key={index} className="relative group">
                     <Link

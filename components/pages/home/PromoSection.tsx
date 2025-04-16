@@ -1,4 +1,5 @@
 import mapPin from "@/assets/svg/map-pin.svg";
+import JotformEmbed from "@/components/form/JotformEmbed";
 import Image from "next/image";
 export default function PromoSection() {
   return (
@@ -29,12 +30,10 @@ export default function PromoSection() {
         </div>
 
         {/* Right Form Section */}
-        <div className="bg-black/30 backdrop-blur-md p-8 rounded-2xl w-full max-w-xl text-white">
-          <h2 className="text-2xl font-semibold mb-6">
-            Request An In-Store Consultation
-          </h2>
+        <div className="bg-black/30 backdrop-blur-md p-8 rounded-2xl w-full max-w-xl text-white  ">
+          <JotformEmbed />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <input
               type="text"
               placeholder="First Name"
@@ -59,7 +58,7 @@ export default function PromoSection() {
 
           <div className="mb-4">
             <p className="font-semibold">Please Select Your Store</p>
-            {/* Add your dropdown or custom store selection here */}
+           
             <select className="w-full mt-2 p-3 rounded-full bg-white text-black">
               <option>Select Store</option>
               <option>Store 1</option>
@@ -69,7 +68,7 @@ export default function PromoSection() {
 
           <button className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white py-3 rounded-full font-semibold text-lg">
             SUBMIT NOW
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
