@@ -1,4 +1,5 @@
 "use client";
+import PaddingContainer from "@/components/layout/PaddingContainer";
 import CountUp from "react-countup";
 
 const stats = [
@@ -11,7 +12,7 @@ const stats = [
 export default function StatsSection() {
   return (
     <section className="bg-[#434A54] text-white py-16">
-      <div className="container mx-auto px-4">
+      <PaddingContainer className=" mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {stats.map((stat, index) => (
             <div key={index}>
@@ -27,7 +28,7 @@ export default function StatsSection() {
             </div>
           ))}
         </div>
-      </div>
+      </PaddingContainer>
     </section>
   );
 }

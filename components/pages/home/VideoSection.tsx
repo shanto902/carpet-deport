@@ -1,7 +1,9 @@
+import PaddingContainer from "@/components/layout/PaddingContainer";
+
 export default function VideoSection() {
   return (
     <section className="py-16 bg-[#F7F9FA] text-center">
-      <div className="container mx-auto px-4">
+      <PaddingContainer className="container mx-auto px-4">
         {/* Title */}
         <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-8">
           Lower Prices Better <br />
@@ -12,7 +14,7 @@ export default function VideoSection() {
 
         {/* YouTube Video */}
         <div className="flex justify-center">
-          <div className="w-full max-w-2xl aspect-video rounded-xl overflow-hidden shadow-lg">
+          <div className="w-full max-w-[1000px] aspect-[16/7] rounded-xl overflow-hidden shadow-lg">
             <iframe
               className="w-full h-full"
               src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
@@ -23,7 +25,7 @@ export default function VideoSection() {
             ></iframe>
           </div>
         </div>
-      </div>
+      </PaddingContainer>
     </section>
   );
 }

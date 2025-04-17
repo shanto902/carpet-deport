@@ -1,3 +1,4 @@
+import PaddingContainer from "@/components/layout/PaddingContainer";
 import Image from "next/image";
 
 export default function FlooringCategories() {
@@ -22,7 +23,7 @@ export default function FlooringCategories() {
 
   return (
     <section className="bg-[#F7F9FA] py-16 text-center">
-      <div className="container mx-auto px-4">
+      <PaddingContainer className=" mx-auto px-4">
         <h2 className="text-3xl md:text-4xl font-semibold text-black mb-2">
           Your Source For Discount
         </h2>
@@ -33,7 +34,7 @@ export default function FlooringCategories() {
           {categories.map((item, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl shadow-sm overflow-hidden p-4 flex flex-col items-center"
+              className="bg-white rounded-2xl drop-shadow overflow-hidden p-4 flex flex-col items-center"
             >
               <Image
                 src={item.image}
@@ -42,13 +43,13 @@ export default function FlooringCategories() {
                 height={300}
                 width={400}
               />
-              <button className="mt-4 bg-red-500 text-white font-semibold w-full py-3 px-6 rounded-full">
+              <button className="mt-4 bg-red-500 text-white text-lg w-full py-3 px-6 rounded-full">
                 {item.name}
               </button>
             </div>
           ))}
         </div>
-      </div>
+      </PaddingContainer>
     </section>
   );
 }

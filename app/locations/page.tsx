@@ -1,4 +1,7 @@
 import BreadcrumbBanner from "@/components/common/BreadcrumbBanner";
+import CustomButton from "@/components/common/CustomButton";
+import PaddingContainer from "@/components/layout/PaddingContainer";
+import Image from "next/image";
 import React from "react";
 import { FiMapPin, FiPhone } from "react-icons/fi";
 
@@ -69,16 +72,18 @@ const LocationsListPage = () => {
         background="/breadcrumb-products.jpg"
         breadcrumb={["Locations"]}
       />
-      <div className="px-4 md:px-16 py-10 space-y-6">
+      <PaddingContainer className=" py-10 space-y-6">
         {locations.map((location, i) => (
           <div
             key={i}
-            className="bg-white rounded-lg shadow-md p-4 md:flex items-center gap-6"
+            className="bg-white rounded-lg drop-shadow-md p-4 md:flex items-center gap-6"
           >
-            <img
+            <Image
+              width={300}
+              height={300}
               src="/images/location.png"
               alt="floor install"
-              className="w-full md:w-40 h-28 object-cover rounded mb-4 md:mb-0"
+              className=" aspect-square object-cover rounded mb-4 md:mb-0"
             />
             <div className="flex-1">
               <h3 className="text-lg font-semibold mb-1">{location.city}</h3>
@@ -94,18 +99,13 @@ const LocationsListPage = () => {
                 <p>Sunday: {location.sunday}</p>
               </div>
             </div>
-            <div className="flex flex-col items-start md:items-end gap-2 mt-4 md:mt-0">
-              <button className="bg-black text-white px-4 py-1 rounded text-sm">
-                Show Info
-              </button>
-              <button className="bg-red-500 text-white px-4 py-1 rounded text-sm flex items-center space-x-1">
-                <span>Get Directions</span>
-                <span className="text-white">▶</span>
-              </button>
+            <div className="flex  items-start md:items-end gap-2 mt-4 md:mt-0">
+              <CustomButton question>More Info</CustomButton>
+              <CustomButton inverted>Get Directions</CustomButton>
             </div>
           </div>
         ))}
-      </div>
+      </PaddingContainer>
     </>
   );
 };

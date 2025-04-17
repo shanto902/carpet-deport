@@ -6,6 +6,7 @@ import InstallationSection from "@/components/pages/home/InstallationSection";
 import OnARollSection from "@/components/pages/home/OnARollSection";
 import PromoSection from "@/components/pages/home/PromoSection";
 import StatsSection from "@/components/pages/home/StatsSection";
+import TestimonialSection from "@/components/pages/home/TestimonialSection";
 import VideoSection from "@/components/pages/home/VideoSection";
 import React from "react";
 
@@ -20,6 +21,7 @@ const page = () => {
       <OnARollSection />
       <InstallationSection />
       <InspirationGallery />
+      <TestimonialSection />
       <BlogSection />
     </div>
   );

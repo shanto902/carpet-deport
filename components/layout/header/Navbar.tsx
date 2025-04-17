@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import CustomButton from "@/components/common/CustomButton";
 import BottomNavbar from "./BottomNavbar";
+import PaddingContainer from "../PaddingContainer";
 
 const NavBar = () => {
   const navLinks = [
@@ -84,7 +85,7 @@ const NavBar = () => {
       <nav
         className={`h-24 shadow-md z-50 flex justify-center items-center bg-white sticky top-0 transition-all duration-300`}
       >
-        <div className="flex px-8 container justify-between w-full items-center">
+        <PaddingContainer className="flex px-8 justify-between w-full items-center">
           {/* Desktop Menu */}
           <div className="  hidden lg:flex  justify-between items-center w-full">
             {/* Logo */}
@@ -163,7 +164,7 @@ const NavBar = () => {
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
-        </div>
+        </PaddingContainer>
 
         {/* Logo */}
 

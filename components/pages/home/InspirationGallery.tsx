@@ -1,3 +1,5 @@
+import PaddingContainer from "@/components/layout/PaddingContainer";
+
 export default function InspirationGallery() {
   const images = [
     "/images/1.png",
@@ -9,12 +11,12 @@ export default function InspirationGallery() {
 
   return (
     <section className="py-16 bg-white text-center">
-      <div className="container mx-auto px-4">
+      <PaddingContainer className=" mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold text-[#1E1E1E] mb-10">
           Get Inspired For Your Next Project
         </h2>
 
-        <div className=" h-[70vh] grid grid-cols-1 sm:grid-cols-6 grid-rows-6 gap-4">
+        <div className=" grid grid-cols-1 sm:grid-cols-6 grid-rows-6 gap-4">
           {/* First Image (top-left large box) */}
           <div className="sm:col-span-2 sm:row-span-3">
             <img
@@ -51,7 +53,7 @@ export default function InspirationGallery() {
             />
           </div>
         </div>
-      </div>
+      </PaddingContainer>
     </section>
   );
 }

@@ -1,5 +1,7 @@
+import CustomButton from "@/components/common/CustomButton";
+import Image from "next/image";
 import Link from "next/link";
-import { FaArrowRight, FaArrowUpRightFromSquare } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa6";
 
 const blogPosts = [
   {
@@ -28,18 +30,10 @@ export default function BlogSection() {
       <div className="max-w-7xl mx-auto px-4">
         {/* Heading */}
         <div className="flex justify-between items-center mb-10">
-          <h2 className="text-[26px] font-bold text-[#1E1E1E]">
+          <h2 className="text-4xl font-bold text-[#1E1E1E]">
             Flooring Tips & Trends
           </h2>
-          <Link
-            href={"/blog"}
-            className="flex items-center gap-2 bg-black text-white text-sm px-5 py-2 rounded-full hover:bg-gray-800"
-          >
-            View All Blog
-            <span className="bg-red-500 text-white p-1 rounded-full">
-              <FaArrowUpRightFromSquare className="w-3 h-3" />
-            </span>
-          </Link>
+          <CustomButton href={"/blog"}>View All Blog</CustomButton>
         </div>
 
         {/* Grid Layout */}
@@ -47,12 +41,14 @@ export default function BlogSection() {
           {blogPosts.map((post, i) => (
             <div
               key={i}
-              className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col"
+              className="bg-white rounded-2xl p-4 drop-shadow-sm hover:drop-shadow-md transition flex flex-col"
             >
-              <img
+              <Image
                 src={post.image}
                 alt={post.title}
-                className="w-full h-[200px] object-cover rounded-xl mb-4"
+                className=" object-cover w-full h-[200px] rounded-xl mb-4"
+                height={200}
+                width={350}
               />
 
               {/* Category and Date */}

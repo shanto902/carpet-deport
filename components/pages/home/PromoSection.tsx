@@ -1,5 +1,6 @@
 import mapPin from "@/assets/svg/map-pin.svg";
 import JotformEmbed from "@/components/form/JotformEmbed";
+import PaddingContainer from "@/components/layout/PaddingContainer";
 import Image from "next/image";
 export default function PromoSection() {
   return (
@@ -9,7 +10,7 @@ export default function PromoSection() {
     >
       <div className="bg-black/50 absolute inset-0 z-0" />
 
-      <div className="relative  z-10 container mx-auto p-8 flex flex-col lg:flex-row justify-between items-center gap-10">
+      <PaddingContainer className="relative  z-10 container mx-auto p-8 flex flex-col lg:flex-row justify-between items-center gap-10">
         {/* Left Text Section */}
         <div className="text-white ">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
@@ -70,7 +71,7 @@ export default function PromoSection() {
             SUBMIT NOW
           </button> */}
         </div>
-      </div>
+      </PaddingContainer>
     </div>
   );
 }
