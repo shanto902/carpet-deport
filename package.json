@@ -11,15 +11,21 @@
   "dependencies": {
     "@directus/sdk": "^19.1.0",
     "axios": "^1.8.4",
+    "framer-motion": "^12.7.4",
+    "html-react-parser": "^5.2.3",
+    "jotform": "^1.0.1",
     "keen-slider": "^6.8.6",
     "lucide-react": "^0.487.0",
+    "moment": "^2.30.1",
     "next": "15.2.4",
     "onnxruntime-web": "^1.21.0",
     "react": "^19.0.0",
     "react-countup": "^6.5.3",
     "react-dom": "^19.0.0",
+    "react-fast-marquee": "^1.6.5",
     "react-icons": "^5.5.0",
-    "tailwind-merge": "^3.1.0"
+    "tailwind-merge": "^3.1.0",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

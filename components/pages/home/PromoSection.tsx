@@ -1,5 +1,5 @@
 import mapPin from "@/assets/svg/map-pin.svg";
-import JotformEmbed from "@/components/form/JotformEmbed";
+import JotformEmbed from "@/components/form/InStoreConsultationForm";
 import PaddingContainer from "@/components/layout/PaddingContainer";
 import Image from "next/image";
 export default function PromoSection() {

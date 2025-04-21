@@ -5,11 +5,22 @@
   --color-title: #181919 !important;
   --color-paragraph: #4f555f !important;
 }
-.supernova {
-  background: transparent !important;
-  box-shadow: none !important;
+
+.header {
+  @apply mb-8;
 }
-.form-all {
-  background: transparent !important;
-  box-shadow: none !important;
+
+.header > h2 {
+  @apply text-3xl font-semibold;
+}
+
+.body > h2 {
+  @apply text-3xl font-semibold mb-4;
+}
+.body > h3 {
+  @apply text-lg font-semibold mb-4;
+}
+
+.body > p {
+  @apply text-base mb-4;
 }

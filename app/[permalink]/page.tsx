@@ -1,14 +1,142 @@
-import React from "react";
+import BlogBlock from "@/components/blocks/BlogBlock";
+import CategoriesShowcaseBlock from "@/components/blocks/CategoriesShowcaseBlock";
+import { HeroBlock } from "@/components/blocks/HeroBlock";
+import InspiredGalleryBlock from "@/components/blocks/InspiredGalleryBlock";
+import PartnerBlock from "@/components/blocks/PartnerBlock";
+import ProductShowcaseBlock from "@/components/blocks/ProductShowcaseBlock";
+import StatisticBlock from "@/components/blocks/StatisticBlock";
+import TestimonialBlock from "@/components/blocks/TestimonialBlock";
+import TwoColumnBlock from "@/components/blocks/TwoColumnBlock";
+import VideoBlock from "@/components/blocks/VideoBlock";
+import { fetchPage, fetchPages } from "@/helper/fetchFromDirectus";
+import {
+  TBlock,
+  TBlogBlogs,
+  TCategoriesShowcaseBlock,
+  THeroBlock,
+  TInspiredGalleryBlock,
+  TPartnerBlock,
+  TProductShowCaseBlock,
+  TStatisticBlock,
+  TTestimonialBlock,
+  TTwoColumnBlock,
+  TVideoBlock,
+} from "@/interfaces";
+import React, { Suspense } from "react";
 
 interface PageProps {
   params: Promise<{
     permalink: string;
   }>;
 }
+
+export async function generateStaticParams() {
+  try {
+    const pages = await fetchPages();
+    return pages.map((page) => ({
+      permalink: page.permalink,
+    }));
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    throw new Error("Error fetching categories");
+  }
+}
+
+const renderBlock = (block: TBlock) => {
+  switch (block.collection) {
+    case "block_hero":
+      return (
+        <Suspense key={block.id}>
+          <HeroBlock key={block.id} block={block as THeroBlock} />
+        </Suspense>
+      );
+    case "block_categories_showcase":
+      return (
+        <Suspense key={block.id}>
+          <CategoriesShowcaseBlock
+            key={block.id}
+            block={block as TCategoriesShowcaseBlock}
+          />
+        </Suspense>
+      );
+    case "block_video":
+      return (
+        <Suspense key={block.id}>
+          <VideoBlock key={block.id} block={block as TVideoBlock} />
+        </Suspense>
+      );
+    case "block_statstics":
+      return (
+        <Suspense key={block.id}>
+          <StatisticBlock key={block.id} block={block as TStatisticBlock} />
+        </Suspense>
+      );
+    case "block_two_columns":
+      return (
+        <Suspense key={block.id}>
+          <TwoColumnBlock key={block.id} block={block as TTwoColumnBlock} />
+        </Suspense>
+      );
+    case "block_two_columns":
+      return (
+        <Suspense key={block.id}>
+          <TwoColumnBlock key={block.id} block={block as TTwoColumnBlock} />
+        </Suspense>
+      );
+    case "block_partners":
+      return (
+        <Suspense key={block.id}>
+          <PartnerBlock key={block.id} block={block as TPartnerBlock} />
+        </Suspense>
+      );
+
+    case "block_inspired_gallery":
+      return (
+        <Suspense key={block.id}>
+          <InspiredGalleryBlock
+            key={block.id}
+            block={block as TInspiredGalleryBlock}
+          />
+        </Suspense>
+      );
+    case "block_testimonial":
+      return (
+        <Suspense key={block.id}>
+          <TestimonialBlock key={block.id} block={block as TTestimonialBlock} />
+        </Suspense>
+      );
+    case "block_blogs":
+      return (
+        <Suspense key={block.id}>
+          <BlogBlock key={block.id} block={block as TBlogBlogs} />
+        </Suspense>
+      );
+    case "block_product_showcase":
+      return (
+        <Suspense key={block.id}>
+          <ProductShowcaseBlock
+            key={block.id}
+            block={block as TProductShowCaseBlock}
+          />
+        </Suspense>
+      );
+    default:
+      return <h2 key={(block as TBlock).id}>Unknown Block Type</h2>;
+  }
+};
+
 const page = async ({ params }: PageProps) => {
   const { permalink } = await params;
-  console.log(permalink);
-  return <div>page</div>;
+  const pageData = await fetchPage(permalink);
+  console.log(pageData);
+  if (!pageData) {
+    return <div>Page not found</div>;
+  }
+  return (
+    <div key={pageData.id}>
+      {pageData.blocks?.map((block) => renderBlock(block))}
+    </div>
+  );
 };
 
 export default page;

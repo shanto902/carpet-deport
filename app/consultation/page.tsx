@@ -1,4 +1,4 @@
-import JotformEmbed from "@/components/form/JotformEmbed";
+import JotformEmbed from "@/components/form/InStoreConsultationForm";
 import PaddingContainer from "@/components/layout/PaddingContainer";
 import React from "react";
 
