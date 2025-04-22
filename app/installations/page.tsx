@@ -6,7 +6,7 @@ export default function InstallationPage() {
   return (
     <>
       <BreadcrumbBanner
-        title="Great Flooring. Professional Installation"
+        title="Great Flooring. Professional Installation"
         background="/breadcrumb-products.jpg"
         breadcrumb={["Installation"]}
       />

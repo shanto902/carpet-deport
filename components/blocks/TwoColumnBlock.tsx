@@ -6,7 +6,9 @@ import { Body } from "../common/Body";
 
 const TwoColumnBlock = ({ block }: { block: TTwoColumnBlock }) => {
   return (
-    <section className="py-10 bg-white">
+    <section
+      className={`py-10 ${block.sort % 2 === 0 ? "bg-white" : " bg-[#F8FAFB]"}`}
+    >
       <PaddingContainer
         className={` max-w-[1200px] px-4 flex flex-col ${
           block.item.layout === "left" ? "md:flex-row" : "md:flex-row-reverse"
@@ -16,9 +18,11 @@ const TwoColumnBlock = ({ block }: { block: TTwoColumnBlock }) => {
         <div className="md:w-1/2">
           <Body>{block.item.body}</Body>
 
-          <CustomButton className="mt-5" button_type={block.item.button_type}>
-            {block.item.button_text}
-          </CustomButton>
+          {block.item.button === "yes" && (
+            <CustomButton className="mt-5" button_type={block.item.button_type}>
+              {block.item.button_text}
+            </CustomButton>
+          )}
         </div>
 
         {/* Image */}

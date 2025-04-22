@@ -15,10 +15,12 @@ export type TBlock =
   | TVideoBlock
   | TTwoColumnBlock
   | TStatisticBlock
+  | TBreadcrumbBlock
   | TInspiredGalleryBlock
   | TTestimonialBlock
   | TBlogBlogs
   | TProductShowCaseBlock
+  | TOneColumnBlock
   | TPartnerBlock;
 
 export type THeroBlock = {
@@ -68,7 +70,9 @@ export type TCategoriesShowcaseBlock = {
 export type TTwoColumnBlock = {
   collection: "block_two_columns";
   id: string;
+  sort: number;
   item: {
+    button: "yes" | "no";
     id: number;
     body: string;
     button_text: string;
@@ -78,6 +82,32 @@ export type TTwoColumnBlock = {
     video?: string;
     layout: "left" | "right";
     button_type: "arrow" | "location";
+  };
+};
+
+export type TOneColumnBlock = {
+  collection: "block_one_cloumn";
+  id: string;
+  sort: number;
+  item: {
+    id: number;
+    body: string;
+    images: [{ id: number; product_id: string; directus_files_id: string }];
+  };
+};
+
+export type TBreadcrumbBlock = {
+  collection: "block_breadcrumb";
+  id: string;
+  item: {
+    id: number;
+    title: string;
+    image: string;
+    breadcrumb: [
+      {
+        label: string;
+      }
+    ];
   };
 };
 

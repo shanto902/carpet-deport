@@ -41,6 +41,8 @@ export const fetchPage = async (
                     "products.products_id.textures.*",
                     "products.products_id.category.name",
                   ],
+                  block_breadcrumb: ["*"],
+                  block_one_cloumn: ["*", "images.*"],
                 },
               },
             ],
