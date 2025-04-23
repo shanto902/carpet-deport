@@ -2,8 +2,13 @@
 
 @theme {
   --color-primary: #f42534 !important;
+  --color-secondary: #f8fafb !important;
   --color-title: #181919 !important;
   --color-paragraph: #4f555f !important;
+}
+
+.html {
+  scroll-behavior: smooth;
 }
 
 .header {
@@ -23,4 +28,32 @@
 
 .body > p {
   @apply text-base mb-4;
+}
+.body > ul {
+  @apply list-disc! ml-6! marker:text-primary! marker:text-2xl!;
+}
+
+.hero-text > h1 {
+  @apply text-5xl! leading-snug!;
+}
+.hero-text > h1 > strong {
+  @apply font-bold!;
+}
+
+.hero-text > p {
+  @apply text-lg! leading-normal!;
+}
+
+.richtext > p {
+  @apply text-base! leading-[28px]! text-paragraph mb-4!;
+}
+.richtext > h1 {
+  @apply text-3xl! text-black mb-4!  font-bold!;
+}
+
+.richtext > h2 {
+  @apply text-2xl! text-black mb-4!  font-bold!;
+}
+.richtext > h3 {
+  @apply text-xl! text-black mb-4!  font-bold!;
 }

@@ -2,6 +2,7 @@
 
 import { TProduct } from "@/interfaces";
 import Image from "next/image";
+import Link from "next/link";
 import { FaStar } from "react-icons/fa6";
 import { TiHeartOutline } from "react-icons/ti";
 
@@ -43,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             height={32}
             className={`w-8 h-8 m-1 rounded-full border cursor-pointer ${
               currentImage === texture.directus_files_id
-                ? "border-red-500 ring-2 ring-red-400"
+                ? "border-primary ring-2 ring-primary"
                 : "border-gray-300"
             }`}
             onClick={() => onTextureClick(texture.directus_files_id)}
@@ -63,13 +64,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 mt-4 flex-wrap">
-        <button className="bg-red-500 text-nowrap text-white text-sm px-3 py-1 rounded-full">
+      <div className="flex gap-2 mt-4 justify-between flex-wrap">
+        <button className="bg-primary text-nowrap text-white text-sm px-3 py-1 rounded-full">
           Find In Store
         </button>
-        <button className="border text-nowrap border-red-500 text-red-500 text-sm px-4 py-1 rounded-full">
+        <Link
+          href={`/see-room/${product.id}`}
+          className="border transition-all duration-300 text-nowrap border-primary text-primary hover:drop-shadow-md drop-shadow-none bg-white text-sm px-4 py-1 rounded-full"
+        >
           See In My Room
-        </button>
+        </Link>
       </div>
     </div>
   );

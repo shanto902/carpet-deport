@@ -30,7 +30,6 @@ export default function ProductsPage() {
     <>
       <BreadcrumbBanner
         title="Great Flooring. Great Brands. Great Prices."
-        background="/breadcrumb-products.jpg"
         breadcrumb={["Products"]}
       />
       <div className="max-w-7xl mx-auto px-4 py-12 space-y-16">

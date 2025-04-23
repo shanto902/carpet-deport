@@ -129,7 +129,6 @@ const ProductCategoryClient = ({ productsData }: Props) => {
     <>
       <BreadcrumbBanner
         title="Product Categories"
-        background="/breadcrumb-products.jpg"
         breadcrumb={["Product Categories"]}
       />
       <PaddingContainer className="flex flex-col md:flex-row py-6 gap-6">

@@ -1,12 +1,16 @@
-import JotformEmbed from "@/components/form/InStoreConsultationForm";
-import PaddingContainer from "@/components/layout/PaddingContainer";
+import BreadcrumbBanner from "@/components/common/BreadcrumbBanner";
+import ConsultationForm from "@/components/pages/consultaion/ConsultationForm";
 import React from "react";
 
 const page = () => {
   return (
-    <PaddingContainer>
-      <JotformEmbed isMain={false} />
-    </PaddingContainer>
+    <div>
+      <BreadcrumbBanner
+        title="Book A Free Consultation"
+        breadcrumb={["Book a Free Consultation"]}
+      />
+      <ConsultationForm />
+    </div>
   );
 };
 

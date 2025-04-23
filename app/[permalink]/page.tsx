@@ -144,7 +144,6 @@ const renderBlock = (block: TBlock) => {
 const page = async ({ params }: PageProps) => {
   const { permalink } = await params;
   const pageData = await fetchPage(permalink);
-  console.log(pageData);
   if (!pageData) {
     return <div>Page not found</div>;
   }

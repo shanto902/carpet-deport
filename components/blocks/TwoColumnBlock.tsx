@@ -3,6 +3,7 @@ import PaddingContainer from "@/components/layout/PaddingContainer";
 import { TTwoColumnBlock } from "@/interfaces";
 import Image from "next/image";
 import { Body } from "../common/Body";
+import { VideoPlayer } from "../common/VideoPlayer";
 
 const TwoColumnBlock = ({ block }: { block: TTwoColumnBlock }) => {
   return (
@@ -10,8 +11,8 @@ const TwoColumnBlock = ({ block }: { block: TTwoColumnBlock }) => {
       className={`py-10 ${block.sort % 2 === 0 ? "bg-white" : " bg-[#F8FAFB]"}`}
     >
       <PaddingContainer
-        className={` max-w-[1200px] px-4 flex flex-col ${
-          block.item.layout === "left" ? "md:flex-row" : "md:flex-row-reverse"
+        className={` flex flex-col ${
+          block.item.layout === "right" ? "md:flex-row" : "md:flex-row-reverse"
         } items-center gap-10`}
       >
         {/* Text Content */}
@@ -19,7 +20,11 @@ const TwoColumnBlock = ({ block }: { block: TTwoColumnBlock }) => {
           <Body>{block.item.body}</Body>
 
           {block.item.button === "yes" && (
-            <CustomButton className="mt-5" button_type={block.item.button_type}>
+            <CustomButton
+              href={block.item.button_link}
+              className="mt-5"
+              button_type={block.item.button_type}
+            >
               {block.item.button_text}
             </CustomButton>
           )}
@@ -37,14 +42,7 @@ const TwoColumnBlock = ({ block }: { block: TTwoColumnBlock }) => {
             />
           ) : (
             <div className="relative   w-full mix-blend-multiply">
-              <video
-                className=""
-                src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${block.item.video}`}
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
+              <VideoPlayer video={block.item.video as string} />
             </div>
           )}
         </div>

@@ -1,0 +1,149 @@
+import BreadcrumbBanner from "@/components/common/BreadcrumbBanner";
+import { FiMapPin, FiPhone } from "react-icons/fi";
+import Image from "next/image";
+import LocationMap from "@/components/pages/location/LocationMap";
+import directus from "@/lib/directus";
+import { readItems } from "@directus/sdk";
+import { fetchLocation } from "@/helper/fetchFromDirectus";
+import { TLocation } from "@/interfaces";
+import CustomButton from "@/components/common/CustomButton";
+import PaddingContainer from "@/components/layout/PaddingContainer";
+import { Suspense } from "react";
+
+interface PageProps {
+  params: Promise<{
+    permalink: string;
+    slug: string;
+  }>;
+}
+
+export const generateStaticParams = async () => {
+  try {
+    const result = await directus.request(
+      readItems("locations", {
+        filter: { status: { _eq: "published" } },
+        fields: ["slug"],
+      })
+    );
+
+    return (result as { slug: string }[]).map((item) => ({
+      slug: item.slug,
+      permalink: "locations",
+    }));
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    throw new Error("Error generating static params");
+  }
+};
+
+// Time formatter (24h to 12h)
+const formatTime = (time: string | undefined) => {
+  if (!time) return "";
+  const [hourStr, minute] = time.split(":");
+  let hour = parseInt(hourStr, 10);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+  return `${hour}:${minute} ${ampm}`;
+};
+
+const LocationPage = async ({ params }: PageProps) => {
+  const { slug } = await params;
+  const location: TLocation = await fetchLocation(slug);
+
+  return (
+    <>
+      <BreadcrumbBanner
+        title={location.name}
+        breadcrumb={["Locations", location.name]}
+      />
+
+      <PaddingContainer className="max-w-7xl mx-auto px-4 py-12 space-y-10">
+        {/* Top section */}
+        <div className="items-center grid grid-cols-3 w-full gap-10">
+          <div className="space-y-2 col-span-1 bg-secondary h-full rounded-2xl flex justify-center flex-col px-10">
+            <h2 className="text-xl font-bold">{location.name}</h2>
+            <p className="flex items-center  text-pretty gap-4 text-base text-gray-700">
+              <FiMapPin className=" text-primary size-7" />
+              {location.google_map.properties.formated}
+            </p>
+            <p className="flex items-center  text-pretty gap-4 text-base text-gray-700">
+              <FiPhone className=" text-primary size-7" />
+              {location.contact_no}
+            </p>
+            <CustomButton
+              href="#map"
+              inverted
+              button_type="location"
+              className="bg-red-500 text-white px-5 py-2 rounded-full text-sm flex items-center gap-2 mt-3 w-full"
+            >
+              Get Directions
+            </CustomButton>
+          </div>
+
+          <div className="col-span-2 rounded-2xl overflow-hidden">
+            <Image
+              src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${location.image}`}
+              alt="Store Photo"
+              width={600}
+              height={400}
+              className="w-full object-cover max-h-[320px]"
+            />
+          </div>
+        </div>
+
+        {/* Store Hours & Map & Service Areas */}
+        <div id="map" className="grid md:grid-cols-2 gap-10">
+          {/* Store Hours */}
+          <div className="bg-secondary p-6 rounded-2xl">
+            <h3 className="font-semibold my-10 text-xl">
+              Store Open & Closed Hours
+            </h3>
+            <ul className="text-base space-y-4 text-gray-700">
+              {location.store_status.map((item, i) => {
+                const formattedDay =
+                  item.day.charAt(0).toUpperCase() + item.day.slice(1);
+                const time = item.is_closed
+                  ? "Closed"
+                  : `${formatTime(item.opening_hour)} - ${formatTime(
+                      item.closing_hour
+                    )}`;
+                return (
+                  <li
+                    key={i}
+                    className="flex bg-white justify-between rounded-xl p-2 capitalize"
+                  >
+                    <span className="font-bold">{formattedDay}</span>
+                    <span>{time}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          {/* Map */}
+          <div className="bg-secondary aspect-square rounded-2xl overflow-hidden">
+            <Suspense>
+              <LocationMap
+                coordinate={location.google_map.geometry.coordinates}
+              />
+            </Suspense>
+          </div>
+
+          {/* Services Area */}
+          <div className="bg-secondary p-6 rounded-2xl md:col-span-2">
+            <h3 className="font-semibold my-10 text-2xl ">Services Area</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 text-base text-paragraph ">
+              {location?.service_areas?.map((area, i) => (
+                <span key={i} className="bg-white rounded-lg p-2 py-1">
+                  {area.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </PaddingContainer>
+    </>
+  );
+};
+
+export default LocationPage;

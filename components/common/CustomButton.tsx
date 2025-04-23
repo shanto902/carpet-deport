@@ -14,7 +14,6 @@ const CustomButton = ({
 }: {
   children: ReactNode;
   className?: string;
-  location?: boolean;
   href?: string;
   inverted?: boolean;
   button_type?: "arrow" | "location" | "question";
@@ -23,15 +22,15 @@ const CustomButton = ({
     <Link
       href={href}
       className={twMerge(
-        ` flex items-center group transition-all duration-300  ${
+        ` drop-shadow-none hover:drop-shadow-lg active:drop-shadow-none flex items-center justify-between group transition-all duration-300  ${
           inverted
             ? " border-primary  bg-primary "
             : " bg-[#181919] border-[#181919] "
-        }hover:text-primary hover:border-primary border-2 gap-2  rounded-full p-2 text-white  w-fit h-fit cursor-pointer hover:bg-white`,
+        }hover:text-primary hover:border-primary border-2 gap-2  rounded-full p-2 text-white  w-fit h-fit cursor-pointer hover:bg-white text-sm font-medium`,
         className
       )}
     >
-      <div className="px-2 text-sm font-medium">{children}</div>
+      <div className="px-2 ">{children}</div>
       {button_type == "location" ? (
         <FaMapMarkerAlt
           className={`group-hover:animate-pulse size-7 p-[5px] ${

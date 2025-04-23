@@ -5,7 +5,6 @@ import { Body } from "../common/Body";
 import { TOneColumnBlock } from "@/interfaces";
 
 const OneColumnBlock = ({ block }: { block: TOneColumnBlock }) => {
-  console.log(block.item);
   return (
     <div
       className={`space-y-5  py-10 ${

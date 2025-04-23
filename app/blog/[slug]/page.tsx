@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import Link from "next/link";
 import CommentList from "@/components/comment/CommentList";
@@ -7,7 +7,46 @@ import CommentList from "@/components/comment/CommentList";
 import { BiSolidShareAlt } from "react-icons/bi";
 import { FaFacebookF, FaLinkedinIn, FaPinterestP } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+import { readItems } from "@directus/sdk";
+import directus from "@/lib/directus";
+import { getBlogData } from "@/helper/fetchFromDirectus";
+import PostBody from "@/components/pages/blog/PostBody";
 
+interface PageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
+
+export const generateStaticParams = async () => {
+  try {
+    const result = await directus.request(
+      readItems("blogs", {
+        filter: {
+          status: {
+            _eq: "published",
+          },
+        },
+        fields: ["slug"],
+      })
+    );
+
+    const allParams =
+      (
+        result as {
+          slug: string;
+        }[]
+      ).map((item) => ({
+        slug: item.slug,
+        permalink: "blog",
+      })) || [];
+
+    return allParams;
+  } catch (error) {
+    console.error("Error fetching career:", error);
+    throw new Error("Error fetching Career");
+  }
+};
 // MOCK DATA - Replace these with CMS/API calls
 const getPostBySlug = async (slug: string) => {
   if (slug !== "choose-flooring") return null;
@@ -16,7 +55,7 @@ const getPostBySlug = async (slug: string) => {
     title: "Choose The Right Flooring For Your Home",
     author: "Emily R",
     date: "2 April, 2024",
-    image: "/your-image.jpg",
+    image: "/rooms/bedroom.jpg",
     content: [
       {
         heading: "1. Understanding Carpet Materials",
@@ -63,34 +102,36 @@ const getRelatedPosts = async (slug: string) => {
   ].filter((post) => post.slug !== slug);
 };
 
-export default async function BlogPage() {
+export default async function BlogPage({ params }: PageProps) {
+  const { slug } = await params;
+
+  const blogData = await getBlogData(slug);
+
+  if (!blogData) {
+    console.error(`Blog not found for slug: ${slug}`);
+    redirect("/blog");
+  }
+
   const post = await getPostBySlug("choose-flooring");
   const categories = await getCategories();
   const relatedPosts = await getRelatedPosts("choose-flooring");
-
-  if (!post) return notFound();
 
   return (
     <section className="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
       {/* Main content */}
       <div className="lg:col-span-2 space-y-6">
         <Image
-          src={post.image}
-          alt={post.title}
+          src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${blogData.image}`}
+          alt={blogData.title}
           width={1000}
           height={500}
           className="rounded-lg w-full object-cover"
         />
 
-        <h1 className="text-3xl font-bold">{post.title}</h1>
+        <h1 className="text-3xl font-bold">{blogData.title}</h1>
 
         <div className="text-gray-700 space-y-6">
-          {post.content.map((block, index) => (
-            <div key={index}>
-              <h2 className="text-xl font-semibold">{block.heading}</h2>
-              <p>{block.text}</p>
-            </div>
-          ))}
+          <PostBody body={blogData.body} />
         </div>
         {/* Share Icons */}
         <div className="flex items-center gap-4 pt-10">
@@ -121,8 +162,8 @@ export default async function BlogPage() {
             className="rounded-full object-cover"
           />
           <div>
-            <p className="font-semibold">{post.author}</p>
-            <p className="text-sm text-gray-500">{post.date}</p>
+            <p className="font-semibold">{post!.author}</p>
+            <p className="text-sm text-gray-500">{post!.date}</p>
             <p className="text-sm text-gray-600 mt-1">
               Ready to transform your home? Explore our carpet collection or
               contact our experts for personalized advice!

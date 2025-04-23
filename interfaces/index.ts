@@ -147,6 +147,7 @@ export type TProduct = {
     id: number;
     name: string;
   };
+  sku: string;
   name: string;
   brand: string;
   fiber_brand: string;
@@ -158,6 +159,64 @@ export type TProduct = {
   look: string;
   material: string;
   textures: [{ id: number; product_id: string; directus_files_id: string }];
+};
+
+export type TSettings = {
+  nav_links: {
+    label: string;
+    link: string;
+    children?: {
+      label: string;
+      link: string;
+    }[];
+  }[];
+};
+
+export type TLocation = {
+  id: string;
+  status: string;
+  contact_no: string;
+  google_map: {
+    geometry: {
+      coordinates: number[];
+      type: string;
+    };
+    properties: {
+      administrativeArea: string;
+      country: string;
+      displayName: string;
+      formated: string;
+      postalCode: string;
+      raw: Record<string, string>;
+      viewport: {
+        south: number;
+        north: number;
+        east: number;
+        west: number;
+      };
+    };
+    type: string;
+  };
+  image: string;
+  name: string;
+  slug: string;
+  service_areas: {
+    name: string;
+  }[];
+  store_status: {
+    day: "sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday";
+    opening_hour?: string;
+    closing_hour?: string;
+    is_closed: boolean;
+  }[];
+};
+export type TTestimonial = {
+  id: string;
+  name: string;
+  designation: string;
+  rating: number;
+  photo: string;
+  review: string;
 };
 export type TTestimonialBlock = {
   collection: "block_testimonial";

@@ -1,7 +1,13 @@
-import { TBlog, TPageBlock, TProduct } from "@/interfaces";
+import {
+  TBlog,
+  TLocation,
+  TPageBlock,
+  TProduct,
+  TTestimonial,
+} from "@/interfaces";
 import directus from "@/lib/directus";
 import { readItems } from "@directus/sdk";
-import { getPlaceholderImage } from "./getBlurData";
+
 import { cache } from "react";
 
 export const fetchPage = async (
@@ -86,6 +92,37 @@ export const fetchProducts = async (): Promise<TProduct[]> => {
   }
 };
 
+export const fetchLocations = async (): Promise<TLocation[]> => {
+  try {
+    const result = await directus.request(
+      readItems("locations", {
+        fields: ["*"],
+      })
+    );
+    return result as TLocation[];
+  } catch (error) {
+    console.error("Error fetch locations", error);
+    throw new Error("Failed to fetch all locations");
+  }
+};
+
+export const fetchLocation = async (slug: string): Promise<TLocation> => {
+  try {
+    const result = await directus.request(
+      readItems("locations", {
+        filter: {
+          slug: { _eq: slug },
+        },
+        fields: ["*"],
+      })
+    );
+    return result[0] as TLocation;
+  } catch (error) {
+    console.error("Error fetch location", error);
+    throw new Error("Failed to fetch all location");
+  }
+};
+
 export const getAllBlogs = cache(
   async (
     page: number,
@@ -127,20 +164,66 @@ export const getAllBlogs = cache(
 
       const totalPages = Math.ceil(totalCount[0].count.id / limit);
 
-      // ✅ Generate blur placeholders for all blog images
-      const blogsWithBlur = await Promise.all(
-        results.map(async (blog) => ({
-          ...blog,
-          blurDataURL: await getPlaceholderImage(
-            `${process.env.NEXT_PUBLIC_ASSETS_URL}${blog.image}`
-          ), // ✅ Ensure blur is fetched
-        }))
-      );
-
-      return { results: blogsWithBlur, totalPages };
+      return { results: results, totalPages };
     } catch (error) {
       console.error("Error fetching blogs:", error);
       throw new Error("Error fetching blogs");
     }
   }
 );
+
+export const getBlogData = cache(async (slug: string): Promise<TBlog> => {
+  try {
+    const result = await directus.request(
+      readItems("blogs", {
+        filter: {
+          slug: {
+            _eq: slug,
+          },
+        },
+        sort: ["sort"],
+        fields: ["*"],
+      })
+    );
+
+    return result[0] as TBlog;
+  } catch (error) {
+    console.error("Error fetching member data:", error);
+    throw new Error("Error fetching post");
+  }
+});
+
+export const getTestimonials = cache(async (): Promise<TTestimonial[]> => {
+  try {
+    const result = await directus.request(
+      readItems("testimonials", {
+        sort: ["sort"],
+        fields: ["*"],
+      })
+    );
+
+    return result[0] as TTestimonial[];
+  } catch (error) {
+    console.error("Error fetching member data:", error);
+    throw new Error("Error fetching post");
+  }
+});
+
+export const getProductData = cache(async (id: string): Promise<TProduct> => {
+  try {
+    const results = await directus.request(
+      readItems("products", {
+        filter: {
+          id,
+        },
+        sort: ["sort"],
+        fields: ["*", "category.name", "category.id", "textures.*"],
+      })
+    );
+
+    return results[0] as TProduct;
+  } catch (error) {
+    console.error("Error fetching product data:", error);
+    throw new Error("Error fetching product ");
+  }
+});

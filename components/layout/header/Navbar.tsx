@@ -10,11 +10,18 @@ import { usePathname } from "next/navigation";
 import CustomButton from "@/components/common/CustomButton";
 import BottomNavbar from "./BottomNavbar";
 import PaddingContainer from "../PaddingContainer";
+import { TLocation, TSettings } from "@/interfaces";
 
-const NavBar = () => {
+const NavBar = ({
+  locations,
+  settings,
+}: {
+  locations: TLocation[];
+  settings: TSettings;
+}) => {
   const navLinks = [
     {
-      path: "/",
+      path: "/home",
       label: "Home",
     },
     {
@@ -101,35 +108,33 @@ const NavBar = () => {
             </Link>
             <div className="flex items-center gap-5">
               <ul className=" text-base xl:text-lg  flex space-x-5">
-                {navLinks.map((item, index) => (
+                {settings?.nav_links?.map((item, index) => (
                   <li key={index} className="relative group">
                     <Link
-                      href={`${item.path}`}
+                      href={`${item.link}`}
                       className={`flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in-out group: ${
-                        pathName === item.path
-                          ? "underline underline-offset-4"
-                          : ""
+                        pathName === item.link ? "font-bold" : ""
                       }`}
                     >
                       {item.label}
-                      {item.submenu && (
+                      {item.children && (
                         <ChevronDown
                           className="group-hover:rotate-180 transition-transform duration-300"
                           size={16}
                         />
                       )}
                     </Link>
-                    {item.submenu && (
+                    {item.children && (
                       <ul
                         className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 opacity-0 invisible 
                       text-primary-title  group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out transform translate-y-2 group-hover:translate-y-0"
                       >
-                        {item.submenu.map((subItem, subIndex) => (
+                        {item.children?.map((subItem, subIndex) => (
                           <li key={subIndex}>
                             <Link
-                              href={`${subItem.path}`}
+                              href={`${subItem.link}`}
                               className={`block px-4 py-2 text-sm text-white-700  hover:bg-white ${
-                                pathName === subItem.path
+                                pathName === subItem.link
                                   ? "underline underline-offset-4"
                                   : ""
                               }`}
@@ -219,7 +224,7 @@ const NavBar = () => {
           </ul>
         </aside>
       </nav>
-      <BottomNavbar />
+      <BottomNavbar locations={locations} />
     </>
   );
 };

@@ -10,7 +10,10 @@ const PaddingContainer = ({
 }) => {
   return (
     <main
-      className={twMerge("container max-w-[1280px]  px-5 mx-auto", className)}
+      className={twMerge(
+        "container  px-8 sm:px-16 max-w-[1280px]   mx-auto",
+        className
+      )}
     >
       {children}
     </main>

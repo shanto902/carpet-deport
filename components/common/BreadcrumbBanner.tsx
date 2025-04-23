@@ -4,14 +4,14 @@ import PaddingContainer from "../layout/PaddingContainer";
 
 type Props = {
   title: string;
-  background: string; // image path from /public
+
   breadcrumb?: string[];
 };
 
 export default function BreadcrumbBanner({
   title,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  background,
+
   breadcrumb = [],
 }: Props) {
   return (
@@ -27,7 +27,7 @@ export default function BreadcrumbBanner({
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50 z-10 flex flex-col justify-center px-8 sm:px-16">
+      <div className="absolute inset-0 bg-black/50 z-10 flex flex-col justify-center ">
         <PaddingContainer>
           <h1 className="text-white text-2xl sm:text-3xl font-bold mb-2">
             {title}

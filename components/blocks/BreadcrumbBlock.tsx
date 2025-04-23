@@ -9,7 +9,6 @@ export default function BreadcrumbBlock({
 }: {
   block: TBreadcrumbBlock;
 }) {
-  console.log(block.item.breadcrumb);
   return (
     <div className="relative h-[250px] w-full overflow-hidden">
       {/* Background Image */}
@@ -23,7 +22,7 @@ export default function BreadcrumbBlock({
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50 z-10 flex flex-col justify-center px-8 sm:px-16">
+      <div className="absolute inset-0 bg-black/50 z-10 flex flex-col justify-center">
         <PaddingContainer>
           <HeaderText className="text-white">{block.item.title}</HeaderText>
           <nav className="text-white text-sm flex items-center gap-2">

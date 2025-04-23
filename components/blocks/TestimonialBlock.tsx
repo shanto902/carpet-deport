@@ -21,6 +21,9 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
       "(min-width: 768px)": {
         slides: { perView: 2, spacing: 20 },
       },
+      "(max-width: 768px)": {
+        slides: { perView: 1, spacing: 10 },
+      },
     },
     slides: { perView: 1, spacing: 15 },
   });
@@ -40,43 +43,45 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
         </div>
 
         {/* Right Content (Slider) */}
-        <div className="md:w-2/3 ">
-          <div ref={sliderRef} className="keen-slider p-4 mx-2">
+        <div className="md:w-2/3 w-full overflow-hidden">
+          <div ref={sliderRef} className="keen-slider ">
             {block.item.testimonials.map((testimonial) => (
               <div
                 key={testimonial.testimonials_id.id}
-                className="keen-slider__slide bg-white rounded-xl shadow-md p-4"
+                className="keen-slider__slide bg-white  w-full"
               >
-                {/* Stars */}
-                <div className="flex gap-1 text-yellow-500 mb-4">
-                  {[...Array(testimonial.testimonials_id.rating)].map(
-                    (_, idx) => (
-                      <FaStar key={idx} />
-                    )
-                  )}
-                </div>
+                <div className="shadow-md m-2  rounded-xl p-4 bg-white">
+                  {/* Stars */}
+                  <div className="flex gap-1 text-yellow-500 mb-4">
+                    {[...Array(testimonial.testimonials_id.rating)].map(
+                      (_, idx) => (
+                        <FaStar key={idx} />
+                      )
+                    )}
+                  </div>
 
-                {/* Message */}
-                <p className="text-[#505050] text-sm md:text-base leading-relaxed mb-4">
-                  {testimonial.testimonials_id.review}
-                </p>
+                  {/* Message */}
+                  <p className="text-[#505050] text-sm md:text-base leading-relaxed mb-4">
+                    {testimonial.testimonials_id.review}
+                  </p>
 
-                {/* Person Info */}
-                <div className="flex items-center gap-3">
-                  <Image
-                    src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${testimonial.testimonials_id.photo}`}
-                    alt={testimonial.testimonials_id.name}
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                  <div>
-                    <p className="font-semibold text-[#1E1E1E] text-sm">
-                      {testimonial.testimonials_id.name}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {testimonial.testimonials_id.designation}
-                    </p>
+                  {/* Person Info */}
+                  <div className="flex items-center gap-3">
+                    <Image
+                      src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${testimonial.testimonials_id.photo}`}
+                      alt={testimonial.testimonials_id.name}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
+                    <div>
+                      <p className="font-semibold text-[#1E1E1E] text-sm">
+                        {testimonial.testimonials_id.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {testimonial.testimonials_id.designation}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

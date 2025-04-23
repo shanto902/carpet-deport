@@ -6,6 +6,7 @@ import Image from "next/image";
 import { FaStar } from "react-icons/fa6";
 import { TiHeartOutline } from "react-icons/ti";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function ProductShowcaseBlock({
   block,
@@ -25,9 +26,9 @@ export default function ProductShowcaseBlock({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {block.item.products.map((product, idx) => {
-            const productId = product.products_id.id;
-            const textures = product.products_id.textures;
+          {block?.item?.products?.map((product, idx) => {
+            const productId = product?.products_id?.id;
+            const textures = product?.products_id?.textures;
             const defaultImage = textures[0]?.directus_files_id;
             const currentImage = activeImages[productId] || defaultImage;
 
@@ -61,7 +62,7 @@ export default function ProductShowcaseBlock({
                       height={32}
                       className={`w-8 h-8 m-1 rounded-full border cursor-pointer ${
                         currentImage === texture.directus_files_id
-                          ? "border-red-500 ring-2 ring-red-400"
+                          ? "border-red-500 ring-2 ring-primary"
                           : "border-gray-300"
                       }`}
                       onClick={() =>
@@ -91,12 +92,18 @@ export default function ProductShowcaseBlock({
 
                 {/* Actions */}
                 <div className="flex gap-2 mt-4 flex-wrap">
-                  <button className="bg-red-500 text-nowrap text-white text-sm px-3 py-1 rounded-full">
+                  <Link
+                    href={`/locations`}
+                    className="bg-primary text-white text-sm  border transition-all duration-300 text-nowrap py-1  px-2 rounded-full hover:drop-shadow-md drop-shadow-none "
+                  >
                     Find In Store
-                  </button>
-                  <button className="border text-nowrap border-red-500 text-red-500 text-sm px-4 py-1 rounded-full">
+                  </Link>
+                  <Link
+                    href={`/see-room/${product.products_id.id}`}
+                    className="border transition-all duration-300 text-nowrap border-primary text-primary hover:drop-shadow-md drop-shadow-none bg-white text-sm px-2 py-1 rounded-full"
+                  >
                     See In My Room
-                  </button>
+                  </Link>
                 </div>
               </div>
             );
