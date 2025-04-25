@@ -155,7 +155,7 @@ const ProductCategoryClient = ({ productsData }: Props) => {
       />
       <PaddingContainer className="flex flex-col md:flex-row py-6 gap-6">
         <aside className="w-full md:w-1/5">
-          <div className="bg-white p-4 rounded shadow space-y-6">
+          <div className="bg-white p-4 rounded-2xl drop-shadow-2xl drop-shadow-[#E9E9E940] space-y-6">
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-lg pb-2">Product Filters</h3>
             </div>

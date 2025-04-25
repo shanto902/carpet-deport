@@ -2,15 +2,20 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import Link from "next/link";
-import CommentList from "@/components/comment/CommentList";
-
 import { BiSolidShareAlt } from "react-icons/bi";
 import { FaFacebookF, FaLinkedinIn, FaPinterestP } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { readItems } from "@directus/sdk";
 import directus from "@/lib/directus";
-import { getBlogData } from "@/helper/fetchFromDirectus";
+import {
+  fetchCategories,
+  getBlogData,
+  getRelatedBlogs,
+} from "@/helper/fetchFromDirectus";
 import PostBody from "@/components/pages/blog/PostBody";
+import moment from "moment";
+import { Square, SquareCheck } from "lucide-react";
+import PaddingContainer from "@/components/layout/PaddingContainer";
 
 interface PageProps {
   params: Promise<{
@@ -73,35 +78,6 @@ const getPostBySlug = async (slug: string) => {
   };
 };
 
-const getCategories = async () => {
-  return [
-    { name: "Carpet", count: 2 },
-    { name: "Hardwood", count: 0 },
-    { name: "Luxury Vinyl Flooring", count: 12 },
-    { name: "Area Rugs & Remnants", count: 7 },
-  ];
-};
-
-const getRelatedPosts = async (slug: string) => {
-  return [
-    {
-      title: "Choose The Right Flooring For Your Home",
-      date: "2 April, 2024",
-      slug: "choose-flooring",
-    },
-    {
-      title: "Top 5 Flooring Tips for Modern Homes",
-      date: "28 March, 2024",
-      slug: "top-flooring-tips",
-    },
-    {
-      title: "The Ultimate Guide to Carpet Types",
-      date: "15 March, 2024",
-      slug: "carpet-guide",
-    },
-  ].filter((post) => post.slug !== slug);
-};
-
 export default async function BlogPage({ params }: PageProps) {
   const { slug } = await params;
 
@@ -111,13 +87,14 @@ export default async function BlogPage({ params }: PageProps) {
     console.error(`Blog not found for slug: ${slug}`);
     redirect("/blog");
   }
+  const categories = await fetchCategories();
 
   const post = await getPostBySlug("choose-flooring");
-  const categories = await getCategories();
-  const relatedPosts = await getRelatedPosts("choose-flooring");
+
+  const relatedPosts = await getRelatedBlogs(blogData.category.id);
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <PaddingContainer className="grid grid-cols-1 lg:grid-cols-3 gap-10">
       {/* Main content */}
       <div className="lg:col-span-2 space-y-6">
         <Image
@@ -155,7 +132,10 @@ export default async function BlogPage({ params }: PageProps) {
         {/* Author */}
         <div className="flex items-start gap-4 pt-10">
           <Image
-            src="/author.jpg"
+            src={
+              `${process.env.NEXT_PUBLIC_ASSETS_URL}${blogData.author_image}` ||
+              "/images/img_avatar.png"
+            }
             alt="Author"
             width={50}
             height={50}
@@ -170,9 +150,6 @@ export default async function BlogPage({ params }: PageProps) {
             </p>
           </div>
         </div>
-
-        {/* Comments */}
-        <CommentList slug={"choose-flooring"} />
 
         {/* Comment Form */}
         <form className="space-y-5 pt-10">
@@ -226,7 +203,7 @@ export default async function BlogPage({ params }: PageProps) {
       {/* Sidebar */}
       <aside className="space-y-10">
         {/* Search */}
-        <div>
+        <div className="bg-white p-6 rounded-lg drop-shadow-[#E1E1E140] drop-shadow-2xl">
           <h3 className="text-xl font-semibold mb-2">Search Here</h3>
           <input
             type="text"
@@ -236,34 +213,58 @@ export default async function BlogPage({ params }: PageProps) {
         </div>
 
         {/* Categories */}
-        <div>
+        <div className="bg-white p-6 rounded-lg drop-shadow-[#E1E1E140] drop-shadow-2xl">
           <h3 className="text-xl font-semibold mb-2">All Categories</h3>
-          <ul className="space-y-2 text-gray-700">
+          <ul className="space-y-2  text-gray-700">
             {categories.map((cat, i) => (
-              <li key={i}>
-                🟠 {cat.name} ({cat.count})
+              <li
+                key={i}
+                className="flex items-center gap-2 text-gray-600 hover:text-red-500 cursor-pointer"
+              >
+                {blogData.category.id === cat.id ? (
+                  <>
+                    <SquareCheck /> {cat.name} ({cat.blogs.length})
+                  </>
+                ) : (
+                  <>
+                    <Square /> {cat.name} ({cat.blogs.length})
+                  </>
+                )}
               </li>
             ))}
           </ul>
         </div>
 
         {/* Related Posts */}
-        <div>
-          <h3 className="text-xl font-semibold mb-2">Related Post</h3>
+        <div className="bg-white p-6 rounded-lg drop-shadow-[#E1E1E140] drop-shadow-2xl">
+          <h3 className="text-xl font-semibold mb-5">Related Post</h3>
           <ul className="space-y-4 text-sm text-gray-800">
-            {relatedPosts.map((post, i) => (
-              <li key={i}>
-                <p className="font-medium">{post.date}</p>
-                <Link href={`/blog/${post.slug}`}>
-                  <p className="hover:text-red-600 cursor-pointer">
-                    {post.title}
+            {relatedPosts.results.map((post, i) => (
+              <li key={i} className="flex items-start gap-4  pb-4">
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${post.image}`}
+                  alt={post.title}
+                  width={100}
+                  height={100}
+                  className="rounded-lg w-20 h-20 object-cover"
+                />
+                <div className="text-base space-y-1">
+                  <p className="font-medium">
+                    {`${moment(post.date_updated || post.date_created).format(
+                      "MMM DD, YYYY"
+                    )} `}
                   </p>
-                </Link>
+                  <Link href={`/blog/${post.slug}`}>
+                    <p className="hover:text-red-600 cursor-pointer">
+                      {post.title}
+                    </p>
+                  </Link>
+                </div>
               </li>
             ))}
           </ul>
         </div>
       </aside>
-    </section>
+    </PaddingContainer>
   );
 }

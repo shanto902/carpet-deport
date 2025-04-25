@@ -52,7 +52,7 @@ const NavBar = ({
 
       {/* Sticky Navbar */}
       <nav
-        className={`h-24 shadow-md z-50 flex justify-center items-center bg-white sticky top-0 transition-all duration-300`}
+        className={`h-24   shadow-md z-50 flex justify-center items-center bg-white sticky top-0 transition-all duration-300`}
       >
         <PaddingContainer className="flex px-8 justify-between w-full items-center">
           {/* Desktop Menu */}

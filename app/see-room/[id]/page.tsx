@@ -7,7 +7,7 @@ import directus from "@/lib/directus";
 import { readItems } from "@directus/sdk";
 import { notFound } from "next/navigation";
 
-import React from "react";
+import React, { Suspense } from "react";
 interface PageProps {
   params: Promise<{
     permalink: string;
@@ -103,7 +103,9 @@ const page = async ({ params }: PageProps) => {
         breadcrumb={["Product Categories", product.name]}
       />
       <ProductDetails product={product} />
-      <SeeInRoom product={product} />
+      <Suspense>
+        <SeeInRoom product={product} />
+      </Suspense>
       <ProductSpecification product={product} />
     </>
   );

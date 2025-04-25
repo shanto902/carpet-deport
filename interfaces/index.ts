@@ -182,6 +182,7 @@ export type TCategory = {
   name: string;
   description: string;
   image: string;
+  blogs: TBlog[];
 };
 
 export type TLocation = {
@@ -280,7 +281,6 @@ export type TBlog = {
   body: string;
   date_created: string;
   date_updated: string;
-  category: {
-    name: string;
-  };
+  author_image: string;
+  category: TCategory;
 };

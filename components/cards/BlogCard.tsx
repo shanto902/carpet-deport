@@ -9,7 +9,7 @@ const BlogCard = ({ blog }: { blog: TBlog }) => {
   return (
     <div
       key={blog.id}
-      className="bg-white rounded-2xl p-4 drop-shadow-sm hover:drop-shadow-md transition flex flex-col"
+      className="bg-white p-6 rounded-lg drop-shadow-[#E1E1E140] drop-shadow-2xl hover:drop-shadow-lg transition flex flex-col"
     >
       <Image
         src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${blog.image}`}

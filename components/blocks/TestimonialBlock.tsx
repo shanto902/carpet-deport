@@ -50,7 +50,7 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
                 key={testimonial.testimonials_id.id}
                 className="keen-slider__slide bg-white  w-full"
               >
-                <div className="shadow-md m-2  rounded-xl p-4 bg-white">
+                <div className=" drop-shadow-lg drop-shadow-[#E9E9E940] m-4  rounded-xl p-4 bg-white">
                   {/* Stars */}
                   <div className="flex gap-1 text-yellow-500 mb-4">
                     {[...Array(testimonial.testimonials_id.rating)].map(

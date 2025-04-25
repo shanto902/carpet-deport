@@ -164,7 +164,7 @@ export const getAllBlogs = cache(
             "title",
             "slug",
             "image",
-            "category.name",
+            "category.*",
           ],
         })
       )) as TBlog[];
@@ -187,6 +187,50 @@ export const getAllBlogs = cache(
   }
 );
 
+export const getRelatedBlogs = cache(
+  async (
+    id: number
+  ): Promise<{
+    results: TBlog[];
+    totalPages: number;
+  }> => {
+    console.log(id);
+    try {
+      const results = (await directus.request(
+        readItems("blogs", {
+          filter: {
+            status: {
+              _eq: "published",
+            },
+            category: {
+              id: {
+                _eq: Number(id),
+              },
+            },
+          },
+          sort: ["sort"],
+          fields: [
+            "id",
+            "date_created",
+            "date_updated",
+            "title",
+            "slug",
+            "image",
+            "category.name",
+            "category.*",
+            "blogs.*",
+          ],
+        })
+      )) as TBlog[];
+
+      return { results: results, totalPages: 1 };
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+      throw new Error("Error fetching blogs");
+    }
+  }
+);
+
 export const getBlogData = cache(async (slug: string): Promise<TBlog> => {
   try {
     const result = await directus.request(
@@ -197,7 +241,7 @@ export const getBlogData = cache(async (slug: string): Promise<TBlog> => {
           },
         },
         sort: ["sort"],
-        fields: ["*"],
+        fields: ["*", "category.id"],
       })
     );
 

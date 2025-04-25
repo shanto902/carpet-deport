@@ -3,6 +3,8 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { useSearchParams } from "next/navigation";
+
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ReactCompareSlider } from "react-compare-slider";
@@ -10,11 +12,14 @@ import PaddingContainer from "../../layout/PaddingContainer";
 import { FaGear, FaX } from "react-icons/fa6";
 import { FaCamera, FaPaintBrush } from "react-icons/fa";
 import { TProduct } from "@/interfaces";
+import { DEFAULT_POINTS } from "@/assets/data/points";
 
 const ROBOFLOW_PROJECT = "wall-floor-inylg-rc21q";
 const ROBOFLOW_VERSION = "2";
 const ROBOFLOW_API_KEY = "VL1oLunXvkJfYp4ZdPWb";
 const LOCAL_STORAGE_KEY = "seeInRoomSettings";
+
+const DEFAULT_IMAGE = "/rooms/bedroom.jpg";
 
 const ROOM_IMAGES = [
   { label: "Bedroom", src: "/rooms/bedroom.jpg" },
@@ -22,6 +27,7 @@ const ROOM_IMAGES = [
   { label: "Kitchen", src: "/rooms/kitchen.jpg" },
   { label: "Corridor", src: "/rooms/corridor.png" },
 ];
+
 const COLOR_SWATCHES = ["#ffcccb", "#c1f0f6", "#d0f0c0", "#f9f6c2", "#e0d4f7"];
 
 const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
@@ -30,11 +36,16 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       (t) => `${process.env.NEXT_PUBLIC_ASSETS_URL}${t.directus_files_id}`
     ) || [];
 
+  const searchParams = useSearchParams();
+  const tileFromQuery = searchParams.get("tile");
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [ready, setReady] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
-  const [skew, setSkew] = useState(0); // skew in degrees
+  const [skew, setSkew] = useState(0);
 
   const [showRotationSlider, setShowRotationSlider] = useState(false);
   const [showPaintSwatches, setShowPaintSwatches] = useState(false);
@@ -46,8 +57,23 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
   const [wallPoints, setWallPoints] = useState<
     { x: number; y: number }[] | null
   >(null);
-  const [selectedTile, setSelectedTile] = useState<string>(TILE_OPTIONS[0]);
-  const [wallColor, setWallColor] = useState<string>("rgba(0, 0, 0, 0)");
+  const [selectedTile, setSelectedTile] = useState<string | null>(null);
+  const [wallColor, setWallColor] = useState<string>("transparent");
+
+  useEffect(() => {
+    if (!baseImageUrl && DEFAULT_IMAGE) {
+      const img = new Image();
+      img.src = DEFAULT_IMAGE;
+      img.onload = () => {
+        setBaseImageUrl(DEFAULT_IMAGE);
+        setReady(true);
+      };
+      img.onerror = () => {
+        console.error("Failed to load default image:", DEFAULT_IMAGE);
+        setReady(true); // Even if error, let app continue
+      };
+    }
+  }, [baseImageUrl]);
 
   useEffect(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -59,7 +85,6 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
         selectedTile,
         rotation,
         scale,
-
         wallColor,
       } = JSON.parse(saved);
       setBaseImageUrl(baseImageUrl);
@@ -70,11 +95,42 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       setScale(scale);
       setSkew(skew);
       setWallColor(wallColor);
+    } else {
+      setBaseImageUrl(DEFAULT_IMAGE);
+      setFloorPoints(DEFAULT_POINTS.floorPoints);
+      setWallPoints(DEFAULT_POINTS.wallPoints);
+      if (tileFromQuery) {
+        setSelectedTile(decodeURIComponent(tileFromQuery));
+      } else if (TILE_OPTIONS.length > 0) {
+        setSelectedTile(TILE_OPTIONS[0]);
+      }
+    }
+
+    setReady(true); // Mark as ready to trigger drawScene
+  }, []);
+
+  useEffect(() => {
+    // Debounce URL update
+    const timeout = setTimeout(() => {
+      if (selectedTile) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("tile", encodeURIComponent(selectedTile));
+        window.history.replaceState({}, "", url.toString());
+      }
+    }, 300); // add slight delay to prevent too frequent updates
+
+    return () => clearTimeout(timeout);
+  }, [selectedTile]);
+
+  // This should only run once to initialize from URL
+  useEffect(() => {
+    if (!selectedTile && tileFromQuery) {
+      setSelectedTile(decodeURIComponent(tileFromQuery));
     }
   }, []);
 
   useEffect(() => {
-    if (baseImageUrl && floorPoints) {
+    if (baseImageUrl && floorPoints && selectedTile) {
       drawScene(baseImageUrl, floorPoints, wallPoints);
       localStorage.setItem(
         LOCAL_STORAGE_KEY,
@@ -93,11 +149,13 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
   }, [
     rotation,
     scale,
+    skew,
+    selectedTile,
+    wallColor,
     baseImageUrl,
     floorPoints,
     wallPoints,
-    selectedTile,
-    wallColor,
+    ready,
   ]);
 
   const loadImage = (src: string): Promise<HTMLImageElement> =>
@@ -119,12 +177,9 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
   const fetchAndProcessImage = async (src: string) => {
     try {
       setLoading(true);
-
-      // Step 1: Fetch original image
       const res = await fetch(src);
       const originalBlob = await res.blob();
 
-      // Step 2: Load image to <canvas> and resize to max 1920x1080
       const img = await new Promise<HTMLImageElement>((resolve, reject) => {
         const image = new Image();
         image.src = URL.createObjectURL(originalBlob);
@@ -135,7 +190,7 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       let { width, height } = img;
       const maxWidth = 1920;
       const maxHeight = 1080;
-      const scale = Math.min(maxWidth / width, maxHeight / height, 1); // scale down only
+      const scale = Math.min(maxWidth / width, maxHeight / height, 1);
       width *= scale;
       height *= scale;
 
@@ -145,18 +200,15 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       const ctx = canvas.getContext("2d");
       ctx?.drawImage(img, 0, 0, width, height);
 
-      // Step 3: Convert canvas to Blob (compressed JPEG)
       const compressedBlob: Blob = await new Promise((resolve) =>
         canvas.toBlob((b) => b && resolve(b), "image/jpeg", 0.7)
       );
 
-      // Step 4: Convert to File and Base64
       const file = new File([compressedBlob], "room.jpg", {
         type: "image/jpeg",
       });
-      const base64 = await fileToBase64(file); // using your existing function
+      const base64 = await fileToBase64(file);
       const localUrl = URL.createObjectURL(file);
-
       // Step 5: Roboflow API call
       const response = await axios.post(
         `https://detect.roboflow.com/${ROBOFLOW_PROJECT}/${ROBOFLOW_VERSION}`,
@@ -173,10 +225,14 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       );
       const wall = predictions.find((p: any) => p.class === "wall" && p.points);
 
-      // Step 6: Update UI
       setBaseImageUrl(localUrl);
       setFloorPoints(floor?.points || null);
       setWallPoints(wall?.points || null);
+
+      console.log("---- Static Data for Default Image ----");
+      console.log("Image URL:", localUrl);
+      console.log("Floor Points:", JSON.stringify(floor?.points || []));
+      console.log("Wall Points:", JSON.stringify(wall?.points || []));
     } catch (err) {
       console.error("Image processing failed:", err);
     } finally {
@@ -191,16 +247,16 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
   ) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
+    if (!canvas || !ctx || !selectedTile) return;
 
     const baseImg = await loadImage(baseImgUrl);
     const texture = await loadImage(selectedTile);
 
     const skewRadians = (skew * Math.PI) / 180;
-    ctx.transform(1, Math.tan(skewRadians), 0, 1, 0, 0);
     canvas.width = baseImg.width;
     canvas.height = baseImg.height;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any existing transforms
     ctx.drawImage(baseImg, 0, 0);
 
     if (floor.length > 2) {
@@ -211,12 +267,16 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       ctx.closePath();
       ctx.clip();
 
+      const safeScale = Math.max(0.1, scale || 1); // protect from zero/undefined scale
+      const patternSize = Math.ceil(200 * safeScale);
       const patternCanvas = document.createElement("canvas");
-      const patternCtx = patternCanvas.getContext("2d")!;
-      const patternSize = 200 * scale;
+      const patternCtx = patternCanvas.getContext("2d");
+
       patternCanvas.width = patternSize;
       patternCanvas.height = patternSize;
-      patternCtx.drawImage(texture, 0, 0, patternSize, patternSize);
+      if (patternCtx) {
+        patternCtx.drawImage(texture, 0, 0, patternSize, patternSize);
+      }
 
       const pattern = ctx.createPattern(patternCanvas, "repeat");
       if (pattern) {
@@ -224,10 +284,7 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
         ctx.translate(canvas.width / 2, canvas.height / 2);
         ctx.rotate((rotation * Math.PI) / 180);
         ctx.transform(1, Math.tan(skewRadians), 0, 1, 0, 0);
-
-        // Apply perspective-style scale
-        const perspective = 0.4; // try values between 0.2 - 0.6
-        ctx.transform(1, 0, perspective, 1, 0, 0); // skew horizontally
+        ctx.transform(1, 0, 0.4, 1, 0, 0); // perspective
         ctx.translate(-canvas.width / 2, -canvas.height / 2);
         ctx.globalAlpha = 0.5;
         ctx.fillStyle = pattern;
@@ -262,28 +319,32 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 flex justify-center">
             <div className="relative w-full max-w-[996px] h-[520px]">
-              <ReactCompareSlider
-                itemOne={
-                  <div className="bg-transparent w-full h-full flex justify-center items-center overflow-hidden">
-                    <img
-                      src={baseImageUrl ?? "/rooms/original.jpg"}
-                      alt="Choose a photo from the sidebar or upload your own to preview textures on your room."
-                      className="max-h-full max-w-full object-contain rounded-2xl"
-                    />
-                  </div>
-                }
-                itemTwo={
-                  <div className="bg-transparent w-full h-full flex justify-center items-center overflow-hidden">
-                    <canvas
-                      ref={canvasRef}
-                      width={996}
-                      height={520}
-                      className="max-h-full max-w-full object-contain rounded-2xl"
-                    />
-                  </div>
-                }
-                style={{ width: "100%", height: "100%" }}
-              />
+              {ready ? (
+                <ReactCompareSlider
+                  itemOne={
+                    <div className="bg-transparent w-full h-full flex justify-center items-center overflow-hidden">
+                      <img
+                        src={baseImageUrl ?? "/rooms/bedroom.jpg"}
+                        alt="Choose a photo from the sidebar or upload your own to preview textures on your room."
+                        className="max-h-full max-w-full object-contain rounded-2xl"
+                      />
+                    </div>
+                  }
+                  itemTwo={
+                    <div className="bg-transparent w-full h-full flex justify-center items-center overflow-hidden">
+                      <canvas
+                        ref={canvasRef}
+                        width={996}
+                        height={520}
+                        className="max-h-full max-w-full object-contain rounded-2xl"
+                      />
+                    </div>
+                  }
+                  style={{ width: "100%", height: "100%" }}
+                />
+              ) : (
+                <div className="bg-transparent w-full h-full flex justify-center items-center overflow-hidden" />
+              )}
               {loading && (
                 <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-50">
                   <div className="flex flex-col items-center space-y-2">
@@ -343,7 +404,12 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
               </svg>
               <p className="text-sm text-center">
                 <strong>Click to upload</strong> or drag and drop an image here
+                <br />
+                <span className="text-xs text-gray-500">
+                  Supported formats: JPG, PNG, JPEG, WEBP
+                </span>
               </p>
+
               <input
                 type="file"
                 accept="image/*"

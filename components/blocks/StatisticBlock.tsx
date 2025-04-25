@@ -5,6 +5,9 @@ import { TStatisticBlock } from "@/interfaces";
 import CountUp from "react-countup";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { Poetsen_One } from "next/font/google";
+
+const poetsenOne = Poetsen_One({ subsets: ["latin"], weight: "400" });
 
 const StatisticBlock = ({ block }: { block: TStatisticBlock }) => {
   const ref = useRef(null);
@@ -21,7 +24,9 @@ const StatisticBlock = ({ block }: { block: TStatisticBlock }) => {
 
             return (
               <div key={index}>
-                <h3 className="text-3xl md:text-4xl font-bold mb-2">
+                <h3
+                  className={`text-3xl md:text-5xl font-bold mb-5 ${poetsenOne.className}`}
+                >
                   {isInView ? (
                     <CountUp
                       start={0}

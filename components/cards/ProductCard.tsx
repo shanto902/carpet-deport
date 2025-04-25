@@ -18,7 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onTextureClick,
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-4 drop-shadow-sm hover:drop-shadow-lg transition">
+    <div className="bg-white p-3 rounded-lg drop-shadow-[#E1E1E140] drop-shadow-2xl hover:drop-shadow-lg transition">
       {/* Main Image */}
       <div className="relative">
         <Image
@@ -56,21 +56,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <p className="text-sm text-gray-600 my-3">{product.category?.name}</p>
       <h3 className="font-medium text-lg">{product.name}</h3>
 
-      {/* Ratings */}
-      <div className="flex items-center my-3 gap-1 text-yellow-500">
-        {[...Array(product.rating)].map((_, i) => (
-          <FaStar key={i} />
-        ))}
+      <div className="flex  items-center gap-3">
+        {/* Ratings */}
+        <div className="flex items-center my-3 gap-1 text-yellow-500">
+          {[...Array(product.rating)].map((_, i) => (
+            <FaStar key={i} />
+          ))}
+        </div>
+        <span className="text-paragraph">(99)</span>
       </div>
 
       {/* Actions */}
       <div className="flex gap-2 mt-4 justify-between flex-wrap">
-        <button className="bg-primary text-nowrap text-white text-sm px-3 py-1 rounded-full">
-          Find In Store
-        </button>
         <Link
-          href={`/see-room/${product.id}`}
-          className="border transition-all duration-300 text-nowrap border-primary text-primary hover:drop-shadow-md drop-shadow-none bg-white text-sm px-4 py-1 rounded-full"
+          href={`/locations`}
+          className="bg-primary hover:drop-shadow-md drop-shadow-none text-nowrap text-white text-sm px-2 py-1 rounded-full"
+        >
+          Find In Store
+        </Link>
+        <Link
+          href={`/see-room/${product.id}?tile=${encodeURIComponent(
+            `${process.env.NEXT_PUBLIC_ASSETS_URL}${currentImage}`
+          )}`}
+          className="border transition-all duration-300 text-nowrap border-primary text-primary hover:drop-shadow-md drop-shadow-none bg-white text-sm px-2 py-1 rounded-full"
         >
           See In My Room
         </Link>
