@@ -32,14 +32,14 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
     <section className="py-20 bg-white">
       <PaddingContainer className="flex flex-col md:flex-row items-start gap-10">
         {/* Left Content */}
-        <div className="md:w-1/3 text-center md:text-left">
+        <div className="md:w-1/3 w-full text-center md:text-left">
           <p className="text-sm text-red-500 font-semibold uppercase tracking-wider mb-2">
             Testimonials
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-[#1E1E1E] leading-snug mb-6">
             What Our Clients <br /> Have To Say
           </h2>
-          <CustomButton>Get Started</CustomButton>
+          <CustomButton className="w-full md:w-fit">Get Started</CustomButton>
         </div>
 
         {/* Right Content (Slider) */}

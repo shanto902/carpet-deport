@@ -9,7 +9,7 @@ const InspiredGalleryBlock = ({ block }: { block: TInspiredGalleryBlock }) => {
           Get Inspired For Your Next Project
         </h2>
 
-        <div className=" grid grid-cols-1 sm:grid-cols-6 grid-rows-6 gap-4">
+        <div className=" grid grid-cols-1 sm:grid-cols-6  gap-4">
           {/* First Image (top-left large box) */}
           <div className="sm:col-span-2 sm:row-span-3">
             <Image

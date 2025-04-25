@@ -1,5 +1,6 @@
 import {
   TBlog,
+  TCategory,
   TLocation,
   TPageBlock,
   TProduct,
@@ -100,6 +101,20 @@ export const fetchLocations = async (): Promise<TLocation[]> => {
       })
     );
     return result as TLocation[];
+  } catch (error) {
+    console.error("Error fetch locations", error);
+    throw new Error("Failed to fetch all locations");
+  }
+};
+
+export const fetchCategories = async (): Promise<TCategory[]> => {
+  try {
+    const result = await directus.request(
+      readItems("categories", {
+        fields: ["*"],
+      })
+    );
+    return result as TCategory[];
   } catch (error) {
     console.error("Error fetch locations", error);
     throw new Error("Failed to fetch all locations");

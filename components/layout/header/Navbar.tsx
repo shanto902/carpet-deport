@@ -19,44 +19,6 @@ const NavBar = ({
   locations: TLocation[];
   settings: TSettings;
 }) => {
-  const navLinks = [
-    {
-      path: "/home",
-      label: "Home",
-    },
-    {
-      path: "/categories",
-      label: "Categories",
-      submenu: [
-        {
-          path: "#",
-          label: "Demo",
-        },
-      ],
-    },
-    {
-      path: "/products",
-      label: "Products",
-      submenu: [
-        {
-          path: "#",
-          label: "Demo",
-        },
-      ],
-    },
-    {
-      path: "/installation",
-      label: "Installation",
-    },
-    {
-      path: "/financing",
-      label: "Financing",
-    },
-    {
-      path: "/locations",
-      label: "Locations",
-    },
-  ];
   const [isOpen, setIsOpen] = useState(false);
   const [hideTopBar, setHideTopBar] = useState(false);
 
@@ -192,25 +154,25 @@ const NavBar = ({
               <Image className="h-10  w-fit" src={logo} priority alt="logo" />
             </Link>
             <hr className="border-2 border-primary" />
-            {navLinks.map((item, index) => (
+            {settings.nav_links.map((item, index) => (
               <li
                 key={index}
                 className="cursor-pointer transition-all duration-300 ease-in-out hover:text-primary underline-offset-4"
               >
                 <div className="flex items-center gap-2">
-                  <Link onClick={() => setIsOpen(false)} href={`${item.path}`}>
+                  <Link onClick={() => setIsOpen(false)} href={`${item.link}`}>
                     {item.label}
                   </Link>
-                  {item.submenu && <ChevronDown size={16} />}
+                  {item.children && <ChevronDown size={16} />}
                 </div>
 
-                {item.submenu && (
+                {item.children && (
                   <ul className="pl-4 mt-2">
-                    {item.submenu.map((subItem, subIndex) => (
+                    {item.children.map((subItem, subIndex) => (
                       <li key={subIndex}>
                         <Link
                           onClick={() => setIsOpen(false)}
-                          href={`${subItem.path}`}
+                          href={`${subItem.link}`}
                           className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
                         >
                           {subItem.label}

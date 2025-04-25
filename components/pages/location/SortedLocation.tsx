@@ -146,8 +146,14 @@ const SortedLocations = ({ locations }: Props) => {
   return (
     <>
       {displayLocations.map((location) => {
-        const { id, name, image, contact_no, google_map, store_status } =
-          location;
+        const {
+          id,
+          name,
+          thumbnail_image,
+          contact_no,
+          google_map,
+          store_status,
+        } = location;
 
         const address = google_map.properties.formated;
         const distance = locationDistances[id];
@@ -155,52 +161,51 @@ const SortedLocations = ({ locations }: Props) => {
         const storeHourLines = formatStoreHours(store_status);
 
         return (
-          <PaddingContainer
-            key={id}
-            className="bg-white my-10 rounded-lg drop-shadow-xl p-6 md:flex items-center gap-6 mb-6"
-          >
-            <Image
-              width={300}
-              height={300}
-              src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${image}`}
-              alt={name}
-              className="aspect-square object-cover rounded mb-4 md:mb-0"
-            />
-            <div className="flex-1">
-              <h3 className="text-xl font-semibold mb-2">{name}</h3>
-              <p className="flex items-center text-base text-gray-600 mb-1">
-                <FiMapPin className="mr-2" /> {address}
-              </p>
-              <p className="flex items-center text-base text-gray-600 mb-2">
-                <FiPhone className="mr-2" /> {contact_no}
-              </p>
-              <div className="text-base text-gray-600 space-y-2">
-                {storeHourLines.map((line, idx) => (
-                  <p key={idx}>{line}</p>
-                ))}
-                <p className="text-base text-gray-600 ">
-                  Distance:{" "}
-                  {distance !== undefined ? (
-                    <span>{distance.toFixed(2)} km away</span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-gray-400">
-                      loading...
-                      <span className="animate-spin inline-block w-3 h-3 border-2 border-primary border-t-transparent rounded-full"></span>
-                    </span>
-                  )}
+          <PaddingContainer key={id}>
+            <div className="bg-white my-10 rounded-lg drop-shadow-xl p-6 md:flex items-center gap-6 mb-6">
+              <Image
+                width={300}
+                height={300}
+                src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${thumbnail_image}`}
+                alt={name}
+                className="aspect-square object-cover rounded mb-4 md:mb-0"
+              />
+              <div className="flex-1">
+                <h3 className="text-xl font-semibold mb-2">{name}</h3>
+                <p className="flex items-center text-base text-gray-600 mb-1">
+                  <FiMapPin className="mr-2" /> {address}
                 </p>
+                <p className="flex items-center text-base text-gray-600 mb-2">
+                  <FiPhone className="mr-2" /> {contact_no}
+                </p>
+                <div className="text-base text-gray-600 space-y-2">
+                  {storeHourLines.map((line, idx) => (
+                    <p key={idx}>{line}</p>
+                  ))}
+                  <p className="text-base text-gray-600 ">
+                    Distance:{" "}
+                    {distance !== undefined ? (
+                      <span>{distance.toFixed(2)} km away</span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-gray-400">
+                        loading...
+                        <span className="animate-spin inline-block w-3 h-3 border-2 border-primary border-t-transparent rounded-full"></span>
+                      </span>
+                    )}
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start md:items-end gap-2 mt-4 md:mt-0">
-              <CustomButton
-                href={`/locations/${location.slug}`}
-                button_type="question"
-              >
-                More Info
-              </CustomButton>
-              <CustomButton href={`/locations/${location.slug}#map`} inverted>
-                Get Directions
-              </CustomButton>
+              <div className="flex items-start md:items-end gap-2 mt-4 md:mt-0">
+                <CustomButton
+                  href={`/locations/${location.slug}`}
+                  button_type="question"
+                >
+                  More Info
+                </CustomButton>
+                <CustomButton href={`/locations/${location.slug}#map`} inverted>
+                  Get Directions
+                </CustomButton>
+              </div>
             </div>
           </PaddingContainer>
         );

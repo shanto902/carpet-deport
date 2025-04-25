@@ -28,7 +28,7 @@ export default async function RootLayout({
       <body className={` ${inter.className} antialiased scroll-smooth`}>
         <NavBar locations={locations} settings={settings as TSettings} />
         {children}
-        <Footer />
+        <Footer settings={settings as TSettings} locations={locations} />
       </body>
     </html>
   );

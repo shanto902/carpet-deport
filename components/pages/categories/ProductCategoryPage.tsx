@@ -9,10 +9,6 @@ import PaddingContainer from "@/components/layout/PaddingContainer";
 import ProductCard from "@/components/cards/ProductCard";
 import { TProduct } from "@/interfaces";
 
-type Props = {
-  productsData: TProduct[];
-};
-
 const filterFields = [
   "category.name",
   "brand",
@@ -25,10 +21,14 @@ const filterFields = [
   "material",
 ] as const;
 
+type Props = {
+  productsData: TProduct[];
+};
+
 const ProductCategoryClient = ({ productsData }: Props) => {
   const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
   const router = useRouter();
+
   const [filters, setFilters] = useState<Record<string, string[]>>({});
   const [filteredProducts, setFilteredProducts] = useState<TProduct[]>([]);
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,6 @@ const ProductCategoryClient = ({ productsData }: Props) => {
   const clearAllFilters = () => {
     const current = new URLSearchParams(window.location.search);
     current.delete("category");
-
     router.replace(`?${current.toString()}`);
     setFilters({});
   };
@@ -62,22 +61,27 @@ const ProductCategoryClient = ({ productsData }: Props) => {
   }
 
   useEffect(() => {
+    const categoryParam = searchParams.get("category");
+    const currentFilters: Record<string, string[]> = {};
+
+    if (categoryParam) {
+      const categoryIds = categoryParam.split(",").map((id) => parseInt(id));
+      const matchedCategories = productsData
+        .filter((p) => categoryIds.includes(p.category?.id || 0))
+        .map((p) => p.category?.name)
+        .filter((name): name is string => Boolean(name));
+
+      currentFilters["category.name"] = matchedCategories;
+    }
+
+    setFilters(currentFilters);
+  }, [searchParams, productsData]);
+
+  useEffect(() => {
     setLoading(true);
+
     const timeout = setTimeout(() => {
       const baseProducts = productsData;
-
-      if (categoryParam && !filters["category.name"]?.length) {
-        const matchedCategory = productsData.find(
-          (p) => p.category?.id === parseInt(categoryParam)
-        )?.category?.name;
-
-        if (matchedCategory) {
-          setFilters((prev) => ({
-            ...prev,
-            ["category.name"]: [matchedCategory],
-          }));
-        }
-      }
 
       const activeFilters = Object.entries(filters).filter(
         ([_, values]) => values.length > 0
@@ -108,16 +112,34 @@ const ProductCategoryClient = ({ productsData }: Props) => {
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [filters, productsData, categoryParam]);
+  }, [filters, productsData]);
 
   const toggleFilter = (field: string, value: string) => {
-    setFilters((prev) => {
-      const current = prev[field] || [];
-      const updated = current.includes(value)
-        ? current.filter((v) => v !== value)
-        : [...current, value];
-      return { ...prev, [field]: updated };
-    });
+    const current = filters[field] || [];
+    const updated = current.includes(value)
+      ? current.filter((v) => v !== value)
+      : [...current, value];
+
+    const newFilters = { ...filters, [field]: updated };
+    setFilters(newFilters);
+
+    if (field === "category.name") {
+      const categoryIds = newFilters["category.name"]
+        .map(
+          (name) =>
+            productsData.find((p) => p.category?.name === name)?.category?.id
+        )
+        .filter((id): id is number => Boolean(id));
+
+      const params = new URLSearchParams(window.location.search);
+      if (categoryIds.length > 0) {
+        params.set("category", categoryIds.join(","));
+      } else {
+        params.delete("category");
+      }
+
+      router.replace(`?${params.toString()}`);
+    }
   };
 
   const paginatedProducts = filteredProducts.slice(
@@ -132,7 +154,6 @@ const ProductCategoryClient = ({ productsData }: Props) => {
         breadcrumb={["Product Categories"]}
       />
       <PaddingContainer className="flex flex-col md:flex-row py-6 gap-6">
-        {/* Sidebar Filters */}
         <aside className="w-full md:w-1/5">
           <div className="bg-white p-4 rounded shadow space-y-6">
             <div className="flex justify-between items-center">
@@ -143,7 +164,7 @@ const ProductCategoryClient = ({ productsData }: Props) => {
               <details
                 key={field}
                 className="group"
-                open={field === "category.name"} // keep "Type" open
+                open={field === "category.name"}
               >
                 <summary
                   className={`cursor-pointer flex justify-between capitalize items-center font-medium py-2 ${
@@ -200,7 +221,6 @@ const ProductCategoryClient = ({ productsData }: Props) => {
               </details>
             ))}
 
-            {/* Rating Filter */}
             <details className="group">
               <summary className="cursor-pointer flex justify-between items-center font-medium py-2">
                 <span>Rating</span>
@@ -208,7 +228,6 @@ const ProductCategoryClient = ({ productsData }: Props) => {
                   +
                 </span>
               </summary>
-
               <div className="mt-2 space-y-2 text-sm">
                 {[5, 4, 3, 2, 1].map((starCount) => (
                   <label key={starCount} className="flex items-center gap-2">
@@ -235,6 +254,7 @@ const ProductCategoryClient = ({ productsData }: Props) => {
                 ))}
               </div>
             </details>
+
             <button
               className="bg-slate-200 rounded-full w-full py-2 px-4"
               onClick={clearAllFilters}
@@ -244,7 +264,6 @@ const ProductCategoryClient = ({ productsData }: Props) => {
           </div>
         </aside>
 
-        {/* Product Grid */}
         <main className="w-full md:w-4/5">
           <div className="flex justify-between items-center mb-4">
             <p>Showing {filteredProducts.length} results</p>
@@ -276,7 +295,6 @@ const ProductCategoryClient = ({ productsData }: Props) => {
                 ))}
           </div>
 
-          {/* Pagination */}
           <div className="flex justify-center mt-6 space-x-2">
             {Array.from({
               length: Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE),

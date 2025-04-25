@@ -33,7 +33,7 @@ export const VideoPlayer = ({ video }: { video: string }) => {
       {/* Play/Pause Button Overlay */}
       <button
         onClick={togglePlay}
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+        className="absolute bottom-2 right-2
                    bg-black/60 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition duration-300"
       >
         {isPlaying ? (

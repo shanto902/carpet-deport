@@ -79,32 +79,44 @@ export default function InStoreConsultationForm() {
   return (
     <div className=" w-full mx-auto">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="bg-black/25 max-h-[400px] overflow-y-auto p-6 rounded-lg shadow-lg space-y-4">
+        <div className="bg-black/25 backdrop-blur-md max-h-[400px] overflow-y-auto p-6 rounded-lg shadow-lg space-y-4">
           <h2 className="text-2xl my-4 font-semibold text-white text-center">
             Request An In-Store Consultation
           </h2>
+          <p className="text-white text-center">
+            Meet One-On-One With One Of Our Flooring Specialists For Design
+            Assistance & A FREE Estimate
+          </p>
           <div className="grid grid-cols-2 gap-4">
             <div>
+              <label className="text-white" htmlFor="firstName">
+                First Name
+              </label>
               <input
                 type="text"
+                id="firstName"
                 name="firstName"
                 placeholder="First Name"
                 value={form.firstName}
                 onChange={handleChange}
-                className="w-full bg-white px-4 py-2 rounded-full focus:outline-none"
+                className="w-full bg-white mt-2 px-4 py-2 rounded-full focus:outline-none"
               />
               {errors.firstName && (
                 <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>
               )}
             </div>
             <div>
+              <label className="text-white" htmlFor="lastName">
+                Last Name
+              </label>
               <input
+                id="lastName"
                 type="text"
                 name="lastName"
                 placeholder="Last Name"
                 value={form.lastName}
                 onChange={handleChange}
-                className="w-full bg-white  px-4 py-2 rounded-full focus:outline-none"
+                className="w-full bg-white mt-2 px-4 py-2 rounded-full focus:outline-none"
               />
               {errors.lastName && (
                 <p className="text-red-400 text-xs mt-1">{errors.lastName}</p>
@@ -114,26 +126,34 @@ export default function InStoreConsultationForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
+              <label className="text-white" htmlFor="email">
+                Email
+              </label>
               <input
+                id="email"
                 type="email"
                 name="email"
                 placeholder="Email Address"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full px-4 bg-white  py-2 rounded-full focus:outline-none"
+                className="w-full px-4 mt-2 bg-white  py-2 rounded-full focus:outline-none"
               />
               {errors.email && (
                 <p className="text-red-400 text-xs mt-1">{errors.email}</p>
               )}
             </div>
             <div>
+              <label className="text-white" htmlFor="number">
+                Number
+              </label>
               <input
+                id="number"
                 type="text"
                 name="number"
                 placeholder="(123) 456-7890"
                 value={form.number}
                 onChange={handleChange}
-                className="w-full bg-white  px-4 py-2 rounded-full focus:outline-none"
+                className="w-full bg-white mt-2  px-4 py-2 rounded-full focus:outline-none"
               />
               {errors.number && (
                 <p className="text-red-400 text-xs mt-1">{errors.number}</p>
@@ -142,12 +162,19 @@ export default function InStoreConsultationForm() {
           </div>
 
           <div className="relative">
+            <label
+              className="block font-bold text-white text-lg"
+              htmlFor="store"
+            >
+              Please Select Your Store
+            </label>
             <select
+              id="store"
               name="store"
               value={form.store}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 rounded-full font-sans focus:outline-none bg-white text-black placeholder:text-gray-700 appearance-none pr-10"
+              className="w-full px-4 mt-2 py-2 rounded-full font-sans focus:outline-none bg-white text-black placeholder:text-gray-700 appearance-none pr-10"
             >
               <option value="" disabled>
                 -- Select Store --
@@ -162,7 +189,7 @@ export default function InStoreConsultationForm() {
             </select>
 
             {/* Dropdown icon */}
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+            <div className="pointer-events-none absolute inset-y-0 -bottom-8 right-3 flex items-center">
               <svg
                 className="w-4 h-4 text-black"
                 fill="none"

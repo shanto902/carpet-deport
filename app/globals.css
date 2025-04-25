@@ -57,3 +57,101 @@
 .richtext > h3 {
   @apply text-xl! text-black mb-4!  font-bold!;
 }
+
+/* CHROME & SAFARI */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #ffffff3d;
+  border-radius: 25px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #f42534;
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: brown;
+}
+
+/* MOZILLA FIREFOX */
+*::-moz-scrollbar {
+  width: 8px;
+}
+
+*::-moz-scrollbar-track {
+  background-color: transparent;
+}
+
+*::-moz-scrollbar-thumb {
+  background: #f42534;
+}
+
+*::-moz-scrollbar-thumb:hover {
+  background: brown;
+}
+
+*::-moz-scrollbar-thumb:active {
+  background: brown;
+}
+
+/* MICROSOFT INTERNET EXPLORER */
+*::-ms-scrollbar {
+  width: 8px;
+}
+
+*::-ms-scrollbar-track {
+  background-color: transparent;
+}
+
+*::-ms-scrollbar-thumb {
+  background: #f42534;
+}
+
+*::-ms-scrollbar-thumb:hover {
+  background: brown;
+}
+
+*::-ms-scrollbar-thumb:active {
+  background: brown;
+}
+
+/* OPERA */
+*::-o-scrollbar {
+  width: 8px;
+}
+
+*::-o-scrollbar-track {
+  background-color: brown;
+}
+
+*::-o-scrollbar-thumb {
+  background: #f42534;
+}
+
+*::-o-scrollbar-thumb:hover {
+  background: brown;
+}
+
+*::-o-scrollbar-thumb:active {
+  background: brown;
+}
+
+::-moz-selection {
+  background: #f42534;
+  color: black;
+}
+::-webkit-selection {
+  background: #f42534;
+  color: black;
+}
+::selection {
+  background: #f42534;
+  color: black;
+}

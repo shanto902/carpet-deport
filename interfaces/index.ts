@@ -39,7 +39,7 @@ export type TVideoBlock = {
   id: string;
   item: {
     header: string;
-    youtube_video_link: string;
+    youtube_video_links: { link: string }[];
   };
 };
 
@@ -170,12 +170,25 @@ export type TSettings = {
       link: string;
     }[];
   }[];
+  footer_links: {
+    label: string;
+    link: string;
+  }[];
+};
+
+export type TCategory = {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  image: string;
 };
 
 export type TLocation = {
   id: string;
   status: string;
   contact_no: string;
+  thumbnail_image: string;
   google_map: {
     geometry: {
       coordinates: number[];
