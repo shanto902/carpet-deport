@@ -49,7 +49,7 @@ export const fetchPage = async (
                     "products.products_id.category.name",
                   ],
                   block_breadcrumb: ["*"],
-                  block_one_cloumn: ["*", "images.*"],
+                  block_one_cloumn: ["*", "images.*", "cards.steps_id.*"],
                 },
               },
             ],
@@ -194,7 +194,6 @@ export const getRelatedBlogs = cache(
     results: TBlog[];
     totalPages: number;
   }> => {
-    console.log(id);
     try {
       const results = (await directus.request(
         readItems("blogs", {

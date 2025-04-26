@@ -145,13 +145,13 @@
 
 ::-moz-selection {
   background: #f42534;
-  color: black;
+  color: white;
 }
 ::-webkit-selection {
   background: #f42534;
-  color: black;
+  color: white;
 }
 ::selection {
   background: #f42534;
-  color: black;
+  color: white;
 }

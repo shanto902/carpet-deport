@@ -9,6 +9,7 @@ import { TLocation } from "@/interfaces";
 import CustomButton from "@/components/common/CustomButton";
 import PaddingContainer from "@/components/layout/PaddingContainer";
 import { Suspense } from "react";
+import Reviews from "@/components/pages/location/Reviews";
 
 interface PageProps {
   params: Promise<{
@@ -142,6 +143,11 @@ const LocationPage = async ({ params }: PageProps) => {
           </div>
         </div>
       </PaddingContainer>
+      <div className="bg-secondary py-10 ">
+        <PaddingContainer>
+          <Reviews placeId={location.place_id} />
+        </PaddingContainer>
+      </div>
     </>
   );
 };

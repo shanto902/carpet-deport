@@ -228,11 +228,6 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       setBaseImageUrl(localUrl);
       setFloorPoints(floor?.points || null);
       setWallPoints(wall?.points || null);
-
-      console.log("---- Static Data for Default Image ----");
-      console.log("Image URL:", localUrl);
-      console.log("Floor Points:", JSON.stringify(floor?.points || []));
-      console.log("Wall Points:", JSON.stringify(wall?.points || []));
     } catch (err) {
       console.error("Image processing failed:", err);
     } finally {

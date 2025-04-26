@@ -93,6 +93,13 @@ export type TOneColumnBlock = {
     id: number;
     body: string;
     images: [{ id: number; product_id: string; directus_files_id: string }];
+    add_card: "yes" | "no";
+    cards: {
+      steps_id: {
+        image: string;
+        body: string;
+      };
+    }[];
   };
 };
 
@@ -190,6 +197,7 @@ export type TLocation = {
   status: string;
   contact_no: string;
   thumbnail_image: string;
+  place_id: string;
   google_map: {
     geometry: {
       coordinates: number[];
