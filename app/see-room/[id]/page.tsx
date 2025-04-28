@@ -5,6 +5,7 @@ import SeeInRoom from "@/components/pages/see-room/SeeInRoom";
 import { getProductData } from "@/helper/fetchFromDirectus";
 import directus from "@/lib/directus";
 import { readItems } from "@directus/sdk";
+import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 
 import React, { Suspense } from "react";
@@ -15,49 +16,48 @@ interface PageProps {
   }>;
 }
 
-//   export async function generateMetadata(
-//     { params }: PageProps,
-//     parent: ResolvingMetadata
-//   ): Promise<Metadata> {
-//     try {
-//       const { id } = await params;
-//       const donation = await getDonationData(id);
-//       const bodyText = donation?.body
-//         ? parse(donation.body.toString().slice(0, 200))
-//         : "";
-//       const previousImages = (await parent).openGraph?.images || [];
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const { id } = await params;
+    const product = await getProductData(id);
+    const previousImages = (await parent).openGraph?.images || [];
 
-//       if (donation !== null) {
-//         return {
-//           title: donation.title,
-//           description: `${bodyText}` || "",
-//           openGraph: {
-//             images: donation.image
-//               ? [
-//                   {
-//                     url: `${process.env.NEXT_PUBLIC_ASSETS_URL}${donation.image}`,
-//                   },
-//                 ]
-//               : [...previousImages],
-//           },
-//         };
-//       }
+    if (product !== null) {
+      return {
+        title:
+          `${product?.name} | ${product.category.name} | Carpet Depot` ||
+          "No description available",
+        description: `${product.brand} - ${product.look}` || "",
+        openGraph: {
+          images: product.textures
+            ? [
+                {
+                  url: `${process.env.NEXT_PUBLIC_ASSETS_URL}${product.textures[0].directus_files_id.id}`,
+                },
+              ]
+            : [...previousImages],
+        },
+      };
+    }
 
-//       // Default metadata if the page is not found
-//       return {
-//         title: "Donation not Found",
-//         description: "This page does not exist.",
-//       };
-//     } catch (error) {
-//       console.error("Error fetching page metadata:", error);
+    // Default metadata if the page is not found
+    return {
+      title: "product not Found",
+      description: "This page does not exist.",
+    };
+  } catch (error) {
+    console.error("Error fetching page metadata:", error);
 
-//       // Return default metadata in case of error
-//       return {
-//         title: "Error",
-//         description: "Failed to fetch page metadata.",
-//       };
-//     }
-//   }
+    // Return default metadata in case of error
+    return {
+      title: "Error",
+      description: "Failed to fetch page metadata.",
+    };
+  }
+}
 
 export const generateStaticParams = async () => {
   try {

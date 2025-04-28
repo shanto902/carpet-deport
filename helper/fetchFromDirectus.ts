@@ -24,6 +24,7 @@ export const fetchPage = async (
         },
         sort: ["blocks.sort"],
         fields: [
+          "*",
           {
             blocks: [
               "*",

@@ -7,7 +7,7 @@ import {
   useJsApiLoader,
 } from "@react-google-maps/api";
 import { useEffect, useState } from "react";
-
+import { toast } from "sonner";
 const containerStyle = {
   width: "100%",
   height: "100%",
@@ -46,8 +46,13 @@ const LocationMap = ({ coordinate }: { coordinate: number[] }) => {
         (result, status) => {
           if (status === "OK") {
             setDirections(result);
+          } else if (status === "ZERO_RESULTS") {
+            toast.error("No routes found between your location and the store.");
           } else {
-            console.error("Error fetching directions", result);
+            toast.error(
+              "Something went wrong. Enable location access and reload the page."
+            );
+            console.error("Error fetching directions:", result);
           }
         }
       );

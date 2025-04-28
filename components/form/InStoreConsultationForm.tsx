@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -62,18 +63,43 @@ export default function InStoreConsultationForm() {
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
       setErrors(fieldErrors as any);
+      toast.error("Please fix the errors in the form before submitting.");
       return;
     }
 
     setErrors({}); // clear old errors
 
-    const res = await fetch("/api/jotform", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    const json = await res.json();
-    alert(json.success ? "Submitted!" : `Error: ${json.error}`);
+    // Show processing notification
+    const toastId = toast.loading("Submitting your request...");
+
+    try {
+      const res = await fetch("/api/jotform", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const json = await res.json();
+
+      if (json.success) {
+        toast.success("Form submitted successfully!", { id: toastId });
+        setForm({
+          firstName: "",
+          lastName: "",
+          email: "",
+          number: "",
+          store: "",
+          productTypes: [],
+          questions: "",
+        });
+      } else {
+        toast.error(`Submission failed: ${json.error}`, { id: toastId });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An unexpected error occurred. Please try again later.", {
+        id: toastId,
+      });
+    }
   };
 
   return (
@@ -150,7 +176,7 @@ export default function InStoreConsultationForm() {
                 id="number"
                 type="text"
                 name="number"
-                placeholder="(123) 456-7890"
+                placeholder="Phone Number"
                 value={form.number}
                 onChange={handleChange}
                 className="w-full bg-white mt-2  px-4 py-2 rounded-full focus:outline-none"

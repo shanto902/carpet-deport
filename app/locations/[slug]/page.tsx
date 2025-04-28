@@ -10,12 +10,58 @@ import CustomButton from "@/components/common/CustomButton";
 import PaddingContainer from "@/components/layout/PaddingContainer";
 import { Suspense } from "react";
 import Reviews from "@/components/pages/location/Reviews";
+import { Metadata, ResolvingMetadata } from "next";
 
 interface PageProps {
   params: Promise<{
     permalink: string;
     slug: string;
   }>;
+}
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const { slug } = await params;
+    const location = await fetchLocation(slug);
+    const previousImages = (await parent).openGraph?.images || [];
+    if (location !== null) {
+      return {
+        title:
+          location.seo.title ||
+          `${location.name} | Carpet Depot` ||
+          "Location not found | Carpet Depot",
+        description:
+          location.seo.meta_description ||
+          location.google_map.properties.formated ||
+          "",
+        openGraph: {
+          images: location.image
+            ? [
+                {
+                  url: `${process.env.NEXT_PUBLIC_ASSETS_URL}${location.image}`,
+                },
+              ]
+            : [...previousImages],
+        },
+      };
+    }
+
+    // Default metadata if the page is not found
+    return {
+      title: "Blog not Found",
+      description: "This page does not exist.",
+    };
+  } catch (error) {
+    console.error("Error fetching page metadata:", error);
+
+    // Return default metadata in case of error
+    return {
+      title: "Error",
+      description: "Failed to fetch page metadata.",
+    };
+  }
 }
 
 export const generateStaticParams = async () => {
@@ -60,8 +106,8 @@ const LocationPage = async ({ params }: PageProps) => {
 
       <PaddingContainer className="max-w-7xl mx-auto px-4 py-12 space-y-10">
         {/* Top section */}
-        <div className="items-center grid grid-cols-3 w-full gap-10">
-          <div className="space-y-2 col-span-1 bg-secondary h-full rounded-2xl flex justify-center flex-col px-10">
+        <div className="items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-10">
+          <div className="space-y-2 col-span-1 bg-secondary h-full w-full rounded-2xl flex justify-center flex-col p-10">
             <h2 className="text-xl font-bold">{location.name}</h2>
             <p className="flex items-center  text-pretty gap-4 text-base text-gray-700">
               <FiMapPin className=" text-primary size-7" />
@@ -81,13 +127,13 @@ const LocationPage = async ({ params }: PageProps) => {
             </CustomButton>
           </div>
 
-          <div className="col-span-2 rounded-2xl overflow-hidden">
+          <div className=" lg:col-span-2 rounded-2xl overflow-hidden">
             <Image
               src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${location.image}`}
               alt="Store Photo"
               width={600}
               height={400}
-              className="w-full object-cover max-h-[320px]"
+              className="w-full object-cover lg:max-h-[320px]"
             />
           </div>
         </div>

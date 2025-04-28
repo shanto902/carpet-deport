@@ -25,14 +25,14 @@ export default function BreadcrumbBlock({
       <div className="absolute inset-0 bg-black/50 z-10 flex flex-col justify-center">
         <PaddingContainer>
           <HeaderText className="text-white">{block.item.title}</HeaderText>
-          <nav className="text-white text-sm flex items-center gap-2">
+          <nav className="text-white text-xs md:text-sm flex items-center gap-2">
             <Link href="/" className="hover:underline">
               Home
             </Link>
             {block.item.breadcrumb.map((item, i) => (
               <div key={i} className="flex items-center gap-2">
                 <span>&gt;</span>
-                <span className="text-white/80">{item.label}</span>
+                <span className="text-white/80 ">{item.label}</span>
               </div>
             ))}
           </nav>

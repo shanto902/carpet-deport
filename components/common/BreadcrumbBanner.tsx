@@ -29,10 +29,10 @@ export default function BreadcrumbBanner({
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/50 z-10 flex flex-col justify-center ">
         <PaddingContainer>
-          <h1 className="text-white text-2xl sm:text-3xl font-bold mb-2">
+          <h1 className="text-white text-2xl sm:text-3xl font-bold mb-5">
             {title}
           </h1>
-          <nav className="text-white text-sm flex items-center gap-2">
+          <nav className="text-white text-xs md:text-sm flex items-center gap-2">
             <Link href="/" className="hover:underline">
               Home
             </Link>

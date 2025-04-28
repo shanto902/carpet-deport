@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
+import { toast } from "sonner";
 
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -194,6 +195,13 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       );
 
       const predictions = response.data.predictions;
+
+      if (!predictions || predictions.length <= 0) {
+        toast.error(
+          "Failed to process image. Please upload a clear, well-lit photo showing both wall and floor — avoid floor-only photos."
+        );
+        return;
+      }
       const floor = predictions.find((p: any) => p.class === "floor");
       const wall = predictions.find((p: any) => p.class === "wall");
 
@@ -209,6 +217,8 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       }, 100);
     } catch (err) {
       console.error("Image processing failed:", err);
+
+      toast.error("Image processing failed try different image.");
     } finally {
       setLoading(false);
     }

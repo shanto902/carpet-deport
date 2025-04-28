@@ -1,5 +1,4 @@
 "use client";
-
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import Image from "next/image";
@@ -28,6 +27,12 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
     slides: { perView: 1, spacing: 15 },
   });
 
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  const toggleExpand = (id: string) => {
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
   return (
     <section className="py-20 bg-white">
       <PaddingContainer className="flex flex-col md:flex-row items-start gap-10">
@@ -46,48 +51,61 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
 
         {/* Right Content (Slider) */}
         <div className="md:w-2/3 w-full overflow-hidden">
-          <div ref={sliderRef} className="keen-slider ">
-            {block.item.testimonials.map((testimonial) => (
-              <div
-                key={testimonial.testimonials_id.id}
-                className="keen-slider__slide bg-white  w-full"
-              >
-                <div className=" drop-shadow-lg drop-shadow-[#E9E9E940] m-4  rounded-xl p-4 bg-white">
-                  {/* Stars */}
-                  <div className="flex gap-1 text-yellow-500 mb-4">
-                    {[...Array(testimonial.testimonials_id.rating)].map(
-                      (_, idx) => (
+          <div ref={sliderRef} className="keen-slider">
+            {block.item.testimonials.map((testimonial) => {
+              const { id, name, designation, review, rating, photo } =
+                testimonial.testimonials_id;
+              const isExpanded = expanded[id];
+
+              return (
+                <div key={id} className="keen-slider__slide bg-white w-full">
+                  <div className="drop-shadow-lg drop-shadow-[#E9E9E940] m-4 rounded-xl p-4 bg-white">
+                    {/* Stars */}
+                    <div className="flex gap-1 text-yellow-500 mb-4">
+                      {[...Array(rating)].map((_, idx) => (
                         <FaStar key={idx} />
-                      )
+                      ))}
+                    </div>
+
+                    {/* Message */}
+                    <p
+                      className={`text-[#505050] text-sm md:text-base leading-relaxed mb-2 ${
+                        !isExpanded ? "line-clamp-3" : ""
+                      }`}
+                    >
+                      {review}
+                    </p>
+
+                    {/* See More / See Less Button */}
+                    {review.length > 150 && (
+                      <button
+                        onClick={() => toggleExpand(id)}
+                        className="text-red-500 text-xs mt-1 font-semibold"
+                      >
+                        {isExpanded ? "See Less" : "See More"}
+                      </button>
                     )}
-                  </div>
 
-                  {/* Message */}
-                  <p className="text-[#505050] text-sm md:text-base leading-relaxed mb-4">
-                    {testimonial.testimonials_id.review}
-                  </p>
-
-                  {/* Person Info */}
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${testimonial.testimonials_id.photo}`}
-                      alt={testimonial.testimonials_id.name}
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
-                    <div>
-                      <p className="font-semibold text-[#1E1E1E] text-sm">
-                        {testimonial.testimonials_id.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {testimonial.testimonials_id.designation}
-                      </p>
+                    {/* Person Info */}
+                    <div className="flex items-center gap-3 mt-4">
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${photo}`}
+                        alt={name}
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                      />
+                      <div>
+                        <p className="font-semibold text-[#1E1E1E] text-sm">
+                          {name}
+                        </p>
+                        <p className="text-xs text-gray-500">{designation}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Pagination Dots */}

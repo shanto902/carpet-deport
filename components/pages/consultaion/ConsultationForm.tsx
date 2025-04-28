@@ -2,6 +2,7 @@
 "use client";
 import { CheckCircle2, Circle, CircleDot } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { z } from "zod";
 
@@ -65,18 +66,43 @@ export default function InStoreConsultationForm() {
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
       setErrors(fieldErrors as any);
+      toast.error("Please fill out all required fields correctly.");
       return;
     }
 
     setErrors({});
 
-    const res = await fetch("/api/jotform", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    const json = await res.json();
-    alert(json.success ? "Submitted!" : `Error: ${json.error}`);
+    // Show loading notification
+    const toastId = toast.loading("Submitting your request...");
+
+    try {
+      const res = await fetch("/api/jotform", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const json = await res.json();
+
+      if (json.success) {
+        toast.success("Form submitted successfully!", { id: toastId });
+        setForm({
+          firstName: "",
+          lastName: "",
+          email: "",
+          number: "",
+          store: "",
+          productTypes: [],
+          questions: "",
+        });
+      } else {
+        toast.error(`Submission failed: ${json.error}`, { id: toastId });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An unexpected error occurred. Please try again later.", {
+        id: toastId,
+      });
+    }
   };
 
   const storeOptions = [
@@ -149,7 +175,7 @@ export default function InStoreConsultationForm() {
               <input
                 type="text"
                 name="number"
-                placeholder="(123) 456-7890"
+                placeholder="Phone Number"
                 value={form.number}
                 onChange={handleChange}
                 className="w-full bg-gray-100 px-4 py-3 rounded-full focus:outline-none"
@@ -239,13 +265,13 @@ export default function InStoreConsultationForm() {
               onChange={handleChange}
               rows={3}
               placeholder="Typing..."
-              className="w-full bg-gray-100 px-4 py-3 rounded-md mt-2"
+              className="w-full bg-gray-100 px-4 py-3 rounded-md mt-2 accent-primary "
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-black text-white font-bold py-3 rounded-full hover:bg-red-600 transition"
+            className="w-full bg-black cursor-pointer text-white font-bold py-3 rounded-full hover:bg-red-600 transition"
           >
             Submit Now
           </button>

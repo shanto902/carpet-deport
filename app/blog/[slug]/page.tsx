@@ -6,6 +6,8 @@ import { BiSolidShareAlt } from "react-icons/bi";
 import { FaFacebookF, FaLinkedinIn, FaPinterestP } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { readItems } from "@directus/sdk";
+import { stripHtml } from "string-strip-html"; // install this package if you don't have it
+
 import directus from "@/lib/directus";
 import {
   fetchCategories,
@@ -16,6 +18,7 @@ import PostBody from "@/components/pages/blog/PostBody";
 import moment from "moment";
 import { Square, SquareCheck } from "lucide-react";
 import PaddingContainer from "@/components/layout/PaddingContainer";
+import { Metadata, ResolvingMetadata } from "next";
 
 interface PageProps {
   params: Promise<{
@@ -23,6 +26,48 @@ interface PageProps {
   }>;
 }
 
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  try {
+    const { slug } = await params;
+    const blog = await getBlogData(slug);
+    const previousImages = (await parent).openGraph?.images || [];
+
+    if (blog !== null) {
+      return {
+        title:
+          `${blog.title} | Blogs | Carpet Depot` ||
+          "Blog not found | Carpet Depot",
+        description: `${stripHtml(blog.body).result}` || "Blog not found ",
+        openGraph: {
+          images: blog.image
+            ? [
+                {
+                  url: `${process.env.NEXT_PUBLIC_ASSETS_URL}${blog.image}`,
+                },
+              ]
+            : [...previousImages],
+        },
+      };
+    }
+
+    // Default metadata if the page is not found
+    return {
+      title: "Blog not Found",
+      description: "This page does not exist.",
+    };
+  } catch (error) {
+    console.error("Error fetching page metadata:", error);
+
+    // Return default metadata in case of error
+    return {
+      title: "Error",
+      description: "Failed to fetch page metadata.",
+    };
+  }
+}
 export const generateStaticParams = async () => {
   try {
     const result = await directus.request(

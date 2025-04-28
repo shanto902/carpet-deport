@@ -27,8 +27,8 @@ const OneColumnBlock = ({ block }: { block: TOneColumnBlock }) => {
                     <Image
                       src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${item.steps_id.image}`}
                       alt={`Image ${index + 1}`}
-                      height={137}
-                      width={258}
+                      height={500}
+                      width={1024}
                       className="object rounded-lg"
                     />
                     <div>
@@ -49,7 +49,7 @@ const OneColumnBlock = ({ block }: { block: TOneColumnBlock }) => {
                   src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${item.directus_files_id}`}
                   alt={`Image ${index + 1}`}
                   fill
-                  className="object-cover rounded-lg"
+                  className="object-cover object-[50%_80%] rounded-lg"
                 />
               </div>
             ))}

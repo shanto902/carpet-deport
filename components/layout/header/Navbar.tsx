@@ -56,7 +56,7 @@ const NavBar = ({
       >
         <PaddingContainer className="flex px-8 justify-between w-full items-center">
           {/* Desktop Menu */}
-          <div className="  hidden lg:flex  justify-between items-center w-full">
+          <div className="hidden lg:flex  justify-between items-center w-full">
             {/* Logo */}
             <Link href={"/"}>
               <Image

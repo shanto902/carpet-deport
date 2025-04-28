@@ -3,10 +3,20 @@ export type TPageBlock = {
   last_updated: string;
   id: string;
   name: string;
-  seo: Record<string, string>;
+  seo: TSeo;
   permalink: string;
   date_updated: string;
   blocks: TBlock[];
+};
+
+export type TSeo = {
+  title: string;
+  meta_description: string;
+  og_image: string;
+  sitemap: {
+    change_frequency: string;
+    priority: string;
+  };
 };
 
 export type TBlock =
@@ -206,6 +216,7 @@ export type TCategory = {
 export type TLocation = {
   id: string;
   status: string;
+  seo: TSeo;
   contact_no: string;
   thumbnail_image: string;
   place_id: string;

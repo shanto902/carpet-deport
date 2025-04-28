@@ -1,13 +1,18 @@
 import BreadcrumbBanner from "@/components/common/BreadcrumbBanner";
 import BlogList from "@/components/pages/blog/BlogList";
 import { getAllBlogs } from "@/helper/fetchFromDirectus";
+import { Metadata } from "next";
+
 import Link from "next/link";
 interface PageProps {
   params: Promise<{
     page: string;
   }>;
 }
-
+export const metadata: Metadata = {
+  title: "Blogs | Carpet Depot",
+  description: "Latest news and updates from Carpet Depot",
+};
 export default async function BlogPage({ params }: PageProps) {
   const { page } = await params;
   const currentPage = Number(page) || 1;
