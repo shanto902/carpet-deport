@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 const ProductCategoryPage = async () => {
   const productsData = await fetchProducts();
+
   return (
     <Suspense>
       <ProductCategoryClient productsData={productsData} />

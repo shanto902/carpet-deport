@@ -1,11 +1,6 @@
 import React from "react";
 import logo from "@/assets/svg/logo.svg";
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaPinterestP,
-  FaLinkedinIn,
-} from "react-icons/fa";
+
 import { FiPhone, FiMail, FiMapPin } from "react-icons/fi";
 import Image from "next/image";
 import PaddingContainer from "../PaddingContainer";
@@ -13,6 +8,7 @@ import { TLocation, TSettings } from "@/interfaces";
 import { getCityName } from "../header/BottomNavbar";
 import Link from "next/link";
 import { fetchCategories } from "@/helper/fetchFromDirectus";
+import { DynamicFaIcon } from "@/components/common/DynamicFaIcon";
 
 const Footer = async ({
   locations,
@@ -91,18 +87,19 @@ const Footer = async ({
             {" "}
             <h2 className="text-lg font-bold mb-4">Follow us on</h2>
             <div className="flex mt-4 space-x-3">
-              <a href="#" className="text-white bg-red-600 p-2 rounded-full">
-                <FaFacebookF />
-              </a>
-              <a href="#" className="text-white bg-red-600 p-2 rounded-full">
-                <FaInstagram />
-              </a>
-              <a href="#" className="text-white bg-red-600 p-2 rounded-full">
-                <FaPinterestP />
-              </a>
-              <a href="#" className="text-white bg-red-600 p-2 rounded-full">
-                <FaLinkedinIn />
-              </a>
+              {
+                /* Social Media Icons */
+                settings?.social_links?.map((item, index) => (
+                  <a
+                    key={index}
+                    href={item.link}
+                    target="_blank"
+                    className="text-white bg-red-600 p-2 rounded-full"
+                  >
+                    <DynamicFaIcon size={20} iconName={item.icon} />
+                  </a>
+                ))
+              }
             </div>
           </div>
           <div>

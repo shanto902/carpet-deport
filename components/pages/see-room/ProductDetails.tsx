@@ -15,7 +15,8 @@ type Props = {
 const ProductDetails = ({ product }: Props) => {
   const textureUrls =
     product?.textures?.map(
-      (t) => `${process.env.NEXT_PUBLIC_ASSETS_URL}${t.directus_files_id}`
+      (t) =>
+        `${process.env.NEXT_PUBLIC_ASSETS_URL}${t.directus_files_id.id}?width=400&height=400`
     ) || [];
 
   const [selectedTexture, setSelectedTexture] = useState(textureUrls[0]);
@@ -38,12 +39,14 @@ const ProductDetails = ({ product }: Props) => {
           <p className="text-sm text-gray-600">
             Color:{" "}
             <span className="font-semibold text-black">
-              {product?.color_tones}
+              {product?.color_tones || product?.look}
             </span>
           </p>
           <div className="flex gap-4 mt-4">
-            <CustomButton button_type="arrow">Request More Info</CustomButton>
-            <CustomButton button_type="location" inverted>
+            <CustomButton href={"/consultation"} button_type="arrow">
+              Request More Info
+            </CustomButton>
+            <CustomButton href={"/locations"} button_type="location" inverted>
               Find In Store
             </CustomButton>
           </div>
@@ -66,23 +69,29 @@ const ProductDetails = ({ product }: Props) => {
           {/* Thumbnails */}
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
             {textureUrls.map((url, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedTexture(url)}
-                className={`w-14 h-14 rounded overflow-hidden border transition-all ${
-                  url === selectedTexture
-                    ? "border-red-500"
-                    : "border-transparent"
-                }`}
-              >
-                <Image
-                  src={url}
-                  alt={`Texture ${idx + 1}`}
-                  width={56}
-                  height={56}
-                  className="object-cover w-full h-full"
-                />
-              </button>
+              <div key={idx} className="relative group">
+                <button
+                  onClick={() => setSelectedTexture(url)}
+                  className={`w-14 h-14 cursor-pointer rounded overflow-hidden border transition-all ${
+                    url === selectedTexture
+                      ? "border-red-500"
+                      : "border-transparent"
+                  }`}
+                >
+                  <Image
+                    src={url}
+                    alt={`Texture ${idx + 1}`}
+                    width={56}
+                    height={56}
+                    className="object-cover w-full h-full"
+                  />
+                </button>
+
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                  {product?.textures[idx]?.directus_files_id?.title}
+                </div>
+              </div>
             ))}
           </div>
         </div>

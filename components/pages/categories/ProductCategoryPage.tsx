@@ -283,7 +283,7 @@ const ProductCategoryClient = ({ productsData }: Props) => {
                     product={product}
                     currentImage={
                       activeImages[product.id] ||
-                      product.textures?.[0]?.directus_files_id
+                      product.textures?.[0]?.directus_files_id.id
                     }
                     onTextureClick={(textureId: string) =>
                       setActiveImages((prev) => ({

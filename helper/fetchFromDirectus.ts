@@ -46,6 +46,7 @@ export const fetchPage = async (
                     "*",
                     "products.products_id.*",
                     "products.products_id.textures.*",
+                    "products.products_id.textures.directus_files_id.*",
                     "products.products_id.category.name",
                   ],
                   block_breadcrumb: ["*"],
@@ -83,9 +84,16 @@ export const fetchProducts = async (): Promise<TProduct[]> => {
   try {
     const result = await directus.request(
       readItems("products", {
-        fields: ["*", "category.name", "category.id", "textures.*"],
+        fields: [
+          "*",
+          "category.name",
+          "category.id",
+          "textures.*",
+          "textures.directus_files_id.*",
+        ],
       })
     );
+
     return result as TProduct[];
   } catch (error) {
     console.error("Error fetch Product", error);
@@ -275,7 +283,13 @@ export const getProductData = cache(async (id: string): Promise<TProduct> => {
           id,
         },
         sort: ["sort"],
-        fields: ["*", "category.name", "category.id", "textures.*"],
+        fields: [
+          "*",
+          "category.name",
+          "category.id",
+          "textures.*",
+          "textures.directus_files_id.*",
+        ],
       })
     );
 

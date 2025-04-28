@@ -165,9 +165,16 @@ export type TProduct = {
   rating: number;
   look: string;
   material: string;
-  textures: [{ id: number; product_id: string; directus_files_id: string }];
+  textures: TTexture[];
 };
-
+export type TTexture = {
+  id: number;
+  directus_files_id: {
+    id: string;
+    title: string;
+    filename_download: string;
+  };
+};
 export type TSettings = {
   nav_links: {
     label: string;
@@ -179,6 +186,10 @@ export type TSettings = {
   }[];
   footer_links: {
     label: string;
+    link: string;
+  }[];
+  social_links: {
+    icon: string;
     link: string;
   }[];
 };

@@ -18,7 +18,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onTextureClick,
 }) => {
   return (
-    <div className="bg-white p-3 rounded-lg drop-shadow-[#E1E1E140] drop-shadow-2xl hover:drop-shadow-lg transition">
+    <div className="bg-white hover:z-40 p-3 overflow-visible rounded-lg drop-shadow-[#E1E1E140] drop-shadow-2xl hover:drop-shadow-lg transition">
       {/* Main Image */}
       <div className="relative">
         <Image
@@ -34,36 +34,52 @@ const ProductCard: React.FC<ProductCardProps> = ({
       </div>
 
       {/* Texture Thumbnails */}
-      <div className="flex items-center gap-2 mt-4 overflow-x-auto">
-        {product.textures.map((texture, i) => (
-          <Image
-            key={i}
-            alt={product.name}
-            src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${texture.directus_files_id}`}
-            width={32}
-            height={32}
-            className={`w-8 h-8 m-1 rounded-full border cursor-pointer ${
-              currentImage === texture.directus_files_id
-                ? "border-primary ring-2 ring-primary"
-                : "border-gray-300"
-            }`}
-            onClick={() => onTextureClick(texture.directus_files_id)}
-          />
-        ))}
+      <div className="flex items-center gap-2 mt-4 ">
+        {product.textures.slice(0, 5).map((texture, i) => {
+          const textureId = texture.directus_files_id?.id;
+          const textureTitle = texture.directus_files_id?.title || product.name;
+
+          return (
+            <div key={i} className="relative group">
+              <Image
+                alt={textureTitle}
+                src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${textureId}`}
+                width={32}
+                height={32}
+                className={`w-7 h-7 m-1 rounded-full border cursor-pointer ${
+                  currentImage === textureId
+                    ? "border-primary ring-2 ring-primary"
+                    : "border-gray-300"
+                }`}
+                onClick={() => onTextureClick(textureId)}
+              />
+              {/* Tooltip */}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                {textureTitle}
+              </div>
+            </div>
+          );
+        })}
+
+        {product.textures.length > 5 && (
+          <Link
+            href={`/see-room/${product.id}?tile=${currentImage}           `}
+            className="rounded-full flex items-center justify-center text-sm"
+          >
+            +{product.textures.length - 5}
+          </Link>
+        )}
       </div>
 
       {/* Category and Name */}
       <p className="text-sm text-gray-600 my-3">{product.category?.name}</p>
       <h3 className="font-medium text-lg">{product.name}</h3>
 
-      <div className="flex  items-center gap-3">
-        {/* Ratings */}
-        <div className="flex items-center my-3 gap-1 text-yellow-500">
-          {[...Array(product.rating)].map((_, i) => (
-            <FaStar key={i} />
-          ))}
-        </div>
-        <span className="text-paragraph">(99)</span>
+      {/* Ratings */}
+      <div className="flex items-center my-3 gap-1 text-yellow-500">
+        {[...Array(product.rating)].map((_, i) => (
+          <FaStar key={i} />
+        ))}
       </div>
 
       {/* Actions */}
@@ -75,9 +91,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           Find In Store
         </Link>
         <Link
-          href={`/see-room/${product.id}?tile=${encodeURIComponent(
-            `${process.env.NEXT_PUBLIC_ASSETS_URL}${currentImage}`
-          )}`}
+          href={`/see-room/${product.id}?tile=${currentImage}`}
           className="border transition-all duration-300 text-nowrap border-primary text-primary hover:drop-shadow-md drop-shadow-none bg-white text-sm px-2 py-1 rounded-full"
         >
           See In My Room

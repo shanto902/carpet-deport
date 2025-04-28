@@ -1,18 +1,17 @@
+"use client";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-"use client";
 
 import { useSearchParams } from "next/navigation";
-
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { ReactCompareSlider } from "react-compare-slider";
 import PaddingContainer from "../../layout/PaddingContainer";
-import { FaGear, FaX } from "react-icons/fa6";
-import { FaCamera, FaPaintBrush } from "react-icons/fa";
+import { FaGear, FaX, FaCamera } from "react-icons/fa6";
 import { TProduct } from "@/interfaces";
-import { DEFAULT_POINTS } from "@/assets/data/points";
+import { FaPaintBrush } from "react-icons/fa";
 
 const ROBOFLOW_PROJECT = "wall-floor-inylg-rc21q";
 const ROBOFLOW_VERSION = "2";
@@ -23,26 +22,32 @@ const DEFAULT_IMAGE = "/rooms/bedroom.jpg";
 
 const ROOM_IMAGES = [
   { label: "Bedroom", src: "/rooms/bedroom.jpg" },
-  { label: "Living Room", src: "/rooms/bathroom.jpg" },
+  { label: "Bathroom", src: "/rooms/bathroom.jpg" },
   { label: "Kitchen", src: "/rooms/kitchen.jpg" },
   { label: "Corridor", src: "/rooms/corridor.png" },
 ];
+
+export function getTextureUrl(id: string) {
+  return `${process.env.NEXT_PUBLIC_ASSETS_URL}${id}?width=200&height=200`;
+}
 
 const COLOR_SWATCHES = ["#ffcccb", "#c1f0f6", "#d0f0c0", "#f9f6c2", "#e0d4f7"];
 
 const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
   const TILE_OPTIONS =
-    product?.textures?.map(
-      (t) => `${process.env.NEXT_PUBLIC_ASSETS_URL}${t.directus_files_id}`
-    ) || [];
+    product?.textures?.map((t) => ({
+      id: t.directus_files_id.id, // fallback if no title
+      url: `${process.env.NEXT_PUBLIC_ASSETS_URL}${t.directus_files_id.id}?width=200&height=200`,
+    })) || [];
 
   const searchParams = useSearchParams();
   const tileFromQuery = searchParams.get("tile");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [ready, setReady] = useState(false);
 
+  const [ready, setReady] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
   const [skew, setSkew] = useState(0);
@@ -60,77 +65,47 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
   const [selectedTile, setSelectedTile] = useState<string | null>(null);
   const [wallColor, setWallColor] = useState<string>("transparent");
 
-  useEffect(() => {
-    if (!baseImageUrl && DEFAULT_IMAGE) {
-      const img = new Image();
-      img.src = DEFAULT_IMAGE;
-      img.onload = () => {
-        setBaseImageUrl(DEFAULT_IMAGE);
-        setReady(true);
-      };
-      img.onerror = () => {
-        console.error("Failed to load default image:", DEFAULT_IMAGE);
-        setReady(true); // Even if error, let app continue
-      };
-    }
-  }, [baseImageUrl]);
-
+  // Load from localstorage OR fetch default
   useEffect(() => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (saved) {
-      const {
-        baseImageUrl,
-        floorPoints,
-        wallPoints,
-        selectedTile,
-        rotation,
-        scale,
-        wallColor,
-      } = JSON.parse(saved);
-      setBaseImageUrl(baseImageUrl);
-      setFloorPoints(floorPoints);
-      setWallPoints(wallPoints);
-      setSelectedTile(selectedTile);
-      setRotation(rotation);
-      setScale(scale);
-      setSkew(skew);
-      setWallColor(wallColor);
+      const data = JSON.parse(saved);
+      setBaseImageUrl(data.baseImageUrl);
+      setFloorPoints(data.floorPoints);
+      setWallPoints(data.wallPoints);
+      setSelectedTile(data.selectedTile);
+      setRotation(data.rotation);
+      setScale(data.scale);
+      setSkew(data.skew);
+      setWallColor(data.wallColor);
+      setReady(true);
     } else {
-      setBaseImageUrl(DEFAULT_IMAGE);
-      setFloorPoints(DEFAULT_POINTS.floorPoints);
-      setWallPoints(DEFAULT_POINTS.wallPoints);
-      if (tileFromQuery) {
-        setSelectedTile(decodeURIComponent(tileFromQuery));
-      } else if (TILE_OPTIONS.length > 0) {
-        setSelectedTile(TILE_OPTIONS[0]);
-      }
+      fetchAndProcessImage(DEFAULT_IMAGE);
+      setReady(true);
     }
-
-    setReady(true); // Mark as ready to trigger drawScene
   }, []);
 
   useEffect(() => {
-    // Debounce URL update
+    if (!selectedTile && tileFromQuery) {
+      setSelectedTile(decodeURIComponent(tileFromQuery));
+    } else if (!selectedTile && TILE_OPTIONS.length > 0) {
+      setSelectedTile(TILE_OPTIONS[0].url);
+    }
+  }, [tileFromQuery, TILE_OPTIONS]);
+
+  useEffect(() => {
     const timeout = setTimeout(() => {
       if (selectedTile) {
         const url = new URL(window.location.href);
         url.searchParams.set("tile", encodeURIComponent(selectedTile));
         window.history.replaceState({}, "", url.toString());
       }
-    }, 300); // add slight delay to prevent too frequent updates
-
+    }, 300);
     return () => clearTimeout(timeout);
   }, [selectedTile]);
 
-  // This should only run once to initialize from URL
   useEffect(() => {
-    if (!selectedTile && tileFromQuery) {
-      setSelectedTile(decodeURIComponent(tileFromQuery));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (baseImageUrl && floorPoints && selectedTile) {
+    if (baseImageUrl && floorPoints && selectedTile && ready) {
       drawScene(baseImageUrl, floorPoints, wallPoints);
       localStorage.setItem(
         LOCAL_STORAGE_KEY,
@@ -177,12 +152,11 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
   const fetchAndProcessImage = async (src: string) => {
     try {
       setLoading(true);
-      const res = await fetch(src);
-      const originalBlob = await res.blob();
 
       const img = await new Promise<HTMLImageElement>((resolve, reject) => {
         const image = new Image();
-        image.src = URL.createObjectURL(originalBlob);
+        image.crossOrigin = "anonymous";
+        image.src = src;
         image.onload = () => resolve(image);
         image.onerror = reject;
       });
@@ -190,9 +164,9 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       let { width, height } = img;
       const maxWidth = 1920;
       const maxHeight = 1080;
-      const scale = Math.min(maxWidth / width, maxHeight / height, 1);
-      width *= scale;
-      height *= scale;
+      const scaleResize = Math.min(maxWidth / width, maxHeight / height, 1);
+      width *= scaleResize;
+      height *= scaleResize;
 
       const canvas = document.createElement("canvas");
       canvas.width = width;
@@ -201,7 +175,7 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       ctx?.drawImage(img, 0, 0, width, height);
 
       const compressedBlob: Blob = await new Promise((resolve) =>
-        canvas.toBlob((b) => b && resolve(b), "image/jpeg", 0.7)
+        canvas.toBlob((b) => b && resolve(b), "image/jpeg", 0.6)
       );
 
       const file = new File([compressedBlob], "room.jpg", {
@@ -209,7 +183,7 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       });
       const base64 = await fileToBase64(file);
       const localUrl = URL.createObjectURL(file);
-      // Step 5: Roboflow API call
+
       const response = await axios.post(
         `https://detect.roboflow.com/${ROBOFLOW_PROJECT}/${ROBOFLOW_VERSION}`,
         base64,
@@ -220,14 +194,19 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       );
 
       const predictions = response.data.predictions;
-      const floor = predictions.find(
-        (p: any) => p.class === "floor" && p.points
-      );
-      const wall = predictions.find((p: any) => p.class === "wall" && p.points);
+      const floor = predictions.find((p: any) => p.class === "floor");
+      const wall = predictions.find((p: any) => p.class === "wall");
 
       setBaseImageUrl(localUrl);
       setFloorPoints(floor?.points || null);
       setWallPoints(wall?.points || null);
+
+      setTimeout(() => {
+        if (localUrl && floor?.points && selectedTile) {
+          drawScene(localUrl, floor.points, wall?.points || null);
+          setReady(true);
+        }
+      }, 100);
     } catch (err) {
       console.error("Image processing failed:", err);
     } finally {
@@ -245,13 +224,15 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
     if (!canvas || !ctx || !selectedTile) return;
 
     const baseImg = await loadImage(baseImgUrl);
-    const texture = await loadImage(selectedTile);
+    const texture = await loadImage(getTextureUrl(selectedTile));
 
     const skewRadians = (skew * Math.PI) / 180;
     canvas.width = baseImg.width;
     canvas.height = baseImg.height;
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any existing transforms
+
     ctx.drawImage(baseImg, 0, 0);
 
     if (floor.length > 2) {
@@ -262,7 +243,7 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       ctx.closePath();
       ctx.clip();
 
-      const safeScale = Math.max(0.1, scale || 1); // protect from zero/undefined scale
+      const safeScale = Math.max(0.1, scale || 1);
       const patternSize = Math.ceil(200 * safeScale);
       const patternCanvas = document.createElement("canvas");
       const patternCtx = patternCanvas.getContext("2d");
@@ -306,9 +287,13 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
   return (
     <div className="bg-[#F8FAFB]">
       <PaddingContainer className="py-16">
-        <div className=" text-left mb-10">
+        <div className=" text-left mb-10 space-y-2">
           <h2 className="text-3xl font-bold">See In My Room</h2>
           <p>Transform your room in real-time by uploading a photo now</p>
+          <p>
+            Upload a clear, well-lit photo of the entire room, taken
+            straight-on, to get the most accurate visualization.
+          </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">
@@ -341,7 +326,7 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
                 <div className="bg-transparent w-full h-full flex justify-center items-center overflow-hidden" />
               )}
               {loading && (
-                <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-50">
+                <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center z-30">
                   <div className="flex flex-col items-center space-y-2">
                     <svg
                       className="animate-spin h-10 w-10 text-primary"
@@ -443,10 +428,10 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
             {TILE_OPTIONS.map((tile, i) => (
               <img
                 key={i}
-                src={tile}
-                onClick={() => setSelectedTile(tile)}
+                src={tile.url}
+                onClick={() => setSelectedTile(tile.id)}
                 className={`w-12 h-12 rounded border cursor-pointer ${
-                  selectedTile === tile ? "ring-2 ring-red-500" : ""
+                  selectedTile === tile.id ? "ring-2 ring-red-500" : ""
                 }`}
                 alt="tile"
               />

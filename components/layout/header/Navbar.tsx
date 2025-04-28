@@ -47,7 +47,7 @@ const NavBar = ({
             : "translate-y-0 opacity-100"
         }`}
       >
-        <TopBar />
+        <TopBar settings={settings} />
       </div>
 
       {/* Sticky Navbar */}
@@ -60,7 +60,7 @@ const NavBar = ({
             {/* Logo */}
             <Link href={"/"}>
               <Image
-                className="h-16 w-fit"
+                className="h-20 w-fit"
                 priority
                 src={logo}
                 alt="logo"

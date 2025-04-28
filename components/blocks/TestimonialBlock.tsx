@@ -39,7 +39,9 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
           <h2 className="text-3xl md:text-4xl font-bold text-[#1E1E1E] leading-snug mb-6">
             What Our Clients <br /> Have To Say
           </h2>
-          <CustomButton className="w-full md:w-fit">Get Started</CustomButton>
+          <CustomButton href="/consultation" className="w-full md:w-fit">
+            Get Started
+          </CustomButton>
         </div>
 
         {/* Right Content (Slider) */}
