@@ -159,6 +159,8 @@ export type TProductShowCaseBlock = {
 };
 
 export type TProduct = {
+  date_updated: string;
+  date_created: string;
   id: string;
   category: {
     id: number;
@@ -214,6 +216,8 @@ export type TCategory = {
 };
 
 export type TLocation = {
+  date_updated: string;
+  date_created: string;
   id: string;
   status: string;
   seo: TSeo;
@@ -304,6 +308,11 @@ export type TInspiredGalleryBlock = {
 };
 
 export type TBlog = {
+  author: {
+    id: string;
+    name: string;
+    photo: string;
+  };
   id: string;
   title: string;
   slug: string;
@@ -311,6 +320,6 @@ export type TBlog = {
   body: string;
   date_created: string;
   date_updated: string;
-  author_image: string;
+
   category: TCategory;
 };

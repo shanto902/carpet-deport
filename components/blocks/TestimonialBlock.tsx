@@ -3,13 +3,15 @@ import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PaddingContainer from "@/components/layout/PaddingContainer";
 import CustomButton from "@/components/common/CustomButton";
 import { TTestimonialBlock } from "@/interfaces";
 
 const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [pause, setPause] = useState(false);
+
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     initial: 0,
     loop: true,
@@ -30,8 +32,25 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const toggleExpand = (id: string) => {
-    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+    setExpanded((prev) => {
+      const newState = { ...prev, [id]: !prev[id] };
+      const isExpanding = newState[id];
+      setPause(isExpanding); // If expanding, pause autoplay
+      return newState;
+    });
   };
+
+  useEffect(() => {
+    if (!instanceRef.current) return;
+
+    if (pause) return; // <-- Add this line to pause autoplay when needed
+
+    const interval = setInterval(() => {
+      instanceRef.current?.next();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [instanceRef, pause]);
 
   return (
     <section className="py-20 bg-white">

@@ -249,7 +249,7 @@ export const getBlogData = cache(async (slug: string): Promise<TBlog> => {
           },
         },
         sort: ["sort"],
-        fields: ["*", "category.id"],
+        fields: ["*", "category.id", "author.*"],
       })
     );
 
