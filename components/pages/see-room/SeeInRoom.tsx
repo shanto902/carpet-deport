@@ -14,9 +14,6 @@ import { FaGear, FaX, FaCamera } from "react-icons/fa6";
 import { TProduct } from "@/interfaces";
 import { FaPaintBrush } from "react-icons/fa";
 
-const ROBOFLOW_PROJECT = "wall-floor-inylg-rc21q";
-const ROBOFLOW_VERSION = "2";
-const ROBOFLOW_API_KEY = "VL1oLunXvkJfYp4ZdPWb";
 const LOCAL_STORAGE_KEY = "seeInRoomSettings";
 
 const DEFAULT_IMAGE = "/rooms/bedroom.jpg";
@@ -185,14 +182,9 @@ const SeeInRoomSegmented = ({ product }: { product: TProduct }) => {
       const base64 = await fileToBase64(file);
       const localUrl = URL.createObjectURL(file);
 
-      const response = await axios.post(
-        `https://detect.roboflow.com/${ROBOFLOW_PROJECT}/${ROBOFLOW_VERSION}`,
+      const response = await axios.post("/api/roboflow", {
         base64,
-        {
-          params: { api_key: ROBOFLOW_API_KEY },
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        }
-      );
+      });
 
       const predictions = response.data.predictions;
 

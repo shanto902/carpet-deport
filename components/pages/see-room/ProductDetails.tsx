@@ -16,7 +16,7 @@ const ProductDetails = ({ product }: Props) => {
   const textureUrls =
     product?.textures?.map(
       (t) =>
-        `${process.env.NEXT_PUBLIC_ASSETS_URL}${t.directus_files_id.id}?width=400&height=400`
+        `${process.env.NEXT_PUBLIC_ASSETS_URL}${t.directus_files_id.id}?width=300&height=300`
     ) || [];
 
   const [selectedTexture, setSelectedTexture] = useState(textureUrls[0]);
@@ -67,7 +67,7 @@ const ProductDetails = ({ product }: Props) => {
           )}
 
           {/* Thumbnails */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {textureUrls.map((url, idx) => (
               <div key={idx} className="relative group">
                 <button

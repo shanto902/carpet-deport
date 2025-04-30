@@ -29,33 +29,37 @@ const LocationMap = ({ coordinate }: { coordinate: number[] }) => {
   useEffect(() => {
     if (!isLoaded) return;
 
-    navigator.geolocation.getCurrentPosition((position) => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
       const origin = {
         lat: position.coords.latitude,
         lng: position.coords.longitude,
       };
       setUserLocation(origin);
 
-      const directionsService = new google.maps.DirectionsService();
-      directionsService.route(
-        {
-          origin,
-          destination: storeLatLng,
-          travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (result, status) => {
-          if (status === "OK") {
-            setDirections(result);
-          } else if (status === "ZERO_RESULTS") {
-            toast.error("No routes found between your location and the store.");
-          } else {
-            toast.error(
-              "Something went wrong. Enable location access and reload the page."
-            );
-            console.error("Error fetching directions:", result);
-          }
+      try {
+        const response = await fetch("/api/directions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ origin, destination: storeLatLng }),
+        });
+
+        const data = await response.json();
+
+        if (data.routes && data.routes.length > 0) {
+          const directionsResult = {
+            geocoded_waypoints: [],
+            routes: data.routes,
+            request: {},
+          } as unknown as google.maps.DirectionsResult;
+
+          setDirections(directionsResult);
+        } else {
+          toast.error("No routes found between your location and the store.");
         }
-      );
+      } catch (err) {
+        toast.error("Failed to fetch directions. Please try again.");
+        console.error("Directions error:", err);
+      }
     });
   }, [isLoaded]);
 

@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { BiSolidShareAlt } from "react-icons/bi";
 import { FaFacebookF, FaLinkedinIn, FaPinterestP } from "react-icons/fa";
-import { RxCross2 } from "react-icons/rx";
 import { readItems } from "@directus/sdk";
 import { stripHtml } from "string-strip-html"; // install this package if you don't have it
 
@@ -20,6 +19,7 @@ import { Square, SquareCheck } from "lucide-react";
 import PaddingContainer from "@/components/layout/PaddingContainer";
 import { Metadata, ResolvingMetadata } from "next";
 import BlogSearch from "@/components/pages/blog/BlogSearch";
+import { FaX } from "react-icons/fa6";
 
 interface PageProps {
   params: Promise<{
@@ -110,6 +110,11 @@ export default async function BlogPage({ params }: PageProps) {
   }
   const categories = await fetchCategories();
 
+  const facebookShare = `https://www.facebook.com/sharer/sharer.php?u=${process.env.NEXT_PUBLIC_SITE_URL}blog/${slug}`;
+  const pinterestShare = `https://pinterest.com/pin/create/button/?url=${process.env.NEXT_PUBLIC_SITE_URL}blog/${slug}}`;
+  const linkedinShare = `https://www.linkedin.com/shareArticle?mini=true&url=${process.env.NEXT_PUBLIC_SITE_URL}blog/${slug}`;
+  const twitterShare = `https://twitter.com/intent/tweet?url=${process.env.NEXT_PUBLIC_SITE_URL}blog/${slug}`;
+
   const relatedPosts = await getRelatedBlogs(blogData.category.id);
 
   return (
@@ -130,21 +135,41 @@ export default async function BlogPage({ params }: PageProps) {
           <PostBody body={blogData.body} />
         </div>
         {/* Share Icons */}
-        <div className="flex items-center gap-4 ">
+        <div className="flex items-center gap-4">
           <BiSolidShareAlt className="text-red-500 text-2xl" />
           <div className="flex gap-3">
-            <button className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center">
+            <a
+              href={facebookShare}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center"
+            >
               <FaFacebookF />
-            </button>
-            <button className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center">
+            </a>
+            <a
+              href={pinterestShare}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center"
+            >
               <FaPinterestP />
-            </button>
-            <button className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center">
+            </a>
+            <a
+              href={linkedinShare}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center"
+            >
               <FaLinkedinIn />
-            </button>
-            <button className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center">
-              <RxCross2 />
-            </button>
+            </a>
+            <a
+              href={twitterShare}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center"
+            >
+              <FaX />
+            </a>
           </div>
         </div>
 
