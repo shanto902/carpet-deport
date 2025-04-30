@@ -29,6 +29,7 @@ import {
 import directus from "@/lib/directus";
 import { readItems } from "@directus/sdk";
 import { Metadata, ResolvingMetadata } from "next";
+import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
 
 interface PageProps {
@@ -55,11 +56,18 @@ export async function generateMetadata(
       })
     );
 
+    if (!result || result.length === 0) {
+      return {
+        title: "Page not found",
+        description: "This page does not exist.",
+      };
+    }
+
     const previousImages = (await parent).openGraph?.images || [];
     if (result && result.length > 0) {
       const page = result[0];
       return {
-        title: page.seo.title || page.name || "Page not found",
+        title: page.seo.title || page.name || "No description available",
         description: page.seo.meta_description || "",
         openGraph: {
           images: page.seo.og_image
@@ -201,7 +209,7 @@ const page = async ({ params }: PageProps) => {
   const pageData = await fetchPage(permalink);
 
   if (!pageData) {
-    return <div>Page not found</div>;
+    notFound();
   }
   return (
     <div key={pageData.id}>

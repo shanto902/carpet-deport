@@ -20,6 +20,7 @@ import PaddingContainer from "@/components/layout/PaddingContainer";
 import { Metadata, ResolvingMetadata } from "next";
 import BlogSearch from "@/components/pages/blog/BlogSearch";
 import { FaX } from "react-icons/fa6";
+import { toast } from "sonner";
 
 interface PageProps {
   params: Promise<{
@@ -105,7 +106,7 @@ export default async function BlogPage({ params }: PageProps) {
   const blogData = await getBlogData(slug);
 
   if (!blogData) {
-    console.error(`Blog not found for slug: ${slug}`);
+    toast.error("Blog not found");
     redirect("/blog");
   }
   const categories = await fetchCategories();

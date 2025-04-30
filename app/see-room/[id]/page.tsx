@@ -102,7 +102,9 @@ const page = async ({ params }: PageProps) => {
         title="See in my room"
         breadcrumb={["Product Categories", product.name]}
       />
-      <ProductDetails product={product} />
+      <Suspense>
+        <ProductDetails product={product} />
+      </Suspense>
       <Suspense>
         <SeeInRoom product={product} />
       </Suspense>

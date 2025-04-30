@@ -115,12 +115,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     {
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}`, // homepage
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}`,
     },
-    ...staticPages, // your manually added pages first
-    ...pageEntries, // dynamic CMS pages
-    ...projectEntries, // see-room projects
-    ...blogEntries, // blogs
-    ...locationEntries, // locations
+    ...staticPages,
+    ...pageEntries,
+    ...projectEntries,
+    ...blogEntries,
+    ...locationEntries,
   ];
 }

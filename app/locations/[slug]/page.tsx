@@ -11,6 +11,7 @@ import PaddingContainer from "@/components/layout/PaddingContainer";
 import { Suspense } from "react";
 import Reviews from "@/components/pages/location/Reviews";
 import { Metadata, ResolvingMetadata } from "next";
+import { notFound } from "next/navigation";
 
 interface PageProps {
   params: Promise<{
@@ -37,7 +38,13 @@ export async function generateMetadata(
           location.google_map.properties.formated ||
           "",
         openGraph: {
-          images: location.image
+          images: location.seo.og_image
+            ? [
+                {
+                  url: `${process.env.NEXT_PUBLIC_ASSETS_URL}${location.seo.og_image}`,
+                },
+              ]
+            : location.image
             ? [
                 {
                   url: `${process.env.NEXT_PUBLIC_ASSETS_URL}${location.image}`,
@@ -50,7 +57,7 @@ export async function generateMetadata(
 
     // Default metadata if the page is not found
     return {
-      title: "Blog not Found",
+      title: "Location not found",
       description: "This page does not exist.",
     };
   } catch (error) {
@@ -97,6 +104,9 @@ const LocationPage = async ({ params }: PageProps) => {
   const { slug } = await params;
   const location: TLocation = await fetchLocation(slug);
 
+  if (!location) {
+    notFound();
+  }
   return (
     <>
       <BreadcrumbBanner
