@@ -15,7 +15,7 @@ const LocationsListPage = async () => {
   return (
     <>
       <BreadcrumbBanner title="Locations" breadcrumb={["Locations"]} />
-      <PaddingContainer>
+      <PaddingContainer className="pb-10">
         <SortedLocations locations={locationData} />
       </PaddingContainer>
     </>

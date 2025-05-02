@@ -5,7 +5,6 @@ import Image from "next/image";
 import { FiMapPin, FiPhone } from "react-icons/fi";
 import CustomButton from "@/components/common/CustomButton";
 import { TLocation } from "@/interfaces";
-import PaddingContainer from "@/components/layout/PaddingContainer";
 
 const LOCAL_STORAGE_KEY = "cached_location";
 
@@ -161,15 +160,15 @@ const SortedLocations = ({ locations }: Props) => {
         const storeHourLines = formatStoreHours(store_status);
 
         return (
-          <PaddingContainer key={id}>
-            <div className="bg-white my-10 rounded-lg drop-shadow-xl p-6 flex  xl:flex-row flex-col xl:items-center gap-6 mb-6">
-              <div className="md:flex gap-6 md:gap-10 items-center">
+          <div key={id}>
+            <div className="bg-white my-10 rounded-lg drop-shadow-xl p-6 flex justify-between  xl:flex-row flex-col xl:items-center gap-6">
+              <div className="md:flex gap-6 max md:gap-10 items-center">
                 <Image
-                  width={300}
-                  height={300}
+                  width={1000}
+                  height={1000}
                   src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${thumbnail_image}`}
                   alt={name}
-                  className="aspect-square object-cover rounded mb-4 md:mb-0"
+                  className="aspect-square max-h-[200px] md:max-w-[200px] object-cover rounded mb-4 md:mb-0"
                 />
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold mb-2">{name}</h3>
@@ -197,7 +196,7 @@ const SortedLocations = ({ locations }: Props) => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-1 flex-col md:flex-row items-start md:items-end gap-2 mt-4 md:mt-0">
+              <div className="flex flex-1 flex-col md:flex-row justify-end md:items-end gap-2 mt-4 md:mt-0">
                 <CustomButton
                   href={`/locations/${location.slug}`}
                   button_type="question"
@@ -214,7 +213,7 @@ const SortedLocations = ({ locations }: Props) => {
                 </CustomButton>
               </div>
             </div>
-          </PaddingContainer>
+          </div>
         );
       })}
     </>

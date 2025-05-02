@@ -114,7 +114,7 @@ const LocationPage = async ({ params }: PageProps) => {
         breadcrumb={["Locations", location.name]}
       />
 
-      <PaddingContainer className="max-w-7xl mx-auto px-4 py-12 space-y-10">
+      <PaddingContainer className="md:max-w-7xl mx-auto py-12 space-y-10">
         {/* Top section */}
         <div className="items-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-10">
           <div className="space-y-2 col-span-1 bg-secondary h-full w-full rounded-2xl flex justify-center flex-col p-10">
@@ -141,9 +141,9 @@ const LocationPage = async ({ params }: PageProps) => {
             <Image
               src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${location.image}`}
               alt="Store Photo"
-              width={600}
-              height={400}
-              className="w-full object-cover lg:max-h-[320px]"
+              width={1200}
+              height={600}
+              className="w-full object-contain"
             />
           </div>
         </div>

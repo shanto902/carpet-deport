@@ -8,7 +8,7 @@ import TopBar from "./TopBar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import CustomButton from "@/components/common/CustomButton";
-import BottomNavbar from "./BottomNavbar";
+import BottomNavbar, { getCityName } from "./BottomNavbar";
 import PaddingContainer from "../PaddingContainer";
 import { TLocation, TSettings } from "@/interfaces";
 
@@ -69,12 +69,12 @@ const NavBar = ({
               />
             </Link>
             <div className="flex items-center gap-5">
-              <ul className=" text-base xl:text-lg  flex space-x-5">
+              <ul className=" text-base xl:text-lg   flex space-x-5">
                 {settings?.nav_links?.map((item, index) => (
                   <li key={index} className="relative group">
                     <Link
                       href={`${item.link}`}
-                      className={`flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in-out group: ${
+                      className={`flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in-out hover:text-primary group: ${
                         pathName === item.link ? "font-bold" : ""
                       }`}
                     >
@@ -95,7 +95,7 @@ const NavBar = ({
                           <li key={subIndex}>
                             <Link
                               href={`${subItem.link}`}
-                              className={`block px-4 py-2 text-sm text-white-700  hover:bg-white ${
+                              className={`block px-4 py-2 hover:bg-primary text-sm text-white-700  hover:text-white  ${
                                 pathName === subItem.link
                                   ? "underline underline-offset-4"
                                   : ""
@@ -137,7 +137,7 @@ const NavBar = ({
 
         {/* Mobile Menu */}
         <aside
-          className={`fixed inset-0 bg-white z-30 flex flex-col items-center justify-start pt-16 gap-6 transition-transform duration-300 lg:hidden ${
+          className={`fixed inset-0 pb-20 bg-white z-30 flex flex-col items-center justify-start pt-16 gap-6 transition-transform duration-300 lg:hidden ${
             isOpen ? "translate-x-0" : "translate-x-full"
           } h-screen overflow-y-auto`}
         >
@@ -148,7 +148,6 @@ const NavBar = ({
             <X size={28} />
           </button>
 
-          {/* Ensure scrolling works */}
           <ul className="text-lg uppercase font-bold flex flex-col gap-5 w-full px-6">
             <Link onClick={() => setIsOpen(false)} href={"/"}>
               <Image className="h-10  w-fit" src={logo} priority alt="logo" />
@@ -181,6 +180,22 @@ const NavBar = ({
                     ))}
                   </ul>
                 )}
+                {item.link === "/locations" &&
+                  (!item.children || item.children.length === 0) && (
+                    <ul className="pl-4 mt-2">
+                      {locations?.map((location, i) => (
+                        <li key={i}>
+                          <Link
+                            href={`/locations/${location.slug}`}
+                            className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {getCityName(location.name)}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
               </li>
             ))}
           </ul>
