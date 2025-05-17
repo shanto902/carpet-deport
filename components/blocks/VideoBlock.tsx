@@ -41,7 +41,7 @@ export const VideoBlock = ({ block }: { block: TVideoBlock }) => {
               key={index}
               className="keen-slider__slide flex justify-center px-4"
             >
-              <div className="w-full max-w-[1000px] aspect-[16/7] rounded-xl overflow-hidden shadow-lg">
+              <div className="w-full max-w-[1000px] aspect-video md:aspect-[16/7] rounded-xl overflow-hidden shadow-lg">
                 <iframe
                   className="w-full h-full"
                   src={`https://www.youtube.com/embed/${getYouTubeVideoID(
