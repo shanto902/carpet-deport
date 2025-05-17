@@ -112,6 +112,7 @@ const LocationPage = async ({ params }: PageProps) => {
       <BreadcrumbBanner
         title={location.name}
         breadcrumb={["Locations", location.name]}
+        image={location.breadcrumb_image}
       />
 
       <PaddingContainer className="md:max-w-7xl mx-auto py-12 space-y-10">

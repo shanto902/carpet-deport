@@ -4,21 +4,25 @@ import PaddingContainer from "../layout/PaddingContainer";
 
 type Props = {
   title: string;
-
-  breadcrumb?: string[];
+  image?: string;
+  breadcrumb: string[];
 };
 
 export default function BreadcrumbBanner({
   title,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
+  image,
   breadcrumb = [],
 }: Props) {
   return (
     <div className="relative h-[250px] w-full overflow-hidden">
       {/* Background Image */}
       <Image
-        src={"/images/breadcrumb.jpg"}
+        src={
+          image
+            ? `${process.env.NEXT_PUBLIC_ASSETS_URL}${image}`
+            : "/images/hero.jpg"
+        }
         alt={title}
         layout="fill"
         objectFit="cover"

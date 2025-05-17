@@ -7,7 +7,7 @@ import { FaStar } from "react-icons/fa";
 import BreadcrumbBanner from "@/components/common/BreadcrumbBanner";
 import PaddingContainer from "@/components/layout/PaddingContainer";
 import ProductCard from "@/components/cards/ProductCard";
-import { TProduct } from "@/interfaces";
+import { TProduct, TSettings } from "@/interfaces";
 
 const filterFields = [
   "category.name",
@@ -23,9 +23,10 @@ const filterFields = [
 
 type Props = {
   productsData: TProduct[];
+  settings: TSettings;
 };
 
-const ProductCategoryClient = ({ productsData }: Props) => {
+const ProductCategoryClient = ({ productsData, settings }: Props) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -152,6 +153,7 @@ const ProductCategoryClient = ({ productsData }: Props) => {
       <BreadcrumbBanner
         title="Product Categories"
         breadcrumb={["Product Categories"]}
+        image={settings.product_categories}
       />
       <PaddingContainer className="flex flex-col md:flex-row py-6 gap-6">
         <aside className="w-full md:w-1/5">

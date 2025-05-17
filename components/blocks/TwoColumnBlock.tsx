@@ -11,12 +11,12 @@ const TwoColumnBlock = ({ block }: { block: TTwoColumnBlock }) => {
       className={`py-10 ${block.sort % 2 === 0 ? "bg-white" : " bg-[#F8FAFB]"}`}
     >
       <PaddingContainer
-        className={` flex flex-col ${
-          block.item.layout === "right" ? "md:flex-row" : "md:flex-row-reverse"
-        } items-center gap-10`}
+        className={`grid md:min-h-[400px] grid-cols-1 md:grid-cols-2 gap-10 items-stretch ${
+          block.item.layout === "right" ? "" : "md:[direction:rtl]"
+        }`}
       >
         {/* Text Content */}
-        <div className="md:w-1/2">
+        <div className=" order-2 md:order-none h-full place-content-center [direction:ltr]">
           <Body>{block.item.body}</Body>
 
           {block.item.button === "yes" && (
@@ -30,18 +30,25 @@ const TwoColumnBlock = ({ block }: { block: TTwoColumnBlock }) => {
           )}
         </div>
 
-        {/* Image */}
-        <div className="md:w-1/2">
+        {/* Image or Video */}
+        <div className="h-full order-1 md:order-none">
           {block.item.media_type === "image" ? (
-            <Image
-              src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${block.item.image}`}
-              alt="Two Column Block Image"
-              width={500}
-              height={500}
-              className="w-full h-auto max-h-[390px] object-cover rounded-lg"
-            />
+            <div
+              className={`
+    relative w-full overflow-hidden rounded-lg 
+    aspect-[4/3] md:aspect-auto h-auto md:h-full
+  `}
+            >
+              <Image
+                src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${block.item.image}`}
+                alt="Two Column Block Image"
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
           ) : (
-            <div className="relative   w-full mix-blend-multiply">
+            <div className="relative w-full h-full mix-blend-multiply">
               <VideoPlayer video={block.item.video as string} />
             </div>
           )}

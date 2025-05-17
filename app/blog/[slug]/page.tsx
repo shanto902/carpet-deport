@@ -240,7 +240,7 @@ export default async function BlogPage({ params }: PageProps) {
                   alt={post.title}
                   width={100}
                   height={100}
-                  className="rounded-lg w-20 h-20 object-cover"
+                  className="rounded-lg w-20 h-20 object-cover aspect-square"
                 />
                 <div className="text-base space-y-1">
                   <p className="font-medium">

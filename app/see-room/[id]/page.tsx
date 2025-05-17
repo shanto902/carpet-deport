@@ -3,8 +3,9 @@ import ProductDetails from "@/components/pages/see-room/ProductDetails";
 import ProductSpecification from "@/components/pages/see-room/ProductSpecification";
 import SeeInRoom from "@/components/pages/see-room/SeeInRoom";
 import { getProductData } from "@/helper/fetchFromDirectus";
+import { TSettings } from "@/interfaces";
 import directus from "@/lib/directus";
-import { readItems } from "@directus/sdk";
+import { readItems, readSingleton } from "@directus/sdk";
 import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -90,7 +91,9 @@ export const generateStaticParams = async () => {
 };
 const page = async ({ params }: PageProps) => {
   const { id } = await params;
-
+  const settings = (await directus.request(
+    readSingleton("settings")
+  )) as TSettings;
   const product = await getProductData(id);
   if (!product) {
     return notFound();
@@ -101,6 +104,7 @@ const page = async ({ params }: PageProps) => {
       <BreadcrumbBanner
         title="See in my room"
         breadcrumb={["Product Categories", product.name]}
+        image={settings.see_in_room}
       />
       <Suspense>
         <ProductDetails product={product} />

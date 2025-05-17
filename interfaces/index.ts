@@ -204,6 +204,11 @@ export type TSettings = {
     icon: string;
     link: string;
   }[];
+  product_categories: string;
+  see_in_room: string;
+  blog: string;
+  locations: string;
+  consultation: string;
 };
 
 export type TCategory = {
@@ -216,6 +221,7 @@ export type TCategory = {
 };
 
 export type TLocation = {
+  breadcrumb_image: string;
   date_updated: string;
   date_created: string;
   id: string;

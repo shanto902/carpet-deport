@@ -16,7 +16,7 @@ export default function BreadcrumbBlock({
         src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${block.item.image}`}
         alt={block.item.title}
         fill
-        objectFit="cover"
+        objectFit="cover w-full"
         className="z-0"
         priority
       />
