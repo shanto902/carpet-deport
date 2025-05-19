@@ -179,7 +179,7 @@ export default function InStoreConsultationForm() {
                 type="tel"
                 inputMode="numeric"
                 name="number"
-                placeholder="Number"
+                placeholder="Phone Number"
                 value={form.number}
                 onChange={handleChange}
                 className="w-full bg-white mt-2 px-4 py-2 rounded-full focus:outline-none"
