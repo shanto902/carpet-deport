@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { formatPhone } from "./formInput";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -52,7 +53,8 @@ export default function InStoreConsultationForm() {
           : prev.productTypes?.filter((item) => item !== value) || [],
       }));
     } else {
-      setForm({ ...form, [name]: value });
+      const newValue = name === "number" ? formatPhone(value) : value;
+      setForm({ ...form, [name]: newValue });
     }
   };
 
@@ -174,13 +176,15 @@ export default function InStoreConsultationForm() {
               </label>
               <input
                 id="number"
-                type="text"
+                type="tel"
+                inputMode="numeric"
                 name="number"
-                placeholder="Phone Number"
+                placeholder="(404) 555-1212"
                 value={form.number}
                 onChange={handleChange}
-                className="w-full bg-white mt-2  px-4 py-2 rounded-full focus:outline-none"
+                className="w-full bg-white mt-2 px-4 py-2 rounded-full focus:outline-none"
               />
+
               {errors.number && (
                 <p className="text-red-400 text-xs mt-1">{errors.number}</p>
               )}

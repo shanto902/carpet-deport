@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { formatPhone } from "@/components/form/formInput";
 import { CheckCircle2, Circle, CircleDot } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -55,7 +56,8 @@ export default function InStoreConsultationForm() {
           : prev.productTypes?.filter((item) => item !== value) || [],
       }));
     } else {
-      setForm({ ...form, [name]: value });
+      const newValue = name === "number" ? formatPhone(value) : value;
+      setForm({ ...form, [name]: newValue });
     }
   };
 
@@ -173,9 +175,11 @@ export default function InStoreConsultationForm() {
                 className="w-full bg-gray-100 px-4 py-3 rounded-full focus:outline-none"
               />
               <input
-                type="text"
+                id="number"
+                type="tel"
+                inputMode="numeric"
                 name="number"
-                placeholder="Phone Number"
+                placeholder="(404) 555-1212"
                 value={form.number}
                 onChange={handleChange}
                 className="w-full bg-gray-100 px-4 py-3 rounded-full focus:outline-none"
