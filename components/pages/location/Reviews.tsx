@@ -10,12 +10,19 @@ const Reviews = ({ placeId }: { placeId: string }) => {
   const [loading, setLoading] = useState(true);
   const [expandedReview, setExpandedReview] = useState<number | null>(null);
 
+  // Reviews.tsx
   useEffect(() => {
     const fetchReviews = async () => {
       try {
         const res = await fetch(`/api/places/${placeId}/reviews`);
         const data = await res.json();
-        setReviews(data);
+
+        // 🚀 keep only perfect-score reviews
+        const fiveStarOnly = data.filter(
+          (review: { rating: number }) => review.rating === 5
+        );
+
+        setReviews(fiveStarOnly);
       } catch (error) {
         console.error("Failed to fetch reviews:", error);
       } finally {
