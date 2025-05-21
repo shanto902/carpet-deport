@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
-
+import Masonry from "react-masonry-css";
 const Reviews = ({ placeId }: { placeId: string }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [reviews, setReviews] = useState<any[]>([]);
@@ -72,12 +72,16 @@ const Reviews = ({ placeId }: { placeId: string }) => {
       </h2>
 
       {/* Columns Layout */}
-      <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
+      <Masonry
+        breakpointCols={{ default: 3, 1024: 2, 640: 1 }}
+        className="flex w-auto gap-6"
+        columnClassName="flex flex-col gap-6"
+      >
         {loading
-          ? [...Array(6)].map((_, idx) => <SkeletonCard key={idx} />)
+          ? [...Array(5)].map((_, idx) => <SkeletonCard key={idx} />)
           : reviews.map((review, idx) => (
               <div
-                key={idx}
+                key={review.author_name + review.time}
                 className=" w-full flex flex-col break-inside-avoid mb-6"
               >
                 <div className="drop-shadow-lg drop-shadow-[#E9E9E940] rounded-xl p-6 bg-white flex flex-col h-full justify-between transition-all duration-300 ease-in-out">
@@ -132,7 +136,7 @@ const Reviews = ({ placeId }: { placeId: string }) => {
                 </div>
               </div>
             ))}
-      </div>
+      </Masonry>
       <a
         href={`https://www.google.com/maps/place/?q=place_id:${placeId}`}
         target="_blank"
