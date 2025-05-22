@@ -257,12 +257,6 @@ export type TLocation = {
   service_areas: {
     name: string;
   }[];
-  store_status: {
-    day: "sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday";
-    opening_hour?: string;
-    closing_hour?: string;
-    is_closed: boolean;
-  }[];
 };
 export type TTestimonial = {
   id: string;
