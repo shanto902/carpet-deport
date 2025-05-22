@@ -12,6 +12,7 @@ import { Suspense } from "react";
 import Reviews from "@/components/pages/location/Reviews";
 import { Metadata, ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
+import StoreHours from "@/components/StoreHours";
 
 interface PageProps {
   params: Promise<{
@@ -90,16 +91,6 @@ export const generateStaticParams = async () => {
   }
 };
 
-// Time formatter (24h to 12h)
-const formatTime = (time: string | undefined) => {
-  if (!time) return "";
-  const [hourStr, minute] = time.split(":");
-  let hour = parseInt(hourStr, 10);
-  const ampm = hour >= 12 ? "PM" : "AM";
-  hour = hour % 12 || 12;
-  return `${hour}:${minute} ${ampm}`;
-};
-
 const LocationPage = async ({ params }: PageProps) => {
   const { slug } = await params;
   const location: TLocation = await fetchLocation(slug);
@@ -152,31 +143,7 @@ const LocationPage = async ({ params }: PageProps) => {
         {/* Store Hours & Map & Service Areas */}
         <div id="map" className="grid md:grid-cols-2 gap-10">
           {/* Store Hours */}
-          <div className="bg-secondary p-6 rounded-2xl">
-            <h3 className="font-semibold my-10 text-xl">
-              Store Open & Closed Hours
-            </h3>
-            <ul className="text-base space-y-4 text-gray-700">
-              {location.store_status.map((item, i) => {
-                const formattedDay =
-                  item.day.charAt(0).toUpperCase() + item.day.slice(1);
-                const time = item.is_closed
-                  ? "Closed"
-                  : `${formatTime(item.opening_hour)} - ${formatTime(
-                      item.closing_hour
-                    )}`;
-                return (
-                  <li
-                    key={i}
-                    className="flex bg-white justify-between rounded-xl p-2 capitalize"
-                  >
-                    <span className="font-bold">{formattedDay}</span>
-                    <span>{time}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          <StoreHours placeId={location.place_id} />
 
           {/* Map */}
           <div className="bg-secondary aspect-square rounded-2xl overflow-hidden">

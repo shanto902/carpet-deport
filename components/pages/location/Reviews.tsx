@@ -16,9 +16,9 @@ const Reviews = ({ placeId }: { placeId: string }) => {
       try {
         const res = await fetch(`/api/places/${placeId}/reviews`);
         const data = await res.json();
-
+        console.log(data);
         // 🚀 keep only perfect-score reviews
-        const fiveStarOnly = data.filter(
+        const fiveStarOnly = data.reviews.filter(
           (review: { rating: number }) => review.rating === 5
         );
 

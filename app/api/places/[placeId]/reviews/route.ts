@@ -8,6 +8,7 @@ interface ApiProps {
     placeId: string;
   }>;
 }
+
 export async function GET(req: NextRequest, { params }: ApiProps) {
   const { placeId } = await params;
 
@@ -16,13 +17,22 @@ export async function GET(req: NextRequest, { params }: ApiProps) {
     {
       params: {
         place_id: placeId,
-        fields: "name,rating,reviews",
+        fields:
+          "name,rating,reviews,opening_hours/weekday_text,opening_hours/periods",
         key: API_KEY,
       },
     }
   );
 
-  const reviews = response.data.result.reviews || [];
+  const data = response.data.result;
 
-  return new Response(JSON.stringify(reviews), { status: 200 });
+  return new Response(
+    JSON.stringify({
+      name: data.name,
+      rating: data.rating,
+      reviews: data.reviews || [],
+      opening_hours: data.opening_hours || null,
+    }),
+    { status: 200 }
+  );
 }
