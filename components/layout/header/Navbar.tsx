@@ -149,9 +149,14 @@ const NavBar = ({
           </button>
 
           <ul className="text-lg uppercase font-bold flex flex-col gap-5 w-full px-6">
-            <Link onClick={() => setIsOpen(false)} href={"/"}>
-              <Image className="h-10  w-fit" src={logo} priority alt="logo" />
-            </Link>
+            <div className="flex items-center justify-between mb-4">
+              <Link onClick={() => setIsOpen(false)} href={"/"}>
+                <Image className="h-10  w-fit" src={logo} priority alt="logo" />
+              </Link>
+              <CustomButton className="text-xs" href="/consultation">
+                Free Consultation
+              </CustomButton>
+            </div>
             <hr className="border-2 border-primary" />
             {settings.nav_links.map((item, index) => (
               <li
