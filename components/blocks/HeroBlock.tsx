@@ -1,10 +1,9 @@
-import InStoreConsultationForm from "@/components/form/InStoreConsultationForm";
-
 import PaddingContainer from "@/components/layout/PaddingContainer";
 import { THeroBlock } from "@/interfaces";
 import parser from "html-react-parser";
 
 import CustomButton from "../common/CustomButton";
+import HomePageForm from "../embedded-form/HomePageForm";
 export const HeroBlock = ({ block }: { block: THeroBlock }) => {
   return (
     <div
@@ -31,7 +30,8 @@ export const HeroBlock = ({ block }: { block: THeroBlock }) => {
         </div>
 
         {/* Right Form Section */}
-        <InStoreConsultationForm />
+        {/* <InStoreConsultationForm /> */}
+        <HomePageForm />
       </PaddingContainer>
     </div>
   );

@@ -1,5 +1,6 @@
 import BreadcrumbBanner from "@/components/common/BreadcrumbBanner";
-import ConsultationForm from "@/components/pages/consultaion/ConsultationForm";
+import ConsultancyFrom from "@/components/embedded-form/ConsultancyFrom";
+
 import { TSettings } from "@/interfaces";
 import directus from "@/lib/directus";
 import { readSingleton } from "@directus/sdk";
@@ -21,7 +22,8 @@ const page = async () => {
         breadcrumb={["Book a Free Consultation"]}
         image={settings.consultation}
       />
-      <ConsultationForm />
+      {/* <ConsultationForm /> */}
+      <ConsultancyFrom />
     </div>
   );
 };

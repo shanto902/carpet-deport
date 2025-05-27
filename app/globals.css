@@ -7,6 +7,9 @@
   --color-paragraph: #4f555f !important;
 }
 
+.form-all {
+  @apply rounded-4xl! overflow-hidden;
+}
 .html {
   scroll-behavior: smooth;
 }
