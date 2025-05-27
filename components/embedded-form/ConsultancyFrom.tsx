@@ -2,7 +2,7 @@ import React from "react";
 
 const ConsultancyFrom = () => {
   return (
-    <div className="w-full overflow-auto rounded-[20px]">
+    <div className="w-full overflow-auto ">
       <iframe
         src="https://form.jotform.com/250145363798060"
         width="100%"
