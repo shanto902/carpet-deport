@@ -28,7 +28,7 @@ const Footer = async ({
           <div className="">
             <Image src={logo} alt="Carpet Depot" className="h-20 mb-2" />
             <p className="text-sm">
-              Our Trusted Source for Quality Carpets, Expert Installation, and
+              Your Trusted Source for Quality Carpets, Expert Installation, and
               Unbeatable Prices.
             </p>
 

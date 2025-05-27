@@ -156,7 +156,7 @@ const LocationPage = async ({ params }: PageProps) => {
 
           {/* Services Area */}
           <div className="bg-secondary p-6 rounded-2xl md:col-span-2">
-            <h3 className="font-semibold my-10 text-2xl ">Services Area</h3>
+            <h3 className="font-semibold my-10 text-2xl ">Service Areas</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-5 text-base text-paragraph ">
               {location?.service_areas?.map((area, i) => (
                 <span key={i} className="bg-white rounded-lg p-2 py-1">
