@@ -11,16 +11,19 @@ const CustomButton = ({
   href = "#",
   button_type = "arrow",
   inverted = false,
+  onClick,
 }: {
   children: ReactNode;
   className?: string;
   href?: string;
   inverted?: boolean;
   button_type?: "arrow" | "location" | "question";
+  onClick?: () => void;
 }) => {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={twMerge(
         ` drop-shadow-none hover:drop-shadow-lg active:drop-shadow-none flex items-center justify-between group transition-all duration-300  ${
           inverted

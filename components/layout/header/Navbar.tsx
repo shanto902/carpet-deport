@@ -153,7 +153,11 @@ const NavBar = ({
               <Link onClick={() => setIsOpen(false)} href={"/"}>
                 <Image className="h-10  w-fit" src={logo} priority alt="logo" />
               </Link>
-              <CustomButton className="text-xs" href="/consultation">
+              <CustomButton
+                onClick={() => setIsOpen(false)}
+                className="text-xs"
+                href="/consultation"
+              >
                 Free Consultation
               </CustomButton>
             </div>
