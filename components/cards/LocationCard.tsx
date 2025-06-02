@@ -124,8 +124,15 @@ export const LocationCard = ({
               <FiMapPin className="mr-2" /> {address}
             </p>
             <p className="flex items-center text-base text-gray-600 mb-2">
-              <FiPhone className="mr-2" /> {contact_no}
+              <FiPhone className="mr-2" />
+              <a
+                href={`tel:+1${contact_no.replace(/[^0-9]/g, "")}`}
+                className="hover:underline"
+              >
+                {contact_no}
+              </a>
             </p>
+
             <div className="text-base text-gray-600 space-y-2">
               {groupStoreHours(storeHours).map(
                 ({ days, time, holidayName }, idx) => {

@@ -115,9 +115,14 @@ const LocationPage = async ({ params }: PageProps) => {
               <FiMapPin className=" text-primary size-7" />
               {location.google_map.properties.formated}
             </p>
-            <p className="flex items-center  text-pretty gap-4 text-base text-gray-700">
-              <FiPhone className=" text-primary size-7" />
-              {location.contact_no}
+            <p className="flex items-center text-pretty gap-4 text-base text-gray-700">
+              <FiPhone className="text-primary size-7" />
+              <a
+                href={`tel:+1${location.contact_no.replace(/[^0-9]/g, "")}`}
+                className="hover:underline"
+              >
+                {location.contact_no}
+              </a>
             </p>
             <CustomButton
               href="#map"
