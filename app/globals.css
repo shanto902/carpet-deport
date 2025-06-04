@@ -44,7 +44,7 @@
 }
 
 .hero-text > p {
-  @apply text-lg! leading-normal!;
+  @apply !text-xl leading-normal!;
 }
 
 .richtext > p {
