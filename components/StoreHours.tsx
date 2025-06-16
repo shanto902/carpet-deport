@@ -19,6 +19,23 @@ const orderedDays = [
   "Sunday",
 ];
 
+// Normalize certain long holiday names to match Google-style naming
+function normalizeHolidayName(name: string): string {
+  const map: Record<string, string> = {
+    "Juneteenth National Independence Day": "Juneteenth",
+    "Washington's Birthday": "Presidents’ Day",
+    "Birthday of Martin Luther King, Jr.": "MLK Day",
+    "Independence Day": "4th of July",
+    "Labor Day": "Labor Day",
+    "Veterans Day": "Veterans Day",
+    "Thanksgiving Day": "Thanksgiving",
+    "Christmas Day": "Christmas",
+    "New Year's Day": "New Year’s Day",
+  };
+
+  return map[name] || name;
+}
+
 const StoreHours = ({ placeId }: { placeId: string }) => {
   const [storeHours, setStoreHours] = useState<StoreDay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,7 +64,10 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
           const [dayName, time] = weekdayText[weekdayIndex].split(": ");
 
           const holiday = holidays.find((h: any) => h.date === formattedDate);
-          const holidayName = holiday?.localName || null;
+          const rawHolidayName = holiday?.localName || null;
+          const holidayName = rawHolidayName
+            ? normalizeHolidayName(rawHolidayName)
+            : null;
 
           days.push({
             day: dayName,
