@@ -78,10 +78,13 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
               <span className="text-right font-medium flex flex-col items-end">
                 {holidayName ? (
                   <>
-                    <span className=" font-medium">{time}</span>
-                    <span className="text-green-600 text-sm font-medium">
-                      Holiday hours
-                    </span>
+                    {time ? (
+                      <span className=" font-medium">{time}</span>
+                    ) : (
+                      <span className="text-green-600 text-sm font-medium">
+                        Hours might differ
+                      </span>
+                    )}
                   </>
                 ) : (
                   <span>{time}</span>
