@@ -79,6 +79,9 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
                 {holidayName ? (
                   <>
                     <span className=" font-medium">{time}</span>
+                    <span className="text-green-600 text-sm font-medium">
+                      Holiday hours
+                    </span>
                   </>
                 ) : (
                   <span>{time}</span>

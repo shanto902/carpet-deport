@@ -29,11 +29,11 @@ function groupStoreHours(storeHours: StoreDay[]) {
   const groups: Record<string, string[]> = {};
 
   storeHours.forEach((entry) => {
+    if (entry.holidayName) return; // Skip holidays
+
     const normalizedDay = normalizeDay(entry.day);
     const time =
-      entry.holidayName || entry.time.trim().toLowerCase() === "closed"
-        ? "Closed"
-        : entry.time;
+      entry.time.trim().toLowerCase() === "closed" ? "Closed" : entry.time;
 
     if (!groups[time]) groups[time] = [];
     groups[time].push(normalizedDay);
@@ -43,7 +43,6 @@ function groupStoreHours(storeHours: StoreDay[]) {
     const sortedDays = days.sort(
       (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b)
     );
-
     return {
       time,
       days: sortedDays,
@@ -82,6 +81,7 @@ const StoreLocationLi = ({ location }: { location: TLocation }) => {
   }, [location.place_id]);
 
   const grouped = groupStoreHours(storeHours);
+  const holidays = storeHours.filter((entry) => entry.holidayName);
 
   return (
     <li key={location.id} className="relative group">
@@ -94,21 +94,29 @@ const StoreLocationLi = ({ location }: { location: TLocation }) => {
 
       {/* Tooltip */}
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 hidden group-hover:flex flex-col items-start bg-white text-gray-800 text-xs p-4 rounded-md shadow-lg whitespace-pre-line min-w-[280px] text-left z-20">
-        {grouped.length === 0 ? (
+        {storeHours.length === 0 ? (
           <div className="text-gray-400 italic">Loading...</div>
         ) : (
-          grouped.map(({ days, time }, idx) => (
-            <div key={idx} className="mb-1 last:mb-0">
-              <span className="font-medium">{formatGroupedLabel(days)}:</span>{" "}
-              <span
-                className={
-                  time.toLowerCase() === "closed" ? "text-red-600" : ""
-                }
-              >
-                {time}
-              </span>
-            </div>
-          ))
+          <>
+            {grouped.map(({ days, time }, idx) => (
+              <div key={idx} className="mb-1 last:mb-0">
+                <span className="font-medium">{formatGroupedLabel(days)}:</span>{" "}
+                <span
+                  className={
+                    time.toLowerCase() === "closed" ? "text-red-600" : ""
+                  }
+                >
+                  {time}
+                </span>
+              </div>
+            ))}
+
+            {holidays.map((entry, idx) => (
+              <div key={`holiday-${idx}`} className="text-red-600 mt-1">
+                {normalizeDay(entry.day)}: {entry.holidayName}
+              </div>
+            ))}
+          </>
         )}
       </div>
     </li>
