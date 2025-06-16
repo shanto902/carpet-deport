@@ -9,6 +9,16 @@ interface StoreDay {
   holidayName?: string | null;
 }
 
+const orderedDays = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
 const StoreHours = ({ placeId }: { placeId: string }) => {
   const [storeHours, setStoreHours] = useState<StoreDay[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +56,12 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
           });
         }
 
-        setStoreHours(days);
+        // Sort days with Monday as the first
+        const sorted = days.sort(
+          (a, b) => orderedDays.indexOf(a.day) - orderedDays.indexOf(b.day)
+        );
+
+        setStoreHours(sorted);
       } catch (error) {
         console.error("❌ Error fetching store hours or holidays:", error);
       } finally {
