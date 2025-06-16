@@ -29,8 +29,7 @@ function groupStoreHours(storeHours: StoreDay[]) {
   const groups: Record<string, string[]> = {};
 
   storeHours.forEach((entry) => {
-    if (entry.holidayName) return; // Skip holidays
-
+    // Ignore holidays completely
     const normalizedDay = normalizeDay(entry.day);
     const time =
       entry.time.trim().toLowerCase() === "closed" ? "Closed" : entry.time;
@@ -81,7 +80,6 @@ const StoreLocationLi = ({ location }: { location: TLocation }) => {
   }, [location.place_id]);
 
   const grouped = groupStoreHours(storeHours);
-  const holidays = storeHours.filter((entry) => entry.holidayName);
 
   return (
     <li key={location.id} className="relative group">
@@ -97,26 +95,18 @@ const StoreLocationLi = ({ location }: { location: TLocation }) => {
         {storeHours.length === 0 ? (
           <div className="text-gray-400 italic">Loading...</div>
         ) : (
-          <>
-            {grouped.map(({ days, time }, idx) => (
-              <div key={idx} className="mb-1 last:mb-0">
-                <span className="font-medium">{formatGroupedLabel(days)}:</span>{" "}
-                <span
-                  className={
-                    time.toLowerCase() === "closed" ? "text-red-600" : ""
-                  }
-                >
-                  {time}
-                </span>
-              </div>
-            ))}
-
-            {holidays.map((entry, idx) => (
-              <div key={`holiday-${idx}`} className="text-red-600 mt-1">
-                {normalizeDay(entry.day)}: {entry.holidayName}
-              </div>
-            ))}
-          </>
+          grouped.map(({ days, time }, idx) => (
+            <div key={idx} className="mb-1 last:mb-0">
+              <span className="font-medium">{formatGroupedLabel(days)}:</span>{" "}
+              <span
+                className={
+                  time.toLowerCase() === "closed" ? "text-red-600" : ""
+                }
+              >
+                {time}
+              </span>
+            </div>
+          ))
         )}
       </div>
     </li>
