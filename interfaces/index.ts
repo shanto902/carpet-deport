@@ -209,6 +209,7 @@ export type TSettings = {
   blog: string;
   locations: string;
   consultation: string;
+  copyright_text: string;
 };
 
 export type TCategory = {

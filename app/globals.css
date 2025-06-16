@@ -33,20 +33,20 @@
   @apply text-base mb-4;
 }
 .body > ul {
-  @apply list-disc! ml-6! marker:text-primary! marker:text-2xl!;
+  @apply !list-disc ml-6! marker:text-primary! marker:text-2xl!;
 }
 
 .hero-text > h1 {
-  @apply text-5xl! leading-snug!;
+  @apply !text-5xl !leading-snug;
+}
+.hero-text > h1 > strong {
+  @apply !font-bold;
 }
 .hero-text > h2 {
   @apply text-4xl! leading-snug!;
 }
 .hero-text > h3 {
   @apply text-3xl! leading-snug!;
-}
-.hero-text > h1 > strong {
-  @apply font-bold!;
 }
 
 .hero-text > h1 > strong {

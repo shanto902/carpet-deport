@@ -97,9 +97,7 @@ const Footer = async ({
       </PaddingContainer>
 
       <hr className="my-6 border-gray-300" />
-      <p className="text-center text-sm">
-        Copyright Carpet Depot. All rights reserved.
-      </p>
+      <p className="text-center text-sm">{settings.copyright_text}</p>
     </footer>
   );
 };
