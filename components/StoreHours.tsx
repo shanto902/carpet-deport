@@ -25,7 +25,6 @@ function normalizeHolidayName(name: string): string {
     "Juneteenth National Independence Day": "Juneteenth",
     "Washington's Birthday": "Presidents’ Day",
     "Birthday of Martin Luther King, Jr.": "MLK Day",
-    "Independence Day": "4th of July",
     "Labor Day": "Labor Day",
     "Veterans Day": "Veterans Day",
     "Thanksgiving Day": "Thanksgiving",
