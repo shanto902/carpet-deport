@@ -29,10 +29,11 @@ function groupStoreHours(storeHours: StoreDay[]) {
   const groups: Record<string, string[]> = {};
 
   storeHours.forEach((entry) => {
-    // Ignore holidays completely
     const normalizedDay = normalizeDay(entry.day);
     const time =
-      entry.time.trim().toLowerCase() === "closed" ? "Closed" : entry.time;
+      entry.holidayName || entry.time.trim().toLowerCase() === "closed"
+        ? "Closed"
+        : entry.time;
 
     if (!groups[time]) groups[time] = [];
     groups[time].push(normalizedDay);
@@ -42,6 +43,7 @@ function groupStoreHours(storeHours: StoreDay[]) {
     const sortedDays = days.sort(
       (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b)
     );
+
     return {
       time,
       days: sortedDays,
@@ -92,7 +94,7 @@ const StoreLocationLi = ({ location }: { location: TLocation }) => {
 
       {/* Tooltip */}
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 hidden group-hover:flex flex-col items-start bg-white text-gray-800 text-xs p-4 rounded-md shadow-lg whitespace-pre-line min-w-[280px] text-left z-20">
-        {storeHours.length === 0 ? (
+        {grouped.length === 0 ? (
           <div className="text-gray-400 italic">Loading...</div>
         ) : (
           grouped.map(({ days, time }, idx) => (
