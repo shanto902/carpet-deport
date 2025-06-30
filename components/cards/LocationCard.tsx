@@ -9,7 +9,8 @@ import { TLocation } from "@/interfaces";
 interface StoreDay {
   day: string;
   time: string;
-  holidayName?: string | null;
+  holidayName: string;
+  status?: "open" | "closed";
 }
 
 // Group same-time days into ranges (excluding holidays)
@@ -32,7 +33,7 @@ function groupStoreHours(storeHours: StoreDay[]) {
 
   sortedHours.forEach((entry) => {
     const time =
-      entry.holidayName || entry.time.trim().toLowerCase() === "closed"
+      entry.status === "closed" || entry.time.trim().toLowerCase() === "closed"
         ? "Closed"
         : entry.time;
 
@@ -50,6 +51,7 @@ function groupStoreHours(storeHours: StoreDay[]) {
       groups.push({
         days: [entry.day],
         time,
+        holidayName: entry.holidayName,
       });
     }
   });
@@ -75,7 +77,7 @@ export const LocationCard = ({
       try {
         const [res, holidaysRes] = await Promise.all([
           fetch(`/api/places/${place_id}/reviews`),
-          fetch(`/api/holidays`),
+          fetch(`/api/directus-holidays`),
         ]);
 
         const data = await res.json();
@@ -90,12 +92,17 @@ export const LocationCard = ({
           const date = today.plus({ days: i });
           const formattedDate = date.toISODate();
           const weekdayIndex = (date.weekday + 6) % 7;
-          const [dayName, time] = weekdayText[weekdayIndex].split(": ");
+
+          const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
+            date.weekdayLong,
+            "Closed",
+          ];
 
           const holiday = holidays.find((h: any) => h.date === formattedDate);
-          const holidayName = holiday?.localName || null;
+          const holidayName = holiday?.name || null;
+          const status = holiday?.status || "open";
 
-          days.push({ day: dayName, time, holidayName });
+          days.push({ day: dayName, time, holidayName, status });
         }
 
         setStoreHours(days);
@@ -110,7 +117,7 @@ export const LocationCard = ({
   return (
     <div key={id}>
       <div className="bg-white my-10 rounded-lg drop-shadow-xl p-6 flex justify-between xl:flex-row flex-col xl:items-center gap-6">
-        <div className="md:flex gap-6 max md:gap-10 items-center">
+        <div className="md:flex gap-6 md:gap-10 items-center">
           <Image
             width={1000}
             height={1000}
@@ -156,8 +163,12 @@ export const LocationCard = ({
                         {isClosed ? "Closed" : time}
                       </p>
                       {holidayName && (
-                        <p className="text-green-600 text-sm font-medium">
-                          Holiday hours
+                        <p
+                          className={`text-sm font-medium ${
+                            isClosed ? "text-red-600" : "text-green-600"
+                          }`}
+                        >
+                          {isClosed ? "Closed for holiday" : "Holiday hours"}
                         </p>
                       )}
                     </div>

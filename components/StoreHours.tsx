@@ -7,6 +7,7 @@ interface StoreDay {
   day: string;
   time: string;
   holidayName?: string | null;
+  status?: "open" | "closed";
 }
 
 const orderedDays = [
@@ -19,19 +20,14 @@ const orderedDays = [
   "Sunday",
 ];
 
-// Normalize certain long holiday names to match Google-style naming
+// Optional: Normalize names for display
 function normalizeHolidayName(name: string): string {
   const map: Record<string, string> = {
     "Juneteenth National Independence Day": "Juneteenth",
     "Washington's Birthday": "Presidents’ Day",
     "Birthday of Martin Luther King, Jr.": "MLK Day",
-    "Labor Day": "Labor Day",
-    "Veterans Day": "Veterans Day",
-    "Thanksgiving Day": "Thanksgiving",
-    "Christmas Day": "Christmas",
     "New Year's Day": "New Year’s Day",
   };
-
   return map[name] || name;
 }
 
@@ -44,11 +40,11 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
       try {
         const [res, holidaysRes] = await Promise.all([
           fetch(`/api/places/${placeId}/reviews`),
-          fetch(`/api/holidays`),
+          fetch(`/api/directus-holidays`), // ✅ from Directus
         ]);
 
         const data = await res.json();
-        const holidays = await holidaysRes.json(); // from Nager.Date
+        const holidays = await holidaysRes.json(); // [{ name, date, status }]
         const weekdayText: string[] = data?.opening_hours?.weekday_text || [];
 
         const days: StoreDay[] = [];
@@ -60,22 +56,27 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
           const formattedDate = date.toISODate(); // YYYY-MM-DD
 
           const weekdayIndex = (date.weekday + 6) % 7;
-          const [dayName, time] = weekdayText[weekdayIndex].split(": ");
+          const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
+            date.weekdayLong,
+            "Closed",
+          ];
 
           const holiday = holidays.find((h: any) => h.date === formattedDate);
-          const rawHolidayName = holiday?.localName || null;
+          const rawHolidayName = holiday?.name || null;
           const holidayName = rawHolidayName
             ? normalizeHolidayName(rawHolidayName)
             : null;
+          const status = holiday?.status || "open";
 
           days.push({
             day: dayName,
             time,
             holidayName,
+            status,
           });
         }
 
-        // Sort days with Monday as the first
+        // Sort days with Monday first
         const sorted = days.sort(
           (a, b) => orderedDays.indexOf(a.day) - orderedDays.indexOf(b.day)
         );
@@ -98,28 +99,33 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
         <p className="text-gray-600">Loading store hours...</p>
       ) : (
         <ul className="text-base space-y-4 text-gray-700">
-          {storeHours.map(({ day, time, holidayName }, index) => (
-            <li
-              key={index}
-              className="flex justify-between bg-white rounded-xl p-2 capitalize"
-            >
-              <span className="font-bold flex flex-col">
-                <span>{day}</span>
-                {holidayName && (
-                  <span className="text-sm font-normal">{holidayName}</span>
-                )}
-              </span>
-              <span className="text-right font-medium flex flex-col items-end">
-                {holidayName ? (
-                  <>
-                    <span className=" font-medium">Closed</span>
-                  </>
-                ) : (
-                  <span>{time}</span>
-                )}
-              </span>
-            </li>
-          ))}
+          {storeHours.map(({ day, time, holidayName, status }, index) => {
+            const isClosed =
+              status === "closed" || time.trim().toLowerCase() === "closed";
+
+            return (
+              <li
+                key={index}
+                className="flex justify-between bg-white rounded-xl p-2 capitalize"
+              >
+                <span className="font-bold flex flex-col">
+                  <span>{day}</span>
+                  {holidayName && (
+                    <span className="text-sm font-normal text-gray-500">
+                      {holidayName}
+                    </span>
+                  )}
+                </span>
+                <span className="text-right font-medium flex flex-col items-end">
+                  {isClosed ? (
+                    <span className="text-red-600">Closed</span>
+                  ) : (
+                    <span>{time}</span>
+                  )}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

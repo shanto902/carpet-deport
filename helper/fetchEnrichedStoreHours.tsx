@@ -5,6 +5,7 @@ interface StoreDay {
   day: string;
   time: string;
   holidayName?: string | null;
+  status?: "open" | "closed";
 }
 
 export async function fetchEnrichedStoreHours(
@@ -13,11 +14,11 @@ export async function fetchEnrichedStoreHours(
   try {
     const [res, holidaysRes] = await Promise.all([
       fetch(`/api/places/${placeId}/reviews`),
-      fetch(`/api/holidays`),
+      fetch(`/api/directus-holidays`), // NEW: hits your own Directus API route
     ]);
 
     const data = await res.json();
-    const holidays = await holidaysRes.json(); // from Nager.Date
+    const holidays = await holidaysRes.json(); // format: { name, date, status }
     const weekdayText: string[] = data?.opening_hours?.weekday_text || [];
 
     const timezone = "America/New_York";
@@ -30,12 +31,16 @@ export async function fetchEnrichedStoreHours(
       const formattedDate = date.toISODate();
 
       const weekdayIndex = (date.weekday + 6) % 7;
-      const [dayName, time] = weekdayText[weekdayIndex].split(": ");
+      const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
+        date.weekdayLong,
+        "Closed",
+      ];
 
       const holiday = holidays.find((h: any) => h.date === formattedDate);
-      const holidayName = holiday?.localName || null;
+      const holidayName = holiday?.name || null;
+      const status = holiday?.status || "open";
 
-      days.push({ day: dayName, time, holidayName });
+      days.push({ day: dayName, time, holidayName, status });
     }
 
     return days;
