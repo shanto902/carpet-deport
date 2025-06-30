@@ -61,7 +61,10 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
             "Closed",
           ];
 
-          const holiday = holidays.find((h: any) => h.date === formattedDate);
+          const holiday = holidays.find(
+            (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
+          );
+
           const rawHolidayName = holiday?.name || null;
           const holidayName = rawHolidayName
             ? normalizeHolidayName(rawHolidayName)

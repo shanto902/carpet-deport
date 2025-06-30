@@ -98,7 +98,10 @@ export const LocationCard = ({
             "Closed",
           ];
 
-          const holiday = holidays.find((h: any) => h.date === formattedDate);
+          const holiday = holidays.find(
+            (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
+          );
+
           const holidayName = holiday?.name || null;
           const status = holiday?.status || "open";
 
