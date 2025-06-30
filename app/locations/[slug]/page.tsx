@@ -148,7 +148,7 @@ const LocationPage = async ({ params }: PageProps) => {
         {/* Store Hours & Map & Service Areas */}
         <div id="map" className="grid md:grid-cols-2 gap-10">
           {/* Store Hours */}
-          <StoreHours placeId={location.place_id} />
+          <StoreHours placeId={location.place_id} location={location} />
 
           {/* Map */}
           <div className="bg-secondary aspect-square rounded-2xl overflow-hidden">

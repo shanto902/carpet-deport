@@ -78,8 +78,10 @@ const StoreLocationLi = ({ location }: { location: TLocation }) => {
   const [storeHours, setStoreHours] = useState<StoreDay[]>([]);
 
   useEffect(() => {
-    fetchEnrichedStoreHours(location.place_id).then(setStoreHours);
-  }, [location.place_id]);
+    fetchEnrichedStoreHours(location.place_id, location.slug).then(
+      setStoreHours
+    );
+  }, [location.place_id, location.slug]);
 
   const grouped = groupStoreHours(storeHours);
 

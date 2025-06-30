@@ -2,6 +2,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
+import { TLocation } from "@/interfaces";
 
 interface StoreDay {
   day: string;
@@ -31,7 +32,13 @@ function normalizeHolidayName(name: string): string {
   return map[name] || name;
 }
 
-const StoreHours = ({ placeId }: { placeId: string }) => {
+const StoreHours = ({
+  placeId,
+  location,
+}: {
+  placeId: string;
+  location: TLocation;
+}) => {
   const [storeHours, setStoreHours] = useState<StoreDay[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,20 +47,20 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
       try {
         const [res, holidaysRes] = await Promise.all([
           fetch(`/api/places/${placeId}/reviews`),
-          fetch(`/api/directus-holidays`), // ✅ from Directus
+          fetch(`/api/directus-holidays?slug=${location.slug}`),
         ]);
 
         const data = await res.json();
         const holidays = await holidaysRes.json(); // [{ name, date, status }]
         const weekdayText: string[] = data?.opening_hours?.weekday_text || [];
 
-        const days: StoreDay[] = [];
         const timezone = "America/New_York";
         const today = DateTime.now().setZone(timezone);
+        const days: StoreDay[] = [];
 
         for (let i = 1; i <= 7; i++) {
           const date = today.plus({ days: i });
-          const formattedDate = date.toISODate(); // YYYY-MM-DD
+          const formattedDate = date.toISODate();
 
           const weekdayIndex = (date.weekday + 6) % 7;
           const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
@@ -79,7 +86,6 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
           });
         }
 
-        // Sort days with Monday first
         const sorted = days.sort(
           (a, b) => orderedDays.indexOf(a.day) - orderedDays.indexOf(b.day)
         );
@@ -92,8 +98,10 @@ const StoreHours = ({ placeId }: { placeId: string }) => {
       }
     };
 
-    fetchStoreHours();
-  }, [placeId]);
+    if (placeId && location?.slug) {
+      fetchStoreHours();
+    }
+  }, [placeId, location]);
 
   return (
     <div className="bg-secondary p-6 rounded-2xl">
