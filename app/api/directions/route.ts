@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
       origin: `${origin.lat},${origin.lng}`,
       destination: `${destination.lat},${destination.lng}`,
       mode: "driving",
-      key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+      key: process.env.SSR_GOOGLE_MAPS_API_KEY!,
     });
 
     const response = await fetch(

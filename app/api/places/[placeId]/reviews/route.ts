@@ -4,7 +4,7 @@ import axios from "axios";
 import fs from "fs/promises";
 import path from "path";
 
-const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!;
+const API_KEY = process.env.SSR_GOOGLE_MAPS_API_KEY!;
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
 
 interface ApiProps {
