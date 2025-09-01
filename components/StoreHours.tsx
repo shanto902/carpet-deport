@@ -21,7 +21,6 @@ const orderedDays = [
   "Sunday",
 ];
 
-// Optional: Normalize names for display
 function normalizeHolidayName(name: string): string {
   const map: Record<string, string> = {
     "Juneteenth National Independence Day": "Juneteenth",
@@ -51,32 +50,53 @@ const StoreHours = ({
         ]);
 
         const data = await res.json();
-        const holidays = await holidaysRes.json(); // [{ name, date, status }]
+        const allHolidays = await holidaysRes.json(); // [{ name, date, status, stores }]
         const weekdayText: string[] = data?.opening_hours?.weekday_text || [];
+
+        // 1) Filter holidays for THIS location
+        const locationHolidays = (allHolidays || []).filter((h: any) =>
+          (h.stores || []).some(
+            (s: any) => s?.locations_id?.slug === location.slug
+          )
+        );
+
+        // 2) Build a quick lookup map by yyyy-MM-dd
+        //    Be timezone-safe by formatting to y-M-d on both sides.
+        const holidaysByDate: Record<
+          string,
+          { name: string; status: "open" | "closed" }
+        > = {};
+        for (const h of locationHolidays) {
+          const key = DateTime.fromISO(h.date).toFormat("yyyy-MM-dd"); // normalize
+          holidaysByDate[key] = { name: h.name, status: h.status };
+        }
 
         const timezone = "America/New_York";
         const today = DateTime.now().setZone(timezone);
+
         const days: StoreDay[] = [];
 
-        for (let i = 1; i <= 7; i++) {
+        // 3) Include TODAY (i = 0) through next 6 days
+        for (let i = 0; i < 7; i++) {
           const date = today.plus({ days: i });
-          const formattedDate = date.toISODate();
+          const dateKey = date.toFormat("yyyy-MM-dd");
 
+          // Map Luxon weekday (Mon=1..Sun=7) to Google’s weekday_text index (0..6, Mon..Sun)
           const weekdayIndex = (date.weekday + 6) % 7;
           const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
             date.weekdayLong,
             "Closed",
           ];
 
-          const holiday = holidays.find(
-            (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
-          );
-
-          const rawHolidayName = holiday?.name || null;
-          const holidayName = rawHolidayName
-            ? normalizeHolidayName(rawHolidayName)
+          const holiday = holidaysByDate[dateKey];
+          const holidayName = holiday
+            ? normalizeHolidayName(holiday.name)
             : null;
-          const status = holiday?.status || "open";
+
+          // If there's a holiday, use that status; otherwise infer from time text
+          const status: "open" | "closed" =
+            holiday?.status ??
+            (time.trim().toLowerCase() === "closed" ? "closed" : "open");
 
           days.push({
             day: dayName,
@@ -86,6 +106,8 @@ const StoreHours = ({
           });
         }
 
+        // Optional: keep your Mon→Sun ordering (this loses "chronological starting today"),
+        // but preserves your original layout. If you want chronological, skip this sort.
         const sorted = days.sort(
           (a, b) => orderedDays.indexOf(a.day) - orderedDays.indexOf(b.day)
         );
