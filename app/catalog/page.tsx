@@ -1,6 +1,5 @@
 // app/catalog/page.tsx
 "use client";
-import Link from "next/link";
 import Script from "next/script";
 import { useEffect } from "react";
 
@@ -28,7 +27,7 @@ export default function CatalogPage() {
       <div id="roomvoCatalog" style={{ minHeight: 640 }} />
 
       {/* Minimal prefilter test links */}
-      <div style={{ padding: 16 }}>
+      {/* <div style={{ padding: 16 }}>
         <Link href="/catalog?product_type=1" style={{ marginRight: 12 }}>
           Flooring
         </Link>
@@ -40,7 +39,7 @@ export default function CatalogPage() {
         >
           Hardwood
         </a>
-      </div>
+      </div> */}
     </>
   );
 }

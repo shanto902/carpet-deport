@@ -93,7 +93,7 @@ const NavBar = ({
                       >
                         {item.children?.map((subItem, subIndex) => (
                           <li key={subIndex}>
-                            <Link
+                            <a
                               href={`${subItem.link}`}
                               className={`block px-4 py-2 hover:bg-primary text-sm text-white-700  hover:text-white  ${
                                 pathName === subItem.link
@@ -102,7 +102,7 @@ const NavBar = ({
                               }`}
                             >
                               {subItem.label}
-                            </Link>
+                            </a>
                           </li>
                         ))}
                       </ul>
@@ -178,13 +178,13 @@ const NavBar = ({
                   <ul className="pl-4 mt-2">
                     {item.children.map((subItem, subIndex) => (
                       <li key={subIndex}>
-                        <Link
+                        <a
                           onClick={() => setIsOpen(false)}
                           href={`${subItem.link}`}
                           className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
                         >
                           {subItem.label}
-                        </Link>
+                        </a>
                       </li>
                     ))}
                   </ul>
