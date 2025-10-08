@@ -1,3 +1,4 @@
+// components/layout/NavBar.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -12,6 +13,39 @@ import BottomNavbar, { getCityName } from "./BottomNavbar";
 import PaddingContainer from "../PaddingContainer";
 import { TLocation, TSettings } from "@/interfaces";
 
+/* ========= SmartLink =========
+   Uses <a> for /catalog (forces full reload for Roomvo) and external links,
+   otherwise uses Next.js <Link> for SPA navigation.
+================================ */
+const SmartLink = ({
+  href,
+  children,
+  className,
+  onClick,
+}: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}) => {
+  const isExternal = /^https?:\/\//i.test(href);
+  const isCatalog = href.startsWith("/catalog");
+
+  if (isExternal || isCatalog) {
+    return (
+      <a href={href} className={className} onClick={onClick}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={href} className={className} onClick={onClick}>
+      {children}
+    </Link>
+  );
+};
+
 const NavBar = ({
   locations,
   settings,
@@ -25,14 +59,7 @@ const NavBar = ({
   const pathName = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setHideTopBar(true);
-      } else {
-        setHideTopBar(false);
-      }
-    };
-
+    const handleScroll = () => setHideTopBar(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -51,12 +78,10 @@ const NavBar = ({
       </div>
 
       {/* Sticky Navbar */}
-      <nav
-        className={`h-24   shadow-md z-50 flex justify-center items-center bg-white sticky top-0 transition-all duration-300`}
-      >
+      <nav className="h-24 shadow-md z-50 flex justify-center items-center bg-white sticky top-0 transition-all duration-300">
         <PaddingContainer className="flex px-8 justify-between w-full items-center">
           {/* Desktop Menu */}
-          <div className="hidden lg:flex  justify-between items-center w-full">
+          <div className="hidden lg:flex justify-between items-center w-full">
             {/* Logo */}
             <Link href={"/"}>
               <Image
@@ -68,13 +93,14 @@ const NavBar = ({
                 height={120}
               />
             </Link>
+
             <div className="flex items-center gap-5">
-              <ul className=" text-base xl:text-lg   flex space-x-5">
+              <ul className="text-base xl:text-lg flex space-x-5">
                 {settings?.nav_links?.map((item, index) => (
                   <li key={index} className="relative group">
-                    <Link
+                    <SmartLink
                       href={`${item.link}`}
-                      className={`flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in-out hover:text-primary group: ${
+                      className={`flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in-out hover:text-primary ${
                         pathName === item.link ? "font-bold" : ""
                       }`}
                     >
@@ -85,24 +111,25 @@ const NavBar = ({
                           size={16}
                         />
                       )}
-                    </Link>
+                    </SmartLink>
+
                     {item.children && (
                       <ul
                         className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 opacity-0 invisible 
-                      text-primary-title  group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out transform translate-y-2 group-hover:translate-y-0"
+                        text-primary-title group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out transform translate-y-2 group-hover:translate-y-0"
                       >
                         {item.children?.map((subItem, subIndex) => (
                           <li key={subIndex}>
-                            <a
+                            <SmartLink
                               href={`${subItem.link}`}
-                              className={`block px-4 py-2 hover:bg-primary text-sm text-white-700  hover:text-white  ${
+                              className={`block px-4 py-2 hover:bg-primary text-sm text-white-700 hover:text-white ${
                                 pathName === subItem.link
                                   ? "underline underline-offset-4"
                                   : ""
                               }`}
                             >
                               {subItem.label}
-                            </a>
+                            </SmartLink>
                           </li>
                         ))}
                       </ul>
@@ -111,11 +138,12 @@ const NavBar = ({
                 ))}
               </ul>
             </div>
+
             <CustomButton href="/consultation">Free Consultation</CustomButton>
           </div>
 
-          {/* Mobile Menu Button */}
-          <Link className="lg:hidden " href={"/"}>
+          {/* Mobile Left (Logo) + Right (Hamburger) */}
+          <Link className="lg:hidden" href={"/"}>
             <Image
               className="h-16 w-fit"
               priority
@@ -127,13 +155,12 @@ const NavBar = ({
           </Link>
           <button
             className="lg:hidden focus:outline-none"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => setIsOpen((v) => !v)}
+            aria-label="Toggle menu"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </PaddingContainer>
-
-        {/* Logo */}
 
         {/* Mobile Menu */}
         <aside
@@ -143,7 +170,8 @@ const NavBar = ({
         >
           <button
             className="absolute top-6 right-6 focus:outline-none"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => setIsOpen(false)}
+            aria-label="Close menu"
           >
             <X size={28} />
           </button>
@@ -151,7 +179,7 @@ const NavBar = ({
           <ul className="text-lg uppercase font-bold flex flex-col gap-5 w-full px-6">
             <div className="flex items-center justify-between mb-4">
               <Link onClick={() => setIsOpen(false)} href={"/"}>
-                <Image className="h-10  w-fit" src={logo} priority alt="logo" />
+                <Image className="h-10 w-fit" src={logo} priority alt="logo" />
               </Link>
               <CustomButton
                 onClick={() => setIsOpen(false)}
@@ -161,16 +189,21 @@ const NavBar = ({
                 Free Consultation
               </CustomButton>
             </div>
+
             <hr className="border-2 border-primary" />
+
             {settings.nav_links.map((item, index) => (
               <li
                 key={index}
                 className="cursor-pointer transition-all duration-300 ease-in-out hover:text-primary underline-offset-4"
               >
                 <div className="flex items-center gap-2">
-                  <Link onClick={() => setIsOpen(false)} href={`${item.link}`}>
+                  <SmartLink
+                    href={`${item.link}`}
+                    onClick={() => setIsOpen(false)}
+                  >
                     {item.label}
-                  </Link>
+                  </SmartLink>
                   {item.children && <ChevronDown size={16} />}
                 </div>
 
@@ -178,17 +211,19 @@ const NavBar = ({
                   <ul className="pl-4 mt-2">
                     {item.children.map((subItem, subIndex) => (
                       <li key={subIndex}>
-                        <a
-                          onClick={() => setIsOpen(false)}
+                        <SmartLink
                           href={`${subItem.link}`}
                           className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
+                          onClick={() => setIsOpen(false)}
                         >
                           {subItem.label}
-                        </a>
+                        </SmartLink>
                       </li>
                     ))}
                   </ul>
                 )}
+
+                {/* locations listing if no children */}
                 {item.link === "/locations" &&
                   (!item.children || item.children.length === 0) && (
                     <ul className="pl-4 mt-2">
@@ -210,6 +245,7 @@ const NavBar = ({
           </ul>
         </aside>
       </nav>
+
       <BottomNavbar locations={locations} />
     </>
   );
