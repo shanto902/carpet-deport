@@ -1,8 +1,12 @@
 // app/catalog/page.tsx
 "use client";
+import { Metadata } from "next";
 import Script from "next/script";
 import { useEffect } from "react";
-
+export const metadata: Metadata = {
+  title: "Categories | Carpet Depot",
+  description: "All categories of Carpet Depot",
+};
 export default function CatalogPage() {
   useEffect(() => {
     console.log("[Roomvo] anchor:", !!document.getElementById("catalog"));

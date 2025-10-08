@@ -71,13 +71,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: page.date_updated ? page.date_updated : page.date_created,
   }));
 
-  const projects = await fetchProductPages();
-  const projectEntries: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${process.env.NEXT_PUBLIC_SITE_URL}see-room/${project.id}`,
-    lastModified: project.date_updated
-      ? project.date_updated
-      : project.date_created,
-  }));
+  // const projects = await fetchProductPages();
+  // const projectEntries: MetadataRoute.Sitemap = projects.map((project) => ({
+  //   url: `${process.env.NEXT_PUBLIC_SITE_URL}see-room/${project.id}`,
+  //   lastModified: project.date_updated
+  //     ? project.date_updated
+  //     : project.date_created,
+  // }));
 
   const blogs = await fetchBlogPages();
   const blogEntries: MetadataRoute.Sitemap = blogs.map((blog) => ({
@@ -99,12 +99,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${process.env.NEXT_PUBLIC_SITE_URL}blog`,
       lastModified: new Date().toISOString(),
     },
+
     {
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}categories`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}locations`,
       lastModified: new Date().toISOString(),
     },
     {
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}locations`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}catalog`,
       lastModified: new Date().toISOString(),
     },
     {
@@ -119,7 +120,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...staticPages,
     ...pageEntries,
-    ...projectEntries,
+
     ...blogEntries,
     ...locationEntries,
   ];
