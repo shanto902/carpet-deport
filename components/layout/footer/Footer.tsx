@@ -6,7 +6,6 @@ import PaddingContainer from "../PaddingContainer";
 import { TLocation, TSettings } from "@/interfaces";
 
 import Link from "next/link";
-import { fetchCategories } from "@/helper/fetchFromDirectus";
 import { DynamicFaIcon } from "@/components/common/DynamicFaIcon";
 
 import StoreLocationLi from "@/components/common/StoreLocationLi";
@@ -18,8 +17,6 @@ const Footer = async ({
   locations: TLocation[];
   settings: TSettings;
 }) => {
-  const categories = await fetchCategories();
-
   return (
     <footer className="bg-[#f8f9fa] text-[#2d2d2d] py-10 border-t border-gray-200">
       <PaddingContainer>
@@ -52,18 +49,22 @@ const Footer = async ({
 
           {/* Shop By Category */}
           <div>
+            {/* Shop By Category */}
             <h4 className="font-bold mb-3">Shop By Category</h4>
             <ul className="space-y-2 text-sm">
-              {categories.map((category) => (
-                <li key={category.id}>
-                  <Link
-                    className="hover:text-primary hover:underline"
-                    href={`/categories?category=${category.id}`}
-                  >
-                    {category.name}
-                  </Link>
-                </li>
-              ))}
+              {settings?.nav_links
+                ?.flatMap((link) => link.children || [])
+                ?.filter((child) => child.link === "/catalog")
+                ?.map((catalogChild, i) => (
+                  <li key={i}>
+                    <Link
+                      className="hover:text-primary hover:underline"
+                      href={catalogChild.link}
+                    >
+                      {catalogChild.label}
+                    </Link>
+                  </li>
+                ))}
             </ul>
           </div>
 

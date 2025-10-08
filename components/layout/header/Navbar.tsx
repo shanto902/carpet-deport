@@ -12,47 +12,14 @@ import CustomButton from "@/components/common/CustomButton";
 import BottomNavbar, { getCityName } from "./BottomNavbar";
 import PaddingContainer from "../PaddingContainer";
 import { TLocation, TSettings } from "@/interfaces";
-
-type TCategory = { id: string | number; name: string };
-
-const SmartLink = ({
-  href,
-  children,
-  className,
-  onClick,
-}: {
-  href: string;
-  children: React.ReactNode;
-  className?: string;
-  onClick?: () => void;
-}) => {
-  const isExternal = /^https?:\/\//i.test(href);
-  const isCatalog = href.startsWith("/catalog");
-
-  if (isExternal || isCatalog) {
-    return (
-      <a href={href} className={className} onClick={onClick}>
-        {children}
-      </a>
-    );
-  }
-
-  return (
-    <Link href={href} className={className} onClick={onClick}>
-      {children}
-    </Link>
-  );
-};
+import SmartLink from "@/components/common/SmartLink";
 
 const NavBar = ({
   locations,
   settings,
-  categories = [],
 }: {
   locations: TLocation[];
   settings: TSettings;
-  /** Categories for Catalog submenu */
-  categories?: TCategory[];
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hideTopBar, setHideTopBar] = useState(false);
@@ -97,66 +64,46 @@ const NavBar = ({
 
             <div className="flex items-center gap-5">
               <ul className="text-base xl:text-lg flex space-x-5">
-                {settings?.nav_links?.map((item, index) => {
-                  const isCatalog = item.link === "/catalog";
-                  return (
-                    <li key={index} className="relative group">
-                      <SmartLink
-                        href={`${item.link}`}
-                        className={`flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in-out hover:text-primary ${
-                          pathName === item.link ? "font-bold" : ""
-                        }`}
-                      >
-                        {item.label}
-                        {(item.children || isCatalog) && (
-                          <ChevronDown
-                            className="group-hover:rotate-180 transition-transform duration-300"
-                            size={16}
-                          />
-                        )}
-                      </SmartLink>
-
-                      {/* Desktop dropdown:
-                          - If item has children, render them
-                          - If link === /catalog, render categories as children */}
-                      {(item.children || isCatalog) && (
-                        <ul
-                          className="absolute left-0 mt-2 min-w-56 bg-white shadow-lg rounded-lg py-2 opacity-0 invisible 
-                          text-primary-title group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out transform translate-y-2 group-hover:translate-y-0"
-                        >
-                          {/* 1) Existing configured children */}
-                          {item.children?.map((subItem, subIndex: number) => (
-                            <li key={`cfg-${subIndex}`}>
-                              <SmartLink
-                                href={`${subItem.link}`}
-                                className={`block px-4 py-2 hover:bg-primary text-sm text-white-700 hover:text-white ${
-                                  pathName === subItem.link
-                                    ? "underline underline-offset-4"
-                                    : ""
-                                }`}
-                              >
-                                {subItem.label}
-                              </SmartLink>
-                            </li>
-                          ))}
-
-                          {/* 2) Catalog → categories */}
-                          {isCatalog &&
-                            categories?.map((category) => (
-                              <li key={`cat-${category.id}`}>
-                                <SmartLink
-                                  href={`/catalog?category=${category.id}`}
-                                  className="block px-4 py-2 hover:bg-primary text-sm text-white-700 hover:text-white"
-                                >
-                                  {category.name}
-                                </SmartLink>
-                              </li>
-                            ))}
-                        </ul>
+                {settings?.nav_links?.map((item, index) => (
+                  <li key={index} className="relative group">
+                    <SmartLink
+                      href={`${item.link}`}
+                      className={`flex items-center gap-1 cursor-pointer transition-all duration-300 ease-in-out hover:text-primary ${
+                        pathName === item.link ? "font-bold" : ""
+                      }`}
+                    >
+                      {item.label}
+                      {item.children && (
+                        <ChevronDown
+                          className="group-hover:rotate-180 transition-transform duration-300"
+                          size={16}
+                        />
                       )}
-                    </li>
-                  );
-                })}
+                    </SmartLink>
+
+                    {item.children && (
+                      <ul
+                        className="absolute left-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 opacity-0 invisible 
+                        text-primary-title group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out transform translate-y-2 group-hover:translate-y-0"
+                      >
+                        {item.children?.map((subItem, subIndex) => (
+                          <li key={subIndex}>
+                            <SmartLink
+                              href={`${subItem.link}`}
+                              className={`block px-4 py-2 hover:bg-primary text-sm text-white-700 hover:text-white ${
+                                pathName === subItem.link
+                                  ? "underline underline-offset-4"
+                                  : ""
+                              }`}
+                            >
+                              {subItem.label}
+                            </SmartLink>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -213,75 +160,56 @@ const NavBar = ({
 
             <hr className="border-2 border-primary" />
 
-            {settings?.nav_links?.map((item, index) => {
-              const isCatalog = item.link === "/catalog";
-              return (
-                <li
-                  key={index}
-                  className="cursor-pointer transition-all duration-300 ease-in-out hover:text-primary underline-offset-4"
-                >
-                  <div className="flex items-center gap-2">
-                    <SmartLink
-                      href={`${item.link}`}
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.label}
-                    </SmartLink>
-                    {(item.children || isCatalog) && <ChevronDown size={16} />}
-                  </div>
+            {settings.nav_links.map((item, index) => (
+              <li
+                key={index}
+                className="cursor-pointer transition-all duration-300 ease-in-out hover:text-primary underline-offset-4"
+              >
+                <div className="flex items-center gap-2">
+                  <SmartLink
+                    href={`${item.link}`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {item.label}
+                  </SmartLink>
+                  {item.children && <ChevronDown size={16} />}
+                </div>
 
-                  {/* Mobile nested list */}
-                  {(item.children || isCatalog) && (
+                {item.children && (
+                  <ul className="pl-4 mt-2">
+                    {item.children.map((subItem, subIndex) => (
+                      <li key={subIndex}>
+                        <SmartLink
+                          href={`${subItem.link}`}
+                          className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {subItem.label}
+                        </SmartLink>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {/* locations listing if no children */}
+                {item.link === "/locations" &&
+                  (!item.children || item.children.length === 0) && (
                     <ul className="pl-4 mt-2">
-                      {/* 1) Configured children */}
-                      {item.children?.map((subItem, subIndex: number) => (
-                        <li key={`m-cfg-${subIndex}`}>
-                          <SmartLink
-                            href={`${subItem.link}`}
+                      {locations?.map((location, i) => (
+                        <li key={i}>
+                          <Link
+                            href={`/locations/${location.slug}`}
                             className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
                             onClick={() => setIsOpen(false)}
                           >
-                            {subItem.label}
-                          </SmartLink>
+                            {getCityName(location.name)}
+                          </Link>
                         </li>
                       ))}
-
-                      {/* 2) Catalog → categories */}
-                      {isCatalog &&
-                        categories?.map((category) => (
-                          <li key={`m-cat-${category.id}`}>
-                            <SmartLink
-                              href={`/catalog?category=${category.id}`}
-                              className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              {category.name}
-                            </SmartLink>
-                          </li>
-                        ))}
                     </ul>
                   )}
-
-                  {/* locations listing if no children */}
-                  {item.link === "/locations" &&
-                    (!item.children || item.children.length === 0) && (
-                      <ul className="pl-4 mt-2">
-                        {locations?.map((location, i) => (
-                          <li key={i}>
-                            <Link
-                              href={`/locations/${location.slug}`}
-                              className="block py-2 text-sm text-gray-700 hover:text-primary hover:underline underline-offset-4"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              {getCityName(location.name)}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                </li>
-              );
-            })}
+              </li>
+            ))}
           </ul>
         </aside>
       </nav>
