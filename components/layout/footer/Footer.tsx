@@ -9,6 +9,7 @@ import Link from "next/link";
 import { DynamicFaIcon } from "@/components/common/DynamicFaIcon";
 
 import StoreLocationLi from "@/components/common/StoreLocationLi";
+import SmartLink from "@/components/common/SmartLink";
 
 const Footer = async ({
   locations,
@@ -17,6 +18,7 @@ const Footer = async ({
   locations: TLocation[];
   settings: TSettings;
 }) => {
+  console.log(settings);
   return (
     <footer className="bg-[#f8f9fa] text-[#2d2d2d] py-10 border-t border-gray-200">
       <PaddingContainer>
@@ -52,15 +54,15 @@ const Footer = async ({
             <h4 className="font-bold mb-3">Shop By Category</h4>
             <ul className="space-y-2 text-sm">
               {settings?.nav_links
-                ?.find((nav) => nav.link === "/catalog")
+                ?.find((nav) => nav.link.startsWith("/catalog")) // ✅ startsWith match
                 ?.children?.map((child, index) => (
                   <li key={index}>
-                    <Link
+                    <SmartLink
                       className="hover:text-primary hover:underline"
                       href={child.link}
                     >
                       {child.label}
-                    </Link>
+                    </SmartLink>
                   </li>
                 ))}
             </ul>
