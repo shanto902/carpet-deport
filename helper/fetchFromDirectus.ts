@@ -52,6 +52,10 @@ export const fetchPage = async (
                   ],
                   block_breadcrumb: ["*"],
                   block_one_cloumn: ["*", "images.*", "cards.steps_id.*"],
+                  block_catalog_product: [
+                    "*",
+                    "catalog_products.catalog_product_id.*",
+                  ],
                 },
               },
             ],
@@ -59,6 +63,7 @@ export const fetchPage = async (
         ],
       })
     );
+    console.log(result[0]);
 
     return result[0] as TPageBlock; // Changed from `TPageBlock[]`
   } catch (error) {

@@ -1,28 +1,22 @@
 "use client";
 
-import { TProduct } from "@/interfaces";
+import { TCatalogProduct } from "@/interfaces";
 import Image from "next/image";
 import Link from "next/link";
 import { FaStar } from "react-icons/fa6";
 import { TiHeartOutline } from "react-icons/ti";
+import SmartLink from "../common/SmartLink";
 
-type ProductCardProps = {
-  product: TProduct;
-  currentImage: string;
-  onTextureClick: (textureId: string) => void;
-};
+interface ProductCardProps {
+  product: TCatalogProduct;
+}
 
-const ProductCard = ({
-  product,
-  currentImage,
-  onTextureClick,
-}: ProductCardProps) => {
+const CatalogProductCard = ({ product }: ProductCardProps) => {
   return (
     <div className="bg-white hover:z-40 p-3 overflow-visible rounded-lg drop-shadow-[#E1E1E140] drop-shadow-2xl hover:drop-shadow-lg transition">
-      {/* Main Image */}
       <div className="relative">
         <Image
-          src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${currentImage}`}
+          src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${product.image}`}
           height={300}
           width={400}
           alt={product.name}
@@ -34,7 +28,7 @@ const ProductCard = ({
       </div>
 
       {/* Texture Thumbnails */}
-      <div className="flex items-center gap-2 mt-4 ">
+      {/* <div className="flex items-center gap-2 mt-4 ">
         {product.textures.slice(0, 5).map((texture, i) => {
           const textureId = texture.directus_files_id?.id;
           const textureTitle = texture.directus_files_id?.title || product.name;
@@ -53,7 +47,6 @@ const ProductCard = ({
                 }`}
                 onClick={() => onTextureClick(textureId)}
               />
-              {/* Tooltip */}
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
                 {textureTitle}
               </div>
@@ -69,10 +62,10 @@ const ProductCard = ({
             +{product.textures.length - 5}
           </Link>
         )}
-      </div>
+      </div> */}
 
       {/* Category and Name */}
-      <p className="text-sm text-gray-600 my-3">{product.category?.name}</p>
+      <p className="text-sm text-gray-600 my-3">{product.category}</p>
       <h3 className="font-medium text-lg">{product.name}</h3>
 
       {/* Ratings */}
@@ -90,15 +83,15 @@ const ProductCard = ({
         >
           Find In Store
         </Link>
-        <Link
-          href={`/see-room/${product.id}?tile=${currentImage}`}
+        <SmartLink
+          href={product.link}
           className="border transition-all duration-300 text-nowrap border-primary text-primary hover:drop-shadow-md drop-shadow-none bg-white text-sm px-2 py-1 rounded-full"
         >
           See In My Room
-        </Link>
+        </SmartLink>
       </div>
     </div>
   );
 };
 
-export default ProductCard;
+export default CatalogProductCard;

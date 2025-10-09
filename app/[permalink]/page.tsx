@@ -1,5 +1,6 @@
 import BlogBlock from "@/components/blocks/BlogBlock";
 import BreadcrumbBlock from "@/components/blocks/BreadcrumbBlock";
+import { CatalogProductShowcaseBlock } from "@/components/blocks/CatalogProductShowcaseBlock";
 import CategoriesShowcaseBlock from "@/components/blocks/CategoriesShowcaseBlock";
 import { HeroBlock } from "@/components/blocks/HeroBlock";
 import InspiredGalleryBlock from "@/components/blocks/InspiredGalleryBlock";
@@ -10,9 +11,11 @@ import StatisticBlock from "@/components/blocks/StatisticBlock";
 import TestimonialBlock from "@/components/blocks/TestimonialBlock";
 import TwoColumnBlock from "@/components/blocks/TwoColumnBlock";
 import VideoBlock from "@/components/blocks/VideoBlock";
+
 import { fetchPage, fetchPages } from "@/helper/fetchFromDirectus";
 import {
   TBlock,
+  TBlockCatalogProduct,
   TBlogBlogs,
   TBreadcrumbBlock,
   TCategoriesShowcaseBlock,
@@ -197,6 +200,15 @@ const renderBlock = (block: TBlock) => {
       return (
         <Suspense key={block.id}>
           <OneColumnBlock key={block.id} block={block as TOneColumnBlock} />
+        </Suspense>
+      );
+    case "block_catalog_product":
+      return (
+        <Suspense key={block.id}>
+          <CatalogProductShowcaseBlock
+            key={block.id}
+            block={block as TBlockCatalogProduct}
+          />
         </Suspense>
       );
     default:

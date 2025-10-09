@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FaStar } from "react-icons/fa";
 import BreadcrumbBanner from "@/components/common/BreadcrumbBanner";
 import PaddingContainer from "@/components/layout/PaddingContainer";
-import ProductCard from "@/components/cards/ProductCard";
+import ProductCard from "@/components/cards/";
 import { TProduct, TSettings } from "@/interfaces";
 
 const filterFields = [

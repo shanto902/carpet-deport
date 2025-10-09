@@ -1,9 +1,9 @@
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
 import React, { ReactNode } from "react";
 import { BiQuestionMark } from "react-icons/bi";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
+import SmartLink from "./SmartLink";
 
 const CustomButton = ({
   children,
@@ -21,7 +21,7 @@ const CustomButton = ({
   onClick?: () => void;
 }) => {
   return (
-    <Link
+    <SmartLink
       href={href}
       onClick={onClick}
       className={twMerge(
@@ -53,7 +53,7 @@ const CustomButton = ({
           } rounded-full`}
         />
       )}
-    </Link>
+    </SmartLink>
   );
 };
 

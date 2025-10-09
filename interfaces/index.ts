@@ -31,6 +31,7 @@ export type TBlock =
   | TBlogBlogs
   | TProductShowCaseBlock
   | TOneColumnBlock
+  | TBlockCatalogProduct
   | TPartnerBlock;
 
 export type THeroBlock = {
@@ -143,6 +144,28 @@ export type TPartnerBlock = {
       }
     ];
   };
+};
+
+export type TBlockCatalogProduct = {
+  collection: "block_catalog_product";
+  id: string;
+  item: {
+    id: number;
+    catalog_products: [
+      {
+        catalog_product_id: TCatalogProduct;
+      }
+    ];
+  };
+};
+
+export type TCatalogProduct = {
+  id: string;
+  image: string;
+  link: string;
+  name: string;
+  category: string;
+  rating: number;
 };
 
 export type TProductShowCaseBlock = {

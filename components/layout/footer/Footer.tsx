@@ -18,7 +18,6 @@ const Footer = async ({
   locations: TLocation[];
   settings: TSettings;
 }) => {
-  console.log(settings);
   return (
     <footer className="bg-[#f8f9fa] text-[#2d2d2d] py-10 border-t border-gray-200">
       <PaddingContainer>

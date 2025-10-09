@@ -5,7 +5,6 @@ import PaddingContainer from "@/components/layout/PaddingContainer";
 import { TProductShowCaseBlock } from "@/interfaces";
 
 import { useState } from "react";
-
 import ProductCard from "../cards/ProductCard";
 
 export default function ProductShowcaseBlock({
