@@ -2,14 +2,14 @@
 
 import CustomButton from "@/components/common/CustomButton";
 import PaddingContainer from "@/components/layout/PaddingContainer";
-import { TBlockCatalogProduct } from "@/interfaces";
+import { TCatalogProductBlock } from "@/interfaces";
 
 import CatalogProductCard from "../cards/CatalogProductCard";
 
 export const CatalogProductShowcaseBlock = ({
   block,
 }: {
-  block: TBlockCatalogProduct;
+  block: TCatalogProductBlock;
 }) => {
   return (
     <section className="py-16 bg-white">

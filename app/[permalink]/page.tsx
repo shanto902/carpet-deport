@@ -1,5 +1,6 @@
 import BlogBlock from "@/components/blocks/BlogBlock";
 import BreadcrumbBlock from "@/components/blocks/BreadcrumbBlock";
+import CatalogCategoriesBlock from "@/components/blocks/CatalogCategoriesBlock";
 import { CatalogProductShowcaseBlock } from "@/components/blocks/CatalogProductShowcaseBlock";
 import CategoriesShowcaseBlock from "@/components/blocks/CategoriesShowcaseBlock";
 import { HeroBlock } from "@/components/blocks/HeroBlock";
@@ -15,7 +16,7 @@ import VideoBlock from "@/components/blocks/VideoBlock";
 import { fetchPage, fetchPages } from "@/helper/fetchFromDirectus";
 import {
   TBlock,
-  TBlockCatalogProduct,
+  TCatalogProductBlock,
   TBlogBlogs,
   TBreadcrumbBlock,
   TCategoriesShowcaseBlock,
@@ -28,6 +29,7 @@ import {
   TTestimonialBlock,
   TTwoColumnBlock,
   TVideoBlock,
+  TCatalogCategoryBlock,
 } from "@/interfaces";
 import directus from "@/lib/directus";
 import { readItems } from "@directus/sdk";
@@ -207,7 +209,16 @@ const renderBlock = (block: TBlock) => {
         <Suspense key={block.id}>
           <CatalogProductShowcaseBlock
             key={block.id}
-            block={block as TBlockCatalogProduct}
+            block={block as TCatalogProductBlock}
+          />
+        </Suspense>
+      );
+    case "block_catalog_categories":
+      return (
+        <Suspense key={block.id}>
+          <CatalogCategoriesBlock
+            key={block.id}
+            block={block as TCatalogCategoryBlock}
           />
         </Suspense>
       );

@@ -56,6 +56,10 @@ export const fetchPage = async (
                     "*",
                     "catalog_products.catalog_product_id.*",
                   ],
+                  block_catalog_categories: [
+                    "*",
+                    "categories.catalog_categories_id.*",
+                  ],
                 },
               },
             ],
@@ -63,9 +67,8 @@ export const fetchPage = async (
         ],
       })
     );
-    console.log(result[0]);
 
-    return result[0] as TPageBlock; // Changed from `TPageBlock[]`
+    return result[0] as TPageBlock;
   } catch (error) {
     console.error("Failed to fetch about page data:", error);
     return null;

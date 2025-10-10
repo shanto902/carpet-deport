@@ -31,8 +31,9 @@ export type TBlock =
   | TBlogBlogs
   | TProductShowCaseBlock
   | TOneColumnBlock
-  | TBlockCatalogProduct
-  | TPartnerBlock;
+  | TCatalogProductBlock
+  | TPartnerBlock
+  | TCatalogCategoryBlock;
 
 export type THeroBlock = {
   collection: "block_hero";
@@ -146,7 +147,7 @@ export type TPartnerBlock = {
   };
 };
 
-export type TBlockCatalogProduct = {
+export type TCatalogProductBlock = {
   collection: "block_catalog_product";
   id: string;
   item: {
@@ -157,6 +158,27 @@ export type TBlockCatalogProduct = {
       }
     ];
   };
+};
+
+export type TCatalogCategoryBlock = {
+  collection: "block_catalog_categories";
+  id: string;
+  item: {
+    header: string;
+    id: number;
+    categories: [
+      {
+        catalog_categories_id: TCatalogCategories;
+      }
+    ];
+  };
+};
+
+export type TCatalogCategories = {
+  id: string;
+  image: string;
+  link: string;
+  name: string;
 };
 
 export type TCatalogProduct = {

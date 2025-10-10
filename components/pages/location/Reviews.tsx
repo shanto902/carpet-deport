@@ -10,14 +10,11 @@ const Reviews = ({ placeId }: { placeId: string }) => {
   const [loading, setLoading] = useState(true);
   const [expandedReview, setExpandedReview] = useState<number | null>(null);
 
-  // Reviews.tsx
   useEffect(() => {
     const fetchReviews = async () => {
       try {
         const res = await fetch(`/api/places/${placeId}/reviews`);
         const data = await res.json();
-        console.log(data);
-        // 🚀 keep only perfect-score reviews
         const fiveStarOnly = data.reviews.filter(
           (review: { rating: number }) => review.rating === 5
         );
@@ -35,9 +32,9 @@ const Reviews = ({ placeId }: { placeId: string }) => {
 
   const handleToggleExpand = (idx: number) => {
     if (expandedReview === idx) {
-      setExpandedReview(null); // Collapse
+      setExpandedReview(null);
     } else {
-      setExpandedReview(idx); // Expand
+      setExpandedReview(idx);
     }
   };
 
@@ -71,7 +68,6 @@ const Reviews = ({ placeId }: { placeId: string }) => {
         Our Customers Are Saying
       </h2>
 
-      {/* Columns Layout */}
       <Masonry
         breakpointCols={{ default: 3, 1024: 2, 640: 1 }}
         className="flex w-auto gap-6"
@@ -92,7 +88,6 @@ const Reviews = ({ placeId }: { placeId: string }) => {
                     ))}
                   </div>
 
-                  {/* Message */}
                   <p
                     className={`text-[#505050] text-sm md:text-base leading-relaxed mb-4 ${
                       expandedReview === idx ? "" : "line-clamp-4"
@@ -101,7 +96,6 @@ const Reviews = ({ placeId }: { placeId: string }) => {
                     {review.text || "No review text provided."}
                   </p>
 
-                  {/* Read More / Show Less Button */}
                   {review.text && review.text.length > 150 && (
                     <button
                       onClick={() => handleToggleExpand(idx)}
