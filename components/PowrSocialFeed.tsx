@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import CustomButton from "./common/CustomButton";
 
 declare global {
   interface Window {
@@ -36,24 +35,13 @@ export default function PowrSocialFeed() {
             powr-social-feed 
             overflow-y-hidden 
             w-full 
-            h-[550px] 
+            h-[1550px] 
             sm:h-[650px] 
             md:h-[750px] 
             lg:h-[850px]
           "
           style={{ maxWidth: "100%" }}
         />
-
-        {/* Follow Button */}
-        <div className="flex justify-end mt-6">
-          <CustomButton
-            button_type="arrow"
-            newTab
-            href="https://www.facebook.com/carpetdepotatlanta"
-          >
-            Follow Us on Facebook
-          </CustomButton>
-        </div>
       </div>
     </section>
   );
