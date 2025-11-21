@@ -60,7 +60,7 @@ const TestimonialBlock = ({ block }: { block: TTestimonialBlock }) => {
           <p className="text-sm text-red-500 font-semibold uppercase tracking-wider mb-2">
             Testimonials
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1E1E1E] leading-snug mb-6">
+          <h2 className="text-3xl font-semibold mb-6">
             What Our Clients <br /> Have To Say
           </h2>
           <CustomButton href="/consultation" className="w-full md:w-fit">
