@@ -95,24 +95,26 @@ const StoreLocationLi = ({ location }: { location: TLocation }) => {
       </Link>
 
       {/* Tooltip */}
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 hidden group-hover:flex flex-col items-start bg-white text-gray-800 text-xs p-4 rounded-md shadow-lg whitespace-pre-line min-w-[280px] text-left z-20">
-        {grouped.length === 0 ? (
-          <div className="text-gray-400 italic">Loading...</div>
-        ) : (
-          grouped.map(({ days, time }, idx) => (
-            <div key={idx} className="mb-1 last:mb-0">
-              <span className="font-medium">{formatGroupedLabel(days)}:</span>{" "}
-              <span
-                className={
-                  time.toLowerCase() === "closed" ? "text-red-600" : ""
-                }
-              >
-                {time}
-              </span>
-            </div>
-          ))
-        )}
-      </div>
+      {location.store_status === "live" && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 hidden group-hover:flex flex-col items-start bg-white text-gray-800 text-xs p-4 rounded-md shadow-lg whitespace-pre-line min-w-[280px] text-left z-20">
+          {grouped.length === 0 ? (
+            <div className="text-gray-400 italic">Loading...</div>
+          ) : (
+            grouped.map(({ days, time }, idx) => (
+              <div key={idx} className="mb-1 last:mb-0">
+                <span className="font-medium">{formatGroupedLabel(days)}:</span>{" "}
+                <span
+                  className={
+                    time.toLowerCase() === "closed" ? "text-red-600" : ""
+                  }
+                >
+                  {time}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </li>
   );
 };

@@ -83,6 +83,7 @@ const SortedLocations = ({ locations }: Props) => {
           key={location.id}
           location={location}
           distance={locationDistances[location.id]}
+          store_status={location.store_status}
         />
       ))}
     </>

@@ -124,14 +124,16 @@ const LocationPage = async ({ params }: PageProps) => {
                 {location.contact_no}
               </a>
             </p>
-            <CustomButton
-              href="#map"
-              inverted
-              button_type="location"
-              className="bg-red-500 text-white px-5 py-2 rounded-full text-sm flex items-center gap-2 mt-3 w-full"
-            >
-              Get Directions
-            </CustomButton>
+            {location.store_status === "live" && (
+              <CustomButton
+                href="#map"
+                inverted
+                button_type="location"
+                className="bg-red-500 text-white px-5 py-2 rounded-full text-sm flex items-center gap-2 mt-3 w-full"
+              >
+                Get Directions
+              </CustomButton>
+            )}
           </div>
 
           <div className=" lg:col-span-2 rounded-2xl overflow-hidden">
@@ -146,37 +148,41 @@ const LocationPage = async ({ params }: PageProps) => {
         </div>
 
         {/* Store Hours & Map & Service Areas */}
-        <div id="map" className="grid md:grid-cols-2 gap-10">
-          {/* Store Hours */}
-          <StoreHours placeId={location.place_id} location={location} />
+        {location.store_status === "live" && (
+          <div id="map" className="grid md:grid-cols-2 gap-10">
+            {/* Store Hours */}
+            <StoreHours placeId={location.place_id} location={location} />
 
-          {/* Map */}
-          <div className="bg-secondary aspect-square rounded-2xl overflow-hidden">
-            <Suspense>
-              <LocationMap
-                coordinate={location.google_map.geometry.coordinates}
-              />
-            </Suspense>
-          </div>
+            {/* Map */}
+            <div className="bg-secondary aspect-square rounded-2xl overflow-hidden">
+              <Suspense>
+                <LocationMap
+                  coordinate={location.google_map.geometry.coordinates}
+                />
+              </Suspense>
+            </div>
 
-          {/* Services Area */}
-          <div className="bg-secondary p-6 rounded-2xl md:col-span-2">
-            <h3 className="font-semibold my-10 text-2xl ">Service Areas</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5 text-base text-paragraph ">
-              {location?.service_areas?.map((area, i) => (
-                <span key={i} className="bg-white rounded-lg p-2 py-1">
-                  {area.name}
-                </span>
-              ))}
+            {/* Services Area */}
+            <div className="bg-secondary p-6 rounded-2xl md:col-span-2">
+              <h3 className="font-semibold my-10 text-2xl ">Service Areas</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-5 text-base text-paragraph ">
+                {location?.service_areas?.map((area, i) => (
+                  <span key={i} className="bg-white rounded-lg p-2 py-1">
+                    {area.name}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </PaddingContainer>
-      <div className="bg-secondary py-10 ">
-        <PaddingContainer>
-          <Reviews placeId={location.place_id} />
-        </PaddingContainer>
-      </div>
+      {location.store_status === "live" && (
+        <div className="bg-gray-100 py-12">
+          <PaddingContainer>
+            <Reviews placeId={location.place_id} />
+          </PaddingContainer>
+        </div>
+      )}
     </>
   );
 };

@@ -274,6 +274,7 @@ export type TLocation = {
   status: string;
   seo: TSeo;
   contact_no: string;
+  store_status: "live" | "coming_soon";
   thumbnail_image: string;
   place_id: string;
   google_map: {

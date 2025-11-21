@@ -62,9 +62,11 @@ function groupStoreHours(storeHours: StoreDay[]) {
 export const LocationCard = ({
   location,
   distance,
+  store_status,
 }: {
   location: TLocation;
   distance: number | undefined;
+  store_status: string;
 }) => {
   const { id, name, thumbnail_image, contact_no, google_map, place_id } =
     location;
@@ -143,54 +145,58 @@ export const LocationCard = ({
               </a>
             </p>
 
-            <div className="text-base text-gray-600 space-y-2">
-              {groupStoreHours(storeHours).map(
-                ({ days, time, holidayName }, idx) => {
-                  const dayLabel =
-                    days.length === 1
-                      ? days[0]
-                      : `${days[0]}–${days[days.length - 1]}`;
-                  const isClosed = time.trim().toLowerCase() === "closed";
+            {store_status === "live" && (
+              <div className="text-base text-gray-600 space-y-2">
+                {groupStoreHours(storeHours).map(
+                  ({ days, time, holidayName }, idx) => {
+                    const dayLabel =
+                      days.length === 1
+                        ? days[0]
+                        : `${days[0]}–${days[days.length - 1]}`;
+                    const isClosed = time.trim().toLowerCase() === "closed";
 
-                  return (
-                    <div key={idx} className="space-y-1">
-                      <p className="font-bold">
-                        {dayLabel}
-                        {holidayName && (
-                          <span className="block text-sm font-normal text-gray-500">
-                            {holidayName}
-                          </span>
-                        )}
-                      </p>
-                      <p className={isClosed ? "text-red-600 font-medium" : ""}>
-                        {isClosed ? "Closed" : time}
-                      </p>
-                      {holidayName && (
-                        <p
-                          className={`text-sm font-medium ${
-                            isClosed ? "text-red-600" : "text-green-600"
-                          }`}
-                        >
-                          {isClosed ? "Closed for holiday" : "Holiday hours"}
+                    return (
+                      <div key={idx} className="space-y-1">
+                        <p className="font-bold">
+                          {dayLabel}
+                          {holidayName && (
+                            <span className="block text-sm font-normal text-gray-500">
+                              {holidayName}
+                            </span>
+                          )}
                         </p>
-                      )}
-                    </div>
-                  );
-                }
-              )}
-
-              <p className="text-base text-gray-600">
-                Distance:{" "}
-                {distance !== undefined ? (
-                  <span>{distance.toFixed(2)} miles away</span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-gray-400">
-                    loading...
-                    <span className="animate-spin inline-block w-3 h-3 border-2 border-primary border-t-transparent rounded-full"></span>
-                  </span>
+                        <p
+                          className={isClosed ? "text-red-600 font-medium" : ""}
+                        >
+                          {isClosed ? "Closed" : time}
+                        </p>
+                        {holidayName && (
+                          <p
+                            className={`text-sm font-medium ${
+                              isClosed ? "text-red-600" : "text-green-600"
+                            }`}
+                          >
+                            {isClosed ? "Closed for holiday" : "Holiday hours"}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }
                 )}
-              </p>
-            </div>
+
+                <p className="text-base text-gray-600">
+                  Distance:{" "}
+                  {distance !== undefined ? (
+                    <span>{distance.toFixed(2)} miles away</span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-gray-400">
+                      loading...
+                      <span className="animate-spin inline-block w-3 h-3 border-2 border-primary border-t-transparent rounded-full"></span>
+                    </span>
+                  )}
+                </p>
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-1 flex-col md:flex-row justify-end md:items-end gap-2 mt-4 md:mt-0">
@@ -201,13 +207,15 @@ export const LocationCard = ({
           >
             More Info
           </CustomButton>
-          <CustomButton
-            className="inline-flex text-nowrap"
-            href={`/locations/${location.slug}#map`}
-            inverted
-          >
-            Get Directions
-          </CustomButton>
+          {store_status === "live" && (
+            <CustomButton
+              className="inline-flex text-nowrap"
+              href={`/locations/${location.slug}#map`}
+              inverted
+            >
+              Get Directions
+            </CustomButton>
+          )}
         </div>
       </div>
     </div>
