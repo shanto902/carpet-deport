@@ -179,7 +179,7 @@ export type TFacebookbBlock = {
   collection: "block_facebook_timeline";
   id: string;
   item: {
-    title: string;
+    header: string;
     id: number;
   };
 };

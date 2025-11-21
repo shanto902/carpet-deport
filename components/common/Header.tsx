@@ -9,7 +9,9 @@ const HeaderText = ({
   children: string;
   className?: string;
 }) => {
-  return <div className={twMerge("header", className)}>{parser(children)}</div>;
+  return (
+    <div className={twMerge("header ", className)}>{parser(children)}</div>
+  );
 };
 
 export default HeaderText;

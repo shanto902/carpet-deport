@@ -175,8 +175,7 @@ const LocationPage = async ({ params }: PageProps) => {
             </div>
           </div>
         ) : (
-          <h2 className="text-center uppercase font-bold text-4xl py-20  ">
-            {" "}
+          <h2 className="text-center uppercase font-bold text-4xl py-20">
             Opening Soon
           </h2>
         )}

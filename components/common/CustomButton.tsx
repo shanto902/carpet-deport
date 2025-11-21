@@ -12,6 +12,7 @@ const CustomButton = ({
   button_type = "arrow",
   inverted = false,
   onClick,
+  newTab,
 }: {
   children: ReactNode;
   className?: string;
@@ -19,9 +20,11 @@ const CustomButton = ({
   inverted?: boolean;
   button_type?: "arrow" | "location" | "question";
   onClick?: () => void;
+  newTab?: boolean;
 }) => {
   return (
     <SmartLink
+      newTab={newTab}
       href={href}
       onClick={onClick}
       className={twMerge(
