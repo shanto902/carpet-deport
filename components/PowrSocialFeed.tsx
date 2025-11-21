@@ -39,7 +39,7 @@ export default function PowrSocialFeed() {
         />
 
         {/* Bottom overlay to hide watermark */}
-        <div className="absolute bottom-2 left-0 w-full h-20 bg-[#F7F9FA]" />
+        <div className="absolute bottom-2 left-0 w-full h-30 md:h-20 bg-[#F7F9FA]" />
       </div>
     </section>
   );
