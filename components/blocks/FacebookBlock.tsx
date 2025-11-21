@@ -6,8 +6,8 @@ import CustomButton from "../common/CustomButton";
 export default function FacebookBlock() {
   return (
     <section className="bg-[#F7F9FA]">
-      <div className="mx-auto max-w-7xl py-10">
-        <PaddingContainer>
+      <PaddingContainer className="mx-auto  py-10">
+        <>
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-semibold">Straight From Our Social</h2>
             <CustomButton
@@ -18,10 +18,10 @@ export default function FacebookBlock() {
               Follow Us on Facebook
             </CustomButton>
           </div>
-        </PaddingContainer>
+        </>
 
         <PowrSocialFeed />
-      </div>
+      </PaddingContainer>
     </section>
   );
 }
