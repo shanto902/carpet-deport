@@ -148,7 +148,7 @@ const LocationPage = async ({ params }: PageProps) => {
         </div>
 
         {/* Store Hours & Map & Service Areas */}
-        {location.store_status === "live" && (
+        {location.store_status === "live" ? (
           <div id="map" className="grid md:grid-cols-2 gap-10">
             {/* Store Hours */}
             <StoreHours placeId={location.place_id} location={location} />
@@ -174,6 +174,11 @@ const LocationPage = async ({ params }: PageProps) => {
               </div>
             </div>
           </div>
+        ) : (
+          <h2 className="text-center uppercase font-bold text-4xl py-20  ">
+            {" "}
+            Opening Soon
+          </h2>
         )}
       </PaddingContainer>
       {location.store_status === "live" && (

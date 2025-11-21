@@ -33,7 +33,8 @@ export type TBlock =
   | TOneColumnBlock
   | TCatalogProductBlock
   | TPartnerBlock
-  | TCatalogCategoryBlock;
+  | TCatalogCategoryBlock
+  | TFacebookbBlock;
 
 export type THeroBlock = {
   collection: "block_hero";
@@ -174,6 +175,14 @@ export type TCatalogCategoryBlock = {
   };
 };
 
+export type TFacebookbBlock = {
+  collection: "block_facebook_timeline";
+  id: string;
+  item: {
+    title: string;
+    id: number;
+  };
+};
 export type TCatalogCategories = {
   id: string;
   image: string;

@@ -3,6 +3,7 @@ import BreadcrumbBlock from "@/components/blocks/BreadcrumbBlock";
 import CatalogCategoriesBlock from "@/components/blocks/CatalogCategoriesBlock";
 import { CatalogProductShowcaseBlock } from "@/components/blocks/CatalogProductShowcaseBlock";
 import CategoriesShowcaseBlock from "@/components/blocks/CategoriesShowcaseBlock";
+import FacebookBlock from "@/components/blocks/FacebookBlock";
 import { HeroBlock } from "@/components/blocks/HeroBlock";
 import InspiredGalleryBlock from "@/components/blocks/InspiredGalleryBlock";
 import OneColumnBlock from "@/components/blocks/OneColumnBlock";
@@ -30,6 +31,7 @@ import {
   TTwoColumnBlock,
   TVideoBlock,
   TCatalogCategoryBlock,
+  TFacebookbBlock,
 } from "@/interfaces";
 import directus from "@/lib/directus";
 import { readItems } from "@directus/sdk";
@@ -220,6 +222,12 @@ const renderBlock = (block: TBlock) => {
             key={block.id}
             block={block as TCatalogCategoryBlock}
           />
+        </Suspense>
+      );
+    case "block_facebook_timeline":
+      return (
+        <Suspense key={block.id}>
+          <FacebookBlock key={block.id} block={block as TFacebookbBlock} />
         </Suspense>
       );
     default:

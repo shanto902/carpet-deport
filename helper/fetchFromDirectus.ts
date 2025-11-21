@@ -60,6 +60,7 @@ export const fetchPage = async (
                     "*",
                     "categories.catalog_categories_id.*",
                   ],
+                  block_facebook_timeline: ["*"],
                 },
               },
             ],

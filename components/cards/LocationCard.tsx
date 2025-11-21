@@ -145,7 +145,7 @@ export const LocationCard = ({
               </a>
             </p>
 
-            {store_status === "live" && (
+            {store_status === "live" ? (
               <div className="text-base text-gray-600 space-y-2">
                 {groupStoreHours(storeHours).map(
                   ({ days, time, holidayName }, idx) => {
@@ -196,6 +196,8 @@ export const LocationCard = ({
                   )}
                 </p>
               </div>
+            ) : (
+              <p className="text-base text-red-600 font-medium">Opening Soon</p>
             )}
           </div>
         </div>
