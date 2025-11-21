@@ -27,8 +27,8 @@ export default function PowrSocialFeed() {
   }, []);
 
   return (
-    <section className="w-full py-8">
-      <div className="max-w-[1280px] mx-auto px-4">
+    <section className="w-full">
+      <div>
         {/* POWR container */}
         <div
           id="b700f064_1763752460"
