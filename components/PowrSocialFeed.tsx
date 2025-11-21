@@ -45,7 +45,7 @@ export default function PowrSocialFeed() {
         />
 
         {/* Follow Button */}
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-end mt-6">
           <CustomButton
             button_type="arrow"
             newTab
