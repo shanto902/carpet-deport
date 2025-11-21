@@ -1,10 +1,9 @@
 import PowrSocialFeed from "@/components/PowrSocialFeed";
 
-import { TFacebookbBlock } from "@/interfaces";
 import PaddingContainer from "../layout/PaddingContainer";
 import CustomButton from "../common/CustomButton";
 
-export default function FacebookBlock({ block }: { block: TFacebookbBlock }) {
+export default function FacebookBlock() {
   return (
     <section className="bg-[#F7F9FA]">
       <div className="mx-auto py-10">

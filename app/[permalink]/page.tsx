@@ -31,7 +31,6 @@ import {
   TTwoColumnBlock,
   TVideoBlock,
   TCatalogCategoryBlock,
-  TFacebookbBlock,
 } from "@/interfaces";
 import directus from "@/lib/directus";
 import { readItems } from "@directus/sdk";
@@ -227,7 +226,7 @@ const renderBlock = (block: TBlock) => {
     case "block_facebook_timeline":
       return (
         <Suspense key={block.id}>
-          <FacebookBlock key={block.id} block={block as TFacebookbBlock} />
+          <FacebookBlock key={block.id} />
         </Suspense>
       );
     default:
