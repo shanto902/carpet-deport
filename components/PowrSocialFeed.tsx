@@ -27,12 +27,21 @@ export default function PowrSocialFeed() {
   }, []);
 
   return (
-    <section className="w-full">
-      <>
+    <section className="w-full py-8">
+      <div className="max-w-[1280px] mx-auto px-4">
+        {/* POWR container */}
         <div
-          className="powr-social-feed overflow-y-hidden"
           id="b700f064_1763752460"
-          style={{ width: "1280px", height: "850px" }}
+          className="
+            powr-social-feed 
+            overflow-y-hidden 
+            w-full 
+            h-[550px] 
+            sm:h-[650px] 
+            md:h-[750px] 
+            lg:h-[850px]
+          "
+          style={{ maxWidth: "100%" }}
         />
 
         {/* Follow Button */}
@@ -45,7 +54,7 @@ export default function PowrSocialFeed() {
             Follow Us on Facebook
           </CustomButton>
         </div>
-      </>
+      </div>
     </section>
   );
 }
