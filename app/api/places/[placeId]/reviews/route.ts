@@ -1,40 +1,29 @@
-// /app/api/places/[placeId]/reviews/route.ts
+// app/api/places/[placeId]/reviews/route.ts
 import { NextRequest } from "next/server";
 import axios from "axios";
-import fs from "fs/promises";
-import path from "path";
+import { readPlaceCache, writePlaceCache } from "@/lib/placeCache";
 
 const API_KEY = process.env.SSR_GOOGLE_MAPS_API_KEY!;
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
 
-interface ApiProps {
-  params: {
-    placeId: string;
-  };
-}
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ placeId: string }> }
+) {
+  // in your Next version params is a Promise
+  const { placeId } = await params;
 
-const CACHE_DIR = path.resolve("./.cache");
-
-export const getCachePath = (placeId: string) =>
-  path.join(CACHE_DIR, `place-${placeId}.json`);
-
-export async function GET(req: NextRequest, { params }: ApiProps) {
-  const { placeId } = params;
-  const cachePath = getCachePath(placeId);
-
+  // try cache first
   try {
-    const cached = await fs.readFile(cachePath, "utf-8");
-    const { data, timestamp } = JSON.parse(cached);
-    const now = Date.now();
-
-    if (now - timestamp < CACHE_DURATION_MS) {
+    const { data, timestamp } = await readPlaceCache(placeId);
+    if (Date.now() - timestamp < CACHE_DURATION_MS) {
       return new Response(JSON.stringify(data), { status: 200 });
     }
   } catch {
-    // no cache or read error. fallback to API call
+    // no cache or error. fall through to API call
   }
 
-  // fetch from Google API
+  // fetch from Google Places API
   const response = await axios.get(
     "https://maps.googleapis.com/maps/api/place/details/json",
     {
@@ -54,13 +43,7 @@ export async function GET(req: NextRequest, { params }: ApiProps) {
     opening_hours: response.data.result.opening_hours || null,
   };
 
-  // save to cache
-  await fs.mkdir(path.dirname(cachePath), { recursive: true });
-  await fs.writeFile(
-    cachePath,
-    JSON.stringify({ data, timestamp: Date.now() }),
-    "utf-8"
-  );
+  await writePlaceCache(placeId, data);
 
   return new Response(JSON.stringify(data), { status: 200 });
 }
