@@ -8,16 +8,18 @@ const API_KEY = process.env.SSR_GOOGLE_MAPS_API_KEY!;
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
 
 interface ApiProps {
-  params: Promise<{
+  params: {
     placeId: string;
-  }>;
+  };
 }
 
-const getCachePath = (placeId: string) =>
-  path.resolve(`./.cache/place-${placeId}.json`);
+const CACHE_DIR = path.resolve("./.cache");
+
+export const getCachePath = (placeId: string) =>
+  path.join(CACHE_DIR, `place-${placeId}.json`);
 
 export async function GET(req: NextRequest, { params }: ApiProps) {
-  const { placeId } = await params;
+  const { placeId } = params;
   const cachePath = getCachePath(placeId);
 
   try {
@@ -29,12 +31,12 @@ export async function GET(req: NextRequest, { params }: ApiProps) {
       return new Response(JSON.stringify(data), { status: 200 });
     }
   } catch {
-    // no cache or read error, fallback to API call
+    // no cache or read error. fallback to API call
   }
 
   // fetch from Google API
   const response = await axios.get(
-    `https://maps.googleapis.com/maps/api/place/details/json`,
+    "https://maps.googleapis.com/maps/api/place/details/json",
     {
       params: {
         place_id: placeId,
