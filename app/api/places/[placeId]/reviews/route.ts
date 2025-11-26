@@ -2,6 +2,7 @@
 import { NextRequest } from "next/server";
 import axios from "axios";
 import { readPlaceCache, writePlaceCache } from "@/lib/placeCache";
+import { overrideWednesdayHours } from "@/helper/overrideWednesdayHours";
 
 const API_KEY = process.env.SSR_GOOGLE_MAPS_API_KEY!;
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
@@ -10,20 +11,21 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ placeId: string }> }
 ) {
-  // in your Next version params is a Promise
   const { placeId } = await params;
 
-  // try cache first
+  // Try cache first
   try {
     const { data, timestamp } = await readPlaceCache(placeId);
+
     if (Date.now() - timestamp < CACHE_DURATION_MS) {
-      return new Response(JSON.stringify(data), { status: 200 });
+      const patched = overrideWednesdayHours(data);
+      return new Response(JSON.stringify(patched), { status: 200 });
     }
   } catch {
-    // no cache or error. fall through to API call
+    // cache failed or doesn't exist. continue.
   }
 
-  // fetch from Google Places API
+  // Fetch from Google Places API
   const response = await axios.get(
     "https://maps.googleapis.com/maps/api/place/details/json",
     {
@@ -36,13 +38,17 @@ export async function GET(
     }
   );
 
-  const data = {
+  let data = {
     name: response.data.result.name,
     rating: response.data.result.rating,
     reviews: response.data.result.reviews || [],
     opening_hours: response.data.result.opening_hours || null,
   };
 
+  // Apply Wednesday override
+  data = overrideWednesdayHours(data);
+
+  // Save to cache
   await writePlaceCache(placeId, data);
 
   return new Response(JSON.stringify(data), { status: 200 });
