@@ -2,7 +2,7 @@
 import { NextRequest } from "next/server";
 import axios from "axios";
 import { readPlaceCache, writePlaceCache } from "@/lib/placeCache";
-import { overrideWednesdayHours } from "@/helper/overrideWednesdayHours";
+// import { overrideWednesdayHours } from "@/helper/overrideWednesdayHours";
 
 const API_KEY = process.env.SSR_GOOGLE_MAPS_API_KEY!;
 const CACHE_DURATION_MS = 24 * 60 * 60 * 1000; // 1 day
@@ -38,7 +38,7 @@ export async function GET(
     }
   );
 
-  let data = {
+  const data = {
     name: response.data.result.name,
     rating: response.data.result.rating,
     reviews: response.data.result.reviews || [],
