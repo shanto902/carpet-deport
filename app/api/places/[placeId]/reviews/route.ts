@@ -18,8 +18,8 @@ export async function GET(
     const { data, timestamp } = await readPlaceCache(placeId);
 
     if (Date.now() - timestamp < CACHE_DURATION_MS) {
-      const patched = overrideWednesdayHours(data);
-      return new Response(JSON.stringify(patched), { status: 200 });
+      // const patched = overrideWednesdayHours(data);
+      return new Response(JSON.stringify(data), { status: 200 });
     }
   } catch {
     // cache failed or doesn't exist. continue.
@@ -46,7 +46,7 @@ export async function GET(
   };
 
   // Apply Wednesday override
-  data = overrideWednesdayHours(data);
+  // data = overrideWednesdayHours(data);
 
   // Save to cache
   await writePlaceCache(placeId, data);
