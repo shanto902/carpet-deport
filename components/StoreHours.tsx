@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { TLocation } from "@/interfaces";
@@ -44,77 +45,106 @@ const StoreHours = ({
   useEffect(() => {
     const fetchStoreHours = async () => {
       try {
-        const [res, holidaysRes] = await Promise.all([
+        const [res, holidaysRes, adjustmentsRes] = await Promise.all([
           fetch(`/api/places/${placeId}/reviews`),
           fetch(`/api/directus-holidays?slug=${location.slug}`),
+          fetch(`/api/directus-adjustments?slug=${location.slug}`),
         ]);
 
         const data = await res.json();
         const allHolidays = await holidaysRes.json(); // [{ name, date, status, stores }]
-        const weekdayText: string[] = data?.opening_hours?.weekday_text || [];
+        const adjustments = await adjustmentsRes.json(); // [{ date, start_time, end_time }]
 
-        // 1) Filter holidays for THIS location
+        const weekdayText: string[] = data?.opening_hours?.weekday_text || [];
+        const timezone = "America/New_York";
+
+        // Filter holidays for this location
         const locationHolidays = (allHolidays || []).filter((h: any) =>
           (h.stores || []).some(
             (s: any) => s?.locations_id?.slug === location.slug
           )
         );
 
-        // 2) Build a quick lookup map by yyyy-MM-dd
-        //    Be timezone-safe by formatting to y-M-d on both sides.
         const holidaysByDate: Record<
           string,
           { name: string; status: "open" | "closed" }
         > = {};
         for (const h of locationHolidays) {
-          const key = DateTime.fromISO(h.date).toFormat("yyyy-MM-dd"); // normalize
+          const key = DateTime.fromISO(h.date).toFormat("yyyy-MM-dd");
           holidaysByDate[key] = { name: h.name, status: h.status };
         }
 
-        const timezone = "America/New_York";
+        // Create adjustment map
+        const adjustmentsByDate: Record<
+          string,
+          { start_time: string; end_time: string }
+        > = {};
+        for (const a of adjustments || []) {
+          const key = DateTime.fromISO(a.date).toFormat("yyyy-MM-dd");
+          adjustmentsByDate[key] = {
+            start_time: a.start_time,
+            end_time: a.end_time,
+          };
+        }
+
+        // Start from Monday this week
         const today = DateTime.now().setZone(timezone);
+        const monday = today.startOf("week").plus({ days: 1 });
 
         const days: StoreDay[] = [];
 
-        // 3) Include TODAY (i = 0) through next 6 days
         for (let i = 0; i < 7; i++) {
-          const date = today.plus({ days: i });
+          const date = monday.plus({ days: i });
           const dateKey = date.toFormat("yyyy-MM-dd");
 
-          // Map Luxon weekday (Mon=1..Sun=7) to Google’s weekday_text index (0..6, Mon..Sun)
-          const weekdayIndex = (date.weekday + 6) % 7;
-          const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
+          const weekdayIndex = (i + 0) % 7;
+          const [dayName, gmbTime] = weekdayText[weekdayIndex]?.split(": ") || [
             date.weekdayLong,
             "Closed",
           ];
 
+          // Holiday
           const holiday = holidaysByDate[dateKey];
           const holidayName = holiday
             ? normalizeHolidayName(holiday.name)
             : null;
 
-          // If there's a holiday, use that status; otherwise infer from time text
-          const status: "open" | "closed" =
+          // Adjustment
+          const adj = adjustmentsByDate[dateKey];
+          let time = gmbTime;
+          let status: "open" | "closed" =
             holiday?.status ??
-            (time.trim().toLowerCase() === "closed" ? "closed" : "open");
+            (gmbTime.trim().toLowerCase() === "closed" ? "closed" : "open");
 
-          days.push({
-            day: dayName,
-            time,
-            holidayName,
-            status,
-          });
+          if (adj) {
+            if (!adj.start_time || !adj.end_time) {
+              time = "Closed";
+              status = "closed";
+            } else {
+              const start = DateTime.fromFormat(adj.start_time, "HH:mm:ss", {
+                zone: timezone,
+              });
+              const end = DateTime.fromFormat(adj.end_time, "HH:mm:ss", {
+                zone: timezone,
+              });
+              time = `${start.toFormat("h:mm a")} – ${end.toFormat("h:mm a")}`;
+              status = "open";
+            }
+          }
+
+          days.push({ day: dayName, time, holidayName, status });
         }
 
-        // Optional: keep your Mon→Sun ordering (this loses "chronological starting today"),
-        // but preserves your original layout. If you want chronological, skip this sort.
         const sorted = days.sort(
           (a, b) => orderedDays.indexOf(a.day) - orderedDays.indexOf(b.day)
         );
 
         setStoreHours(sorted);
       } catch (error) {
-        console.error("❌ Error fetching store hours or holidays:", error);
+        console.error(
+          "❌ Error fetching store hours/holidays/adjustments:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -133,8 +163,7 @@ const StoreHours = ({
       ) : (
         <ul className="text-base space-y-4 text-gray-700">
           {storeHours.map(({ day, time, holidayName, status }, index) => {
-            const isClosed =
-              status === "closed" || time.trim().toLowerCase() === "closed";
+            const isClosed = status === "closed";
 
             return (
               <li
