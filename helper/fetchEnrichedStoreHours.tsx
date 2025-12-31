@@ -20,8 +20,10 @@ export async function fetchEnrichedStoreHours(
     ]);
 
     const gmbData = await res.json();
-    const holidays = await holidaysRes.json(); // [{ name, date, status }]
-    const adjustments = await adjustmentsRes.json(); // [{ date, start_time, end_time }]
+    const holidays = await holidaysRes.json();
+    const adjustments = await adjustmentsRes.json();
+
+    console.log("🔧 Time Adjustments fetched:", adjustments);
 
     const weekdayText: string[] = gmbData?.opening_hours?.weekday_text || [];
 
@@ -32,10 +34,9 @@ export async function fetchEnrichedStoreHours(
 
     for (let i = 1; i <= 7; i++) {
       const date = today.plus({ days: i });
-      const formattedDate = date.toISODate(); // YYYY-MM-DD
+      const formattedDate = date.toISODate();
       const weekdayIndex = (date.weekday + 6) % 7;
 
-      // ✅ SAFE parsing of Google Business hours
       const weekdayEntry = weekdayText[weekdayIndex] || "";
 
       const [dayName, gmbTime] =
@@ -43,7 +44,6 @@ export async function fetchEnrichedStoreHours(
           ? weekdayEntry.split(": ")
           : [date.weekdayLong ?? "Unknown", "Closed"];
 
-      // ✅ Holiday lookup
       const holiday = holidays.find(
         (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
       );
@@ -51,7 +51,7 @@ export async function fetchEnrichedStoreHours(
       const holidayName = holiday?.name ?? null;
       const status: "open" | "closed" = holiday?.status ?? "open";
 
-      // ✅ Time adjustment override
+      // 🔍 Find adjustment for this date
       const adjustment = adjustments.find(
         (a: any) => DateTime.fromISO(a.date).toISODate() === formattedDate
       );
@@ -59,11 +59,21 @@ export async function fetchEnrichedStoreHours(
       let time = gmbTime;
 
       if (adjustment) {
+        console.log(
+          `⚙️ Adjustment found for ${formattedDate}:`,
+          adjustment.start_time,
+          adjustment.end_time
+        );
+
         if (!adjustment.start_time || !adjustment.end_time) {
           time = "Closed";
         } else {
           time = `${adjustment.start_time} – ${adjustment.end_time}`;
         }
+
+        console.log(`✅ Time overridden for ${formattedDate}: ${time}`);
+      } else {
+        console.log(`ℹ️ No time adjustment for ${formattedDate}`);
       }
 
       days.push({
