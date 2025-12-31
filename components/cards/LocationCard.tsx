@@ -9,11 +9,10 @@ import { TLocation } from "@/interfaces";
 interface StoreDay {
   day: string;
   time: string;
-  holidayName: string;
+  holidayName: string | null;
   status?: "open" | "closed";
 }
 
-// Group same-time days into ranges (excluding holidays)
 function groupStoreHours(storeHours: StoreDay[]) {
   const dayOrder = [
     "Sunday",
@@ -51,7 +50,7 @@ function groupStoreHours(storeHours: StoreDay[]) {
       groups.push({
         days: [entry.day],
         time,
-        holidayName: entry.holidayName,
+        holidayName: entry.holidayName ?? undefined,
       });
     }
   });
@@ -88,24 +87,30 @@ export const LocationCard = ({
 
         const timezone = "America/New_York";
         const today = DateTime.now().setZone(timezone);
+        const monday = today.startOf("week").plus({ days: 1 }); // ensure week starts from Monday
+
         const days: StoreDay[] = [];
 
-        for (let i = 1; i <= 7; i++) {
-          const date = today.plus({ days: i });
+        for (let i = 0; i < 7; i++) {
+          const date = monday.plus({ days: i });
           const formattedDate = date.toISODate();
           const weekdayIndex = (date.weekday + 6) % 7;
 
-          const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
-            date.weekdayLong,
-            "Closed",
-          ];
+          const [dayName, baseTime] = weekdayText[weekdayIndex]?.split(
+            ": "
+          ) || [date.weekdayLong ?? "Unknown", "Closed"];
 
           const holiday = holidays.find(
             (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
           );
 
           const holidayName = holiday?.name || null;
-          const status = holiday?.status || "open";
+          const status: "open" | "closed" = holiday?.status || "open";
+
+          let time = baseTime;
+          if (status === "closed") {
+            time = "Closed";
+          }
 
           days.push({ day: dayName, time, holidayName, status });
         }
@@ -201,6 +206,7 @@ export const LocationCard = ({
             )}
           </div>
         </div>
+
         <div className="flex flex-1 flex-col md:flex-row justify-end md:items-end gap-2 mt-4 md:mt-0">
           <CustomButton
             href={`/locations/${location.slug}`}
