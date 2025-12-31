@@ -35,12 +35,9 @@ export async function fetchEnrichedStoreHours(
       const date = monday.plus({ days: i });
       const formattedDate = date.toISODate(); // YYYY-MM-DD
 
-      const weekdayIndex = (i + 0) % 7; // 0 (Mon) to 6 (Sun)
-
-      const [dayName, gmbTime] = weekdayText[weekdayIndex]?.split(": ") || [
-        date.weekdayLong,
-        "Closed",
-      ];
+      const luxonDayName = date.setZone(timezone).toFormat("cccc"); // e.g. "Wednesday"
+      const match = weekdayText.find((text) => text.startsWith(luxonDayName));
+      const [dayName, gmbTime] = match?.split(": ") || [luxonDayName, "Closed"];
 
       // Check holiday
       const holiday = holidays.find(

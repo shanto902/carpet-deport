@@ -93,10 +93,12 @@ export const LocationCard = ({
         for (let i = 1; i <= 7; i++) {
           const date = today.plus({ days: i });
           const formattedDate = date.toISODate();
-          const weekdayIndex = (date.weekday + 6) % 7;
-
-          const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
-            date.weekdayLong,
+          const luxonDayName = date.setZone(timezone).toFormat("cccc"); // e.g. "Wednesday"
+          const match = weekdayText.find((text) =>
+            text.startsWith(luxonDayName)
+          );
+          const [dayName, gmbTime] = match?.split(": ") || [
+            luxonDayName,
             "Closed",
           ];
 

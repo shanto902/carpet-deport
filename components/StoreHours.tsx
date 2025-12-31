@@ -97,9 +97,12 @@ const StoreHours = ({
           const date = monday.plus({ days: i });
           const dateKey = date.toFormat("yyyy-MM-dd");
 
-          const weekdayIndex = (i + 0) % 7;
-          const [dayName, gmbTime] = weekdayText[weekdayIndex]?.split(": ") || [
-            date.weekdayLong,
+          const luxonDayName = date.setZone(timezone).toFormat("cccc"); // e.g. "Wednesday"
+          const match = weekdayText.find((text) =>
+            text.startsWith(luxonDayName)
+          );
+          const [dayName, gmbTime] = match?.split(": ") || [
+            luxonDayName,
             "Closed",
           ];
 
