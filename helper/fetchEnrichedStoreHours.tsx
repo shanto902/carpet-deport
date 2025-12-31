@@ -25,36 +25,31 @@ export async function fetchEnrichedStoreHours(
 
     const weekdayText: string[] = gmbData?.opening_hours?.weekday_text || [];
     const timezone = "America/New_York";
-    const today = DateTime.now().setZone(timezone);
 
-    console.log("📅 Starting date:", today.toISODate());
-    console.log("📋 GMB Weekday Text:", weekdayText);
+    const today = DateTime.now().setZone(timezone);
+    const monday = today.startOf("week").plus({ days: 1 }); // Force Monday (Luxon: Sunday = 7)
 
     const days: StoreDay[] = [];
 
-    for (let i = 1; i <= 7; i++) {
-      const date = today.plus({ days: i });
+    for (let i = 0; i < 7; i++) {
+      const date = monday.plus({ days: i });
       const formattedDate = date.toISODate(); // YYYY-MM-DD
 
-      // Luxon weekday: 1 (Monday) to 7 (Sunday)
-      // GMB: 0 (Monday) to 6 (Sunday)
-      const weekdayIndex = (date.weekday + 6) % 7;
+      const weekdayIndex = (i + 0) % 7; // 0 (Mon) to 6 (Sun)
 
       const [dayName, gmbTime] = weekdayText[weekdayIndex]?.split(": ") || [
         date.weekdayLong,
         "Closed",
       ];
 
-      console.log(`📅 ${dayName} (${formattedDate}) → ${gmbTime}`);
-
-      // Check holiday match
+      // Check holiday
       const holiday = holidays.find(
         (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
       );
       const holidayName = holiday?.name || null;
       let status: "open" | "closed" = holiday?.status || "open";
 
-      // Check for time adjustment
+      // Check adjustment
       const adjustment = adjustments.find(
         (a: any) => DateTime.fromISO(a.date).toISODate() === formattedDate
       );
@@ -62,36 +57,24 @@ export async function fetchEnrichedStoreHours(
       let time = gmbTime;
 
       if (adjustment) {
-        console.log(`🕐 Adjustment found for ${formattedDate}:`, adjustment);
+        console.log(`🕐 Adjustment for ${formattedDate}`, adjustment);
 
-        try {
-          if (!adjustment.start_time || !adjustment.end_time) {
-            time = "Closed";
-            status = "closed";
-          } else {
-            const start = DateTime.fromISO(adjustment.start_time, {
-              zone: timezone,
-            });
-            const end = DateTime.fromISO(adjustment.end_time, {
-              zone: timezone,
-            });
-
-            if (!start.isValid || !end.isValid) {
-              console.warn(
-                "⚠️ Invalid time format for adjustment:",
-                adjustment
-              );
-              time = "Closed";
-              status = "closed";
-            } else {
-              time = `${start.toFormat("h:mm a")} – ${end.toFormat("h:mm a")}`;
-              status = "open"; // override holiday closure
-            }
-          }
-        } catch (e) {
-          console.error("❌ Error parsing adjustment time:", e);
+        if (!adjustment.start_time || !adjustment.end_time) {
           time = "Closed";
           status = "closed";
+        } else {
+          const start = DateTime.fromISO(adjustment.start_time, {
+            zone: timezone,
+          });
+          const end = DateTime.fromISO(adjustment.end_time, { zone: timezone });
+
+          if (start.isValid && end.isValid) {
+            time = `${start.toFormat("h:mm a")} – ${end.toFormat("h:mm a")}`;
+            status = "open";
+          } else {
+            time = "Closed";
+            status = "closed";
+          }
         }
       }
 
@@ -103,7 +86,7 @@ export async function fetchEnrichedStoreHours(
       });
     }
 
-    console.log("✅ Final enriched hours:", days);
+    console.log("✅ Final weekly schedule from Monday:", days);
     return days;
   } catch (err) {
     console.error("❌ Store hours fetch failed for", placeId, err);
