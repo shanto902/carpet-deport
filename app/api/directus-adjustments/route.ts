@@ -35,11 +35,6 @@ export async function GET(req: NextRequest) {
       })
     );
 
-    console.log(
-      "✅ Adjustments fetched with shop.locations_id.slug:",
-      adjustments
-    );
-
     return new Response(JSON.stringify(adjustments), { status: 200 });
   } catch (err) {
     console.error("❌ Error fetching time adjustments:", err);

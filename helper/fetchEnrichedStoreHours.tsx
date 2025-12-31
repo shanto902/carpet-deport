@@ -54,8 +54,6 @@ export async function fetchEnrichedStoreHours(
       let time = gmbTime;
 
       if (adjustment) {
-        console.log(`🕐 Adjustment for ${formattedDate}`, adjustment);
-
         if (!adjustment.start_time || !adjustment.end_time) {
           time = "Closed";
           status = "closed";
@@ -83,7 +81,6 @@ export async function fetchEnrichedStoreHours(
       });
     }
 
-    console.log("✅ Final weekly schedule from Monday:", days);
     return days;
   } catch (err) {
     console.error("❌ Store hours fetch failed for", placeId, err);
