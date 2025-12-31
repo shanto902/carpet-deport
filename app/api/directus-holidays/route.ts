@@ -1,37 +1,72 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// /app/api/directus-holidays/route.ts
-import { NextRequest } from "next/server";
-import { readItems } from "@directus/sdk";
-import directus from "@/lib/directus";
+import { DateTime } from "luxon";
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const slug = searchParams.get("slug");
+interface StoreDay {
+  day: string;
+  time: string;
+  holidayName?: string | null;
+  status?: "open" | "closed";
+}
 
-  if (!slug) {
-    return new Response(JSON.stringify({ error: "Missing slug" }), {
-      status: 400,
-    });
-  }
-
+export async function fetchEnrichedStoreHours(
+  placeId: string,
+  slug: string
+): Promise<StoreDay[]> {
   try {
-    const holidays = await directus.request(
-      readItems("holidays", {
-        fields: ["name", "date", "status", "stores.locations_id.slug"],
-        sort: ["date"],
-      })
-    );
+    const [res, holidaysRes, adjustmentsRes] = await Promise.all([
+      fetch(`/api/places/${placeId}/reviews`),
+      fetch(`/api/directus-holidays?slug=${slug}`),
+      fetch(`/api/directus-adjustments?slug=${slug}`),
+    ]);
 
-    // Filter holidays where any store slug matches
-    const filtered = holidays.filter((holiday: any) =>
-      holiday.stores.some(
-        (s: any) => s.locations_id?.slug?.toLowerCase() === slug.toLowerCase()
-      )
-    );
+    const gmbData = await res.json();
+    const holidays = await holidaysRes.json(); // [{ name, date, status }]
+    const adjustments = await adjustmentsRes.json(); // [{ date, start_time, end_time }]
 
-    return new Response(JSON.stringify(filtered), { status: 200 });
+    const weekdayText: string[] = gmbData?.opening_hours?.weekday_text || [];
+    const timezone = "America/New_York";
+    const today = DateTime.now().setZone(timezone);
+
+    const days: StoreDay[] = [];
+
+    for (let i = 1; i <= 7; i++) {
+      const date = today.plus({ days: i });
+      const formattedDate = date.toISODate(); // YYYY-MM-DD
+      const weekdayIndex = (date.weekday + 6) % 7;
+
+      const [dayName, gmbTime] = weekdayText[weekdayIndex]?.split(": ") || [
+        date.weekdayLong,
+        "Closed",
+      ];
+
+      // Check if holiday
+      const holiday = holidays.find(
+        (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
+      );
+      const holidayName = holiday?.name || null;
+      const status = holiday?.status || "open";
+
+      // Check for time adjustment override
+      const adjustment = adjustments.find(
+        (a: any) => DateTime.fromISO(a.date).toISODate() === formattedDate
+      );
+
+      let time = gmbTime;
+
+      if (adjustment) {
+        if (!adjustment.start_time || !adjustment.end_time) {
+          time = "Closed";
+        } else {
+          time = `${adjustment.start_time} – ${adjustment.end_time}`;
+        }
+      }
+
+      days.push({ day: dayName, time, holidayName, status });
+    }
+
+    return days;
   } catch (err) {
-    console.error("❌ Error fetching holidays:", err);
-    return new Response(JSON.stringify([]), { status: 500 });
+    console.error("Store hours fetch failed for", placeId, err);
+    return [];
   }
 }
