@@ -13,14 +13,17 @@ export async function fetchEnrichedStoreHours(
   slug: string
 ): Promise<StoreDay[]> {
   try {
-    const [res, holidaysRes] = await Promise.all([
+    const [res, holidaysRes, adjustmentsRes] = await Promise.all([
       fetch(`/api/places/${placeId}/reviews`),
       fetch(`/api/directus-holidays?slug=${slug}`),
+      fetch(`/api/directus-adjustments?slug=${slug}`),
     ]);
 
-    const data = await res.json();
+    const gmbData = await res.json();
     const holidays = await holidaysRes.json(); // [{ name, date, status }]
-    const weekdayText: string[] = data?.opening_hours?.weekday_text || [];
+    const adjustments = await adjustmentsRes.json(); // [{ date, start_time, end_time }]
+
+    const weekdayText: string[] = gmbData?.opening_hours?.weekday_text || [];
 
     const timezone = "America/New_York";
     const today = DateTime.now().setZone(timezone);
@@ -29,27 +32,51 @@ export async function fetchEnrichedStoreHours(
 
     for (let i = 1; i <= 7; i++) {
       const date = today.plus({ days: i });
-      const formattedDate = date.toISODate();
-
+      const formattedDate = date.toISODate(); // YYYY-MM-DD
       const weekdayIndex = (date.weekday + 6) % 7;
-      const [dayName, time] = weekdayText[weekdayIndex]?.split(": ") || [
-        date.weekdayLong,
-        "Closed",
-      ];
 
+      // ✅ SAFE parsing of Google Business hours
+      const weekdayEntry = weekdayText[weekdayIndex] || "";
+
+      const [dayName, gmbTime] =
+        weekdayEntry.includes(": ") && weekdayEntry.split(": ").length === 2
+          ? weekdayEntry.split(": ")
+          : [date.weekdayLong ?? "Unknown", "Closed"];
+
+      // ✅ Holiday lookup
       const holiday = holidays.find(
         (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
       );
 
-      const holidayName = holiday?.name || null;
-      const status = holiday?.status || "open";
+      const holidayName = holiday?.name ?? null;
+      const status: "open" | "closed" = holiday?.status ?? "open";
 
-      days.push({ day: dayName, time, holidayName, status });
+      // ✅ Time adjustment override
+      const adjustment = adjustments.find(
+        (a: any) => DateTime.fromISO(a.date).toISODate() === formattedDate
+      );
+
+      let time = gmbTime;
+
+      if (adjustment) {
+        if (!adjustment.start_time || !adjustment.end_time) {
+          time = "Closed";
+        } else {
+          time = `${adjustment.start_time} – ${adjustment.end_time}`;
+        }
+      }
+
+      days.push({
+        day: dayName,
+        time,
+        holidayName,
+        status,
+      });
     }
 
     return days;
   } catch (err) {
-    console.error("Store hours fetch failed for", placeId, err);
+    console.error("❌ Store hours fetch failed for", placeId, err);
     return [];
   }
 }
