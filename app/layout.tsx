@@ -66,6 +66,13 @@ export default async function RootLayout({
             `,
           }}
         />
+
+        {/* HubSpot Embed Code */}
+        <Script
+          id="hs-script-loader"
+          strategy="afterInteractive"
+          src="//js-na2.hs-scripts.com/244998019.js"
+        />
       </head>
       <body className={`${inter.className} antialiased scroll-smooth`}>
         {/* GTM NoScript Fallback */}
