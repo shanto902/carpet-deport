@@ -25,7 +25,7 @@ function groupStoreHours(storeHours: StoreDay[]) {
   ];
 
   const sortedHours = [...storeHours].sort(
-    (a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day)
+    (a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day),
   );
 
   const groups: { days: string[]; time: string; holidayName?: string }[] = [];
@@ -78,7 +78,7 @@ export const LocationCard = ({
       try {
         const [res, holidaysRes] = await Promise.all([
           fetch(`/api/places/${place_id}/reviews`),
-          fetch(`/api/directus-holidays`),
+          fetch(`/api/directus-holidays?slug=${location.slug}`),
         ]);
 
         const data = await res.json();
@@ -97,12 +97,15 @@ export const LocationCard = ({
           const weekdayIndex = (date.weekday + 6) % 7;
 
           const [dayName, baseTime] = weekdayText[weekdayIndex]?.split(
-            ": "
+            ": ",
           ) || [date.weekdayLong ?? "Unknown", "Closed"];
 
-          const holiday = holidays.find(
-            (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate
-          );
+          const holiday = Array.isArray(holidays)
+            ? holidays.find(
+                (h: any) =>
+                  DateTime.fromISO(h.date).toISODate() === formattedDate,
+              )
+            : null;
 
           const holidayName = holiday?.name || null;
           const status: "open" | "closed" = holiday?.status || "open";
@@ -186,7 +189,7 @@ export const LocationCard = ({
                         )}
                       </div>
                     );
-                  }
+                  },
                 )}
 
                 <p className="text-base text-gray-600">
