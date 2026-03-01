@@ -34,25 +34,20 @@ const SortedLocations = ({ locations }: Props) => {
   const [locationDistances, setLocationDistances] = useState<
     Record<string, number>
   >({});
+
   const [displayLocations, setDisplayLocations] =
     useState<TLocation[]>(locations);
 
   const loadDistances = (lat: number, lon: number) => {
     const distanceMap: Record<string, number> = {};
     const updated = locations.map((loc) => {
-      const coords = loc.google_map?.geometry?.coordinates;
-      if (!coords || coords.length < 2) {
-        return loc;
-      }
-      const [lng, lat2] = coords.map(Number);
+      const [lng, lat2] = loc.google_map.geometry.coordinates.map(Number);
       const distance = getDistance(lat, lon, lat2, lng);
       distanceMap[loc.id] = distance;
-      return { ...loc, __distance: distance } as TLocation & {
-        __distance: number;
-      };
+      return { ...loc, __distance: distance };
     });
 
-    const sorted = (updated as any[]).sort(
+    const sorted = updated.sort(
       (a, b) => (a.__distance ?? Infinity) - (b.__distance ?? Infinity),
     );
     setDisplayLocations(sorted);
@@ -60,11 +55,6 @@ const SortedLocations = ({ locations }: Props) => {
   };
 
   const requestLocation = () => {
-    if (!navigator.geolocation) {
-      console.warn("Geolocation is not supported by this browser.");
-      return;
-    }
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
@@ -72,10 +62,7 @@ const SortedLocations = ({ locations }: Props) => {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ lat, lon }));
         loadDistances(lat, lon);
       },
-      (error) => {
-        console.error("Geolocation error:", error.message);
-        // Fallback or just ignore, distances will remain loading or hidden
-      },
+      () => {},
     );
   };
 

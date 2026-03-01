@@ -78,7 +78,7 @@ export const LocationCard = ({
       try {
         const [res, holidaysRes] = await Promise.all([
           fetch(`/api/places/${place_id}/reviews`),
-          fetch(`/api/directus-holidays?slug=${location.slug}`),
+          fetch(`/api/directus-holidays`),
         ]);
 
         const data = await res.json();
@@ -100,12 +100,9 @@ export const LocationCard = ({
             ": ",
           ) || [date.weekdayLong ?? "Unknown", "Closed"];
 
-          const holiday = Array.isArray(holidays)
-            ? holidays.find(
-                (h: any) =>
-                  DateTime.fromISO(h.date).toISODate() === formattedDate,
-              )
-            : null;
+          const holiday = holidays.find(
+            (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate,
+          );
 
           const holidayName = holiday?.name || null;
           const status: "open" | "closed" = holiday?.status || "open";
