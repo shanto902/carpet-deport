@@ -67,7 +67,7 @@ export const LocationCard = ({
   distance: number | undefined;
   store_status: string;
 }) => {
-  const { id, name, thumbnail_image, contact_no, google_map, place_id } =
+  const { id, name, thumbnail_image, image, contact_no, google_map, place_id } =
     location;
 
   const address = google_map.properties.formated;
@@ -78,7 +78,7 @@ export const LocationCard = ({
       try {
         const [res, holidaysRes] = await Promise.all([
           fetch(`/api/places/${place_id}/reviews`),
-          fetch(`/api/directus-holidays`),
+          fetch(`/api/directus-holidays?slug=${location.slug}`),
         ]);
 
         const data = await res.json();
@@ -100,9 +100,12 @@ export const LocationCard = ({
             ": ",
           ) || [date.weekdayLong ?? "Unknown", "Closed"];
 
-          const holiday = holidays.find(
-            (h: any) => DateTime.fromISO(h.date).toISODate() === formattedDate,
-          );
+          const holiday = Array.isArray(holidays)
+            ? holidays.find(
+                (h: any) =>
+                  DateTime.fromISO(h.date).toISODate() === formattedDate,
+              )
+            : null;
 
           const holidayName = holiday?.name || null;
           const status: "open" | "closed" = holiday?.status || "open";
@@ -125,105 +128,83 @@ export const LocationCard = ({
   }, [place_id]);
 
   return (
-    <div key={id}>
-      <div className="bg-white my-10 rounded-lg drop-shadow-xl p-6 flex justify-between xl:flex-row flex-col xl:items-center gap-6">
-        <div className="md:flex gap-6 md:gap-10 items-center">
+    <div key={id} className="my-10">
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300">
+        {/* FULL WIDTH IMAGE */}
+        <div className="w-full bg-gray-100 flex justify-center">
           <Image
-            width={1000}
-            height={1000}
-            src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${thumbnail_image}`}
+            src={`${process.env.NEXT_PUBLIC_ASSETS_URL}${image}`}
             alt={name}
-            className="md:aspect-[3/4] md:max-w-[200px] object-cover rounded mb-4 md:mb-0"
+            width={1200}
+            height={600}
+            className="w-full h-auto object-contain"
+            sizes="100vw"
           />
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold mb-2">{name}</h3>
-            <p className="flex items-center text-base text-gray-600 mb-1">
-              <FiMapPin className="mr-2" /> {address}
-            </p>
-            <p className="flex items-center text-base text-gray-600 mb-2">
-              <FiPhone className="mr-2" />
-              <a
-                href={`tel:+1${contact_no.replace(/[^0-9]/g, "")}`}
-                className="hover:underline"
-              >
-                {contact_no}
-              </a>
-            </p>
-
-            {store_status === "live" ? (
-              <div className="text-base text-gray-600 space-y-2">
-                {groupStoreHours(storeHours).map(
-                  ({ days, time, holidayName }, idx) => {
-                    const dayLabel =
-                      days.length === 1
-                        ? days[0]
-                        : `${days[0]}–${days[days.length - 1]}`;
-                    const isClosed = time.trim().toLowerCase() === "closed";
-
-                    return (
-                      <div key={idx} className="space-y-1">
-                        <p className="font-bold">
-                          {dayLabel}
-                          {holidayName && (
-                            <span className="block text-sm font-normal text-gray-500">
-                              {holidayName}
-                            </span>
-                          )}
-                        </p>
-                        <p
-                          className={isClosed ? "text-red-600 font-medium" : ""}
-                        >
-                          {isClosed ? "Closed" : time}
-                        </p>
-                        {holidayName && (
-                          <p
-                            className={`text-sm font-medium ${
-                              isClosed ? "text-red-600" : "text-green-600"
-                            }`}
-                          >
-                            {isClosed ? "Closed for holiday" : "Holiday hours"}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  },
-                )}
-
-                <p className="text-base text-gray-600">
-                  Distance:{" "}
-                  {distance !== undefined ? (
-                    <span>{distance.toFixed(2)} miles away</span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 text-gray-400">
-                      loading...
-                      <span className="animate-spin inline-block w-3 h-3 border-2 border-primary border-t-transparent rounded-full"></span>
-                    </span>
-                  )}
-                </p>
-              </div>
-            ) : (
-              <p className="text-base text-red-600 font-medium">Opening Soon</p>
-            )}
-          </div>
         </div>
 
-        <div className="flex flex-1 flex-col md:flex-row justify-end md:items-end gap-2 mt-4 md:mt-0">
-          <CustomButton
-            href={`/locations/${location.slug}`}
-            button_type="question"
-            className="inline-flex text-nowrap"
-          >
-            More Info
-          </CustomButton>
-          {store_status === "live" && (
-            <CustomButton
-              className="inline-flex text-nowrap"
-              href={`/locations/${location.slug}#map`}
-              inverted
-            >
-              Get Directions
-            </CustomButton>
-          )}
+        <div className="bg-white p-6">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+            {/* LEFT CONTENT */}
+            <div className="flex-1">
+              <div className="flex items-start justify-between">
+                <h3 className="text-2xl font-bold text-gray-800">{name}</h3>
+
+                {store_status === "live" && (
+                  <span className="md:hidden px-3 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-full">
+                    Open
+                  </span>
+                )}
+              </div>
+
+              <div className="space-y-2 text-gray-700 mt-3">
+                <p className="flex items-start">
+                  <FiMapPin className="mr-2 mt-1" />
+                  {address}
+                </p>
+
+                <p className="flex items-center">
+                  <FiPhone className="mr-2" />
+                  <a
+                    href={`tel:+1${contact_no.replace(/[^0-9]/g, "")}`}
+                    className="hover:text-primary transition-colors"
+                  >
+                    {contact_no}
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            {/* RIGHT SIDE AREA */}
+            <div className="flex flex-col items-start md:items-end gap-4 min-w-[220px]">
+              {store_status === "live" ? (
+                <span className="hidden md:inline-block px-3 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-full">
+                  Open
+                </span>
+              ) : (
+                <span className="hidden md:inline-block px-3 py-1 text-sm font-medium bg-red-100 text-red-600 rounded-full">
+                  Opening Soon
+                </span>
+              )}
+
+              <div className="flex gap-4">
+                <CustomButton
+                  href={`/locations/${location.slug}`}
+                  button_type="question"
+                >
+                  More Info
+                </CustomButton>
+
+                {store_status === "live" && (
+                  <CustomButton
+                    href={`/locations/${location.slug}#map`}
+                    inverted
+                  >
+                    Get Directions
+                  </CustomButton>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
