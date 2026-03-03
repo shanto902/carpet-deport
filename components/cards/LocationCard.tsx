@@ -158,12 +158,12 @@ export const LocationCard = ({
 
               <div className="space-y-2 text-gray-700 mt-3">
                 <p className="flex items-start">
-                  <FiMapPin className="mr-2 mt-1" />
+                  <FiMapPin className="mr-2 mt-1 min-w-4" />
                   {address}
                 </p>
 
                 <p className="flex items-center">
-                  <FiPhone className="mr-2" />
+                  <FiPhone className="mr-2 min-w-4" />
                   <a
                     href={`tel:+1${contact_no.replace(/[^0-9]/g, "")}`}
                     className="hover:text-primary transition-colors"
@@ -176,15 +176,22 @@ export const LocationCard = ({
 
             {/* RIGHT SIDE AREA */}
             <div className="flex flex-col items-start md:items-end gap-4 min-w-[220px]">
-              {store_status === "live" ? (
-                <span className="hidden md:inline-block px-3 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-full">
-                  Open
-                </span>
-              ) : (
-                <span className="hidden md:inline-block px-3 py-1 text-sm font-medium bg-red-100 text-red-600 rounded-full">
-                  Opening Soon
-                </span>
-              )}
+              <div className="flex items-center gap-3">
+                {distance !== undefined && (
+                  <span className="text-sm font-medium text-primary">
+                    📍 {distance.toFixed(1)} miles away
+                  </span>
+                )}
+                {store_status === "live" ? (
+                  <span className="hidden md:inline-block px-3 py-1 text-sm font-medium bg-green-100 text-green-700 rounded-full">
+                    Open
+                  </span>
+                ) : (
+                  <span className="hidden md:inline-block px-3 py-1 text-sm font-medium bg-red-100 text-red-600 rounded-full">
+                    Opening Soon
+                  </span>
+                )}
+              </div>
 
               <div className="flex gap-4">
                 <CustomButton
