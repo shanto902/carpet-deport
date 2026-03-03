@@ -45,11 +45,11 @@ export const VideoBlock = ({ block }: { block: TVideoBlock }) => {
                 <iframe
                   className="w-full h-full"
                   src={`https://www.youtube.com/embed/${getYouTubeVideoID(
-                    video.link
+                    video.link,
                   )}`}
                   title={`Video ${index + 1}`}
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; geolocation"
                   allowFullScreen
                 ></iframe>
               </div>
