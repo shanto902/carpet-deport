@@ -7,7 +7,7 @@ export default function ContactForm() {
         src="https://form.jotform.com/251464251620146"
         width="100%"
         height="500"
-        allow="fullscreen"
+        allow="fullscreen; geolocation"
       />
     </div>
   );

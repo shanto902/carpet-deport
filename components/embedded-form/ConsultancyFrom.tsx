@@ -7,7 +7,7 @@ const ConsultancyFrom = () => {
         src="https://form.jotform.com/250145363798060"
         width="100%"
         height="1350"
-        allow="fullscreen"
+        allow="fullscreen; geolocation"
         className=""
       />
     </div>
